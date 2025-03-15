@@ -1,0 +1,427 @@
+"use client";
+
+import { Input } from "@heroui/input";
+import {
+  At,
+  Key,
+  IdentificationCard,
+  GoogleLogo,
+  SignIn,
+} from "@phosphor-icons/react/dist/ssr";
+import { Button } from "@heroui/button";
+import { Checkbox } from "@heroui/checkbox";
+import { Divider } from "@heroui/divider";
+import { DateInput } from "@heroui/date-input";
+import { parseDate, getLocalTimeZone, today } from "@internationalized/date";
+import { Link } from "@heroui/link";
+import {FormEvent, useMemo, useState} from "react";
+import { zxcvbn, zxcvbnOptions } from "@zxcvbn-ts/core";
+import * as zxcvbnCommonPackage from "@zxcvbn-ts/language-common";
+import * as zxcvbnItPackage from "@zxcvbn-ts/language-it";
+
+export default function LoginPage() {
+  const oggi = today(getLocalTimeZone());
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [passwordConferma, setPasswordConferma] = useState("");
+  const [nome, setNome] = useState("");
+  const [cognome, setCognome] = useState("");
+  const [dataNascita, setDataNascita] = useState(parseDate(oggi.toString()));
+  const [segmentiRiempiti, setsegmentiRiempiti] = useState(0);
+  const [colore, setColore] = useState("");
+  const [emailInvalida, setEmailInvalida] = useState(false);
+  const [passInvalida, setPassInvalida] = useState(false);
+  const [login, setLogin] = useState(false);
+
+  const config_zxcvbn = {
+    translations: zxcvbnItPackage.translations,
+    graphs: zxcvbnCommonPackage.adjacencyGraphs,
+    dictionary: {
+      ...zxcvbnCommonPackage.dictionary,
+      ...zxcvbnItPackage.dictionary,
+    },
+  };
+
+  zxcvbnOptions.setOptions(config_zxcvbn);
+  const segments = 5;
+
+  const getStrengthLabel = (strength: number) => {
+    if (strength === 0) setColore("bg-gray-300");
+    else if (strength < 0.5) setColore("bg-red-500");
+    else if (strength < 0.75) setColore("bg-yellow-500");
+    else if (strength < 1) setColore("bg-blue-500");
+    else setColore("bg-green-500");
+  };
+
+  async function registrazione(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    let form_invalido = false;
+
+    if (colore === "bg-gray-300" || colore === "bg-red-500") {
+        setPassInvalida(true);
+        form_invalido = true;
+    }
+
+    if (!email.match("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\\])/gm")) {
+        setEmailInvalida(true)
+        form_invalido = true;
+    }
+
+    if (form_invalido) {
+        //TODO
+        //Chiamo la funzione che manda i dati all'API
+    }
+  }
+
+  return (
+    <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-background/60 px-8 pb-10 pt-6 shadow-small backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50">
+      <p className="text-white pb-2 text-xl font-medium">
+        {!login ? "Registrati" : "Login"}
+      </p>
+      <form
+        className={!login ? "flex flex-col gap-3" : "hidden"}
+        onSubmit={async (e) => registrazione(e)}
+      >
+        <Input
+          autoComplete="new-password"
+          isClearable
+          classNames={{
+            label: "text-black/50 dark:text-white/90",
+            input: [
+              "bg-transparent",
+              "text-black/90 dark:text-white/90",
+              "placeholder:text-default-700/50 dark:placeholder:text-white/60",
+            ],
+            innerWrapper: "bg-transparent",
+            inputWrapper: [
+              "shadow-xl",
+              "bg-default-200/50",
+              "dark:bg-default/60",
+              "backdrop-blur-xl",
+              "backdrop-saturate-200",
+              "hover:bg-default-200/70",
+              "dark:hover:bg-default/70",
+              "group-data-[focus=true]:bg-default-200/50",
+              "dark:group-data-[focus=true]:bg-default/60",
+              "!cursor-text",
+            ],
+          }}
+          isRequired={true}
+          label="Email"
+          placeholder="Scrivi la tua email"
+          radius="lg"
+          startContent={<At />}
+          value={email}
+          isInvalid={emailInvalida}
+          errorMessage="Email non valida"
+          onValueChange={(email) => {
+              if (email === "" && emailInvalida) {
+                  setEmailInvalida(false);
+              }
+              setEmail(email);
+          }}
+        />
+        <Input
+          isClearable
+          autoComplete="new-password"
+          classNames={{
+            label: "text-black/50 dark:text-white/90",
+            input: [
+              "bg-transparent",
+              "text-black/90 dark:text-white/90",
+              "placeholder:text-default-700/50 dark:placeholder:text-white/60",
+            ],
+            innerWrapper: "bg-transparent",
+            inputWrapper: [
+              "shadow-xl",
+              "bg-default-200/50",
+              "dark:bg-default/60",
+              "backdrop-blur-xl",
+              "backdrop-saturate-200",
+              "hover:bg-default-200/70",
+              "dark:hover:bg-default/70",
+              "group-data-[focus=true]:bg-default-200/50",
+              "dark:group-data-[focus=true]:bg-default/60",
+              "!cursor-text",
+            ],
+          }}
+          isRequired={true}
+          label="Password"
+          placeholder="Scrivi la password"
+          isInvalid={passInvalida}
+          errorMessage="Password non valida"
+          radius="lg"
+          startContent={<Key />}
+          type="password"
+          value={password}
+          onValueChange={(nuovo_password) => {
+            setPassword(nuovo_password);
+            let res = zxcvbn(nuovo_password);
+            const punteggio = res.score / 4;
+
+            setsegmentiRiempiti(Math.ceil(punteggio * segments));
+            getStrengthLabel(punteggio);
+          }}
+        />
+        <div className="flex w-full gap-1 h-2 px-2 pr-2">
+          {[...Array(segments)].map((_, i) => (
+            <div
+              key={i}
+              className={`h-full flex-1 rounded-full transition-all duration-300 ${i < segmentiRiempiti ? colore : "bg-gray-200"}`}
+            />
+          ))}
+        </div>
+        <Input
+          isClearable
+          autoComplete="new-password"
+          classNames={{
+            label: "text-black/50 dark:text-white/90",
+            input: [
+              "bg-transparent",
+              "text-black/90 dark:text-white/90",
+              "placeholder:text-default-700/50 dark:placeholder:text-white/60",
+            ],
+            innerWrapper: "bg-transparent",
+            inputWrapper: [
+              "shadow-xl",
+              "bg-default-200/50",
+              "dark:bg-default/60",
+              "backdrop-blur-xl",
+              "backdrop-saturate-200",
+              "hover:bg-default-200/70",
+              "dark:hover:bg-default/70",
+              "group-data-[focus=true]:bg-default-200/50",
+              "dark:group-data-[focus=true]:bg-default/60",
+              "!cursor-text",
+            ],
+          }}
+          isRequired={true}
+          label="Conferma password"
+          placeholder="Riscrivi la password"
+          isInvalid={passInvalida}
+          errorMessage="Password non valida"
+          radius="lg"
+          startContent={<Key />}
+          type="password"
+          validate={() => {
+            if (passwordConferma !== password) {
+              return "Le password non sono uguali";
+            }
+          }}
+          value={passwordConferma}
+          onValueChange={setPasswordConferma}
+        />
+        <Input
+          isClearable
+          autoComplete="new-password"
+          classNames={{
+            label: "text-black/50 dark:text-white/90",
+            input: [
+              "bg-transparent",
+              "text-black/90 dark:text-white/90",
+              "placeholder:text-default-700/50 dark:placeholder:text-white/60",
+            ],
+            innerWrapper: "bg-transparent",
+            inputWrapper: [
+              "shadow-xl",
+              "bg-default-200/50",
+              "dark:bg-default/60",
+              "backdrop-blur-xl",
+              "backdrop-saturate-200",
+              "hover:bg-default-200/70",
+              "dark:hover:bg-default/70",
+              "group-data-[focus=true]:bg-default-200/50",
+              "dark:group-data-[focus=true]:bg-default/60",
+              "!cursor-text",
+            ],
+          }}
+          isRequired={true}
+          label="Nome"
+          placeholder="Scrivi il tuo nome"
+          radius="lg"
+          startContent={<IdentificationCard />}
+          value={nome}
+          onValueChange={setNome}
+        />
+        <Input
+          isClearable
+          autoComplete="new-password"
+          classNames={{
+            label: "text-black/50 dark:text-white/90",
+            input: [
+              "bg-transparent",
+              "text-black/90 dark:text-white/90",
+              "placeholder:text-default-700/50 dark:placeholder:text-white/60",
+            ],
+            innerWrapper: "bg-transparent",
+            inputWrapper: [
+              "shadow-xl",
+              "bg-default-200/50",
+              "dark:bg-default/60",
+              "backdrop-blur-xl",
+              "backdrop-saturate-200",
+              "hover:bg-default-200/70",
+              "dark:hover:bg-default/70",
+              "group-data-[focus=true]:bg-default-200/50",
+              "dark:group-data-[focus=true]:bg-default/60",
+              "!cursor-text",
+            ],
+          }}
+          isRequired={true}
+          label="Cognome"
+          placeholder="Scrivi il tuo cognome"
+          radius="lg"
+          startContent={<IdentificationCard />}
+          value={cognome}
+          onValueChange={setCognome}
+        />
+
+        <DateInput
+          classNames={{
+            label: "text-black/50 dark:text-white/90",
+            input: [
+              "bg-transparent",
+              "text-black/90 dark:text-white/90",
+              "placeholder:text-default-700/50 dark:placeholder:text-white/60",
+            ],
+            innerWrapper: "bg-transparent",
+            inputWrapper: [
+              "shadow-xl",
+              "bg-default-200/50",
+              "dark:bg-default/60",
+              "backdrop-blur-xl",
+              "backdrop-saturate-200",
+              "hover:bg-default-200/70",
+              "dark:hover:bg-default/70",
+              "group-data-[focus=true]:bg-default-200/50",
+              "dark:group-data-[focus=true]:bg-default/60",
+              "!cursor-text",
+            ],
+          }}
+          isRequired={true}
+          label="Data di nascita"
+          value={dataNascita}
+          //@ts-ignore
+          onChange={setDataNascita}
+        />
+        <Checkbox
+          classNames={{
+            base: "py-4",
+            label: "text-foreground/60",
+            wrapper: "before:border-foreground/50",
+          }}
+          isRequired={true}
+          size="sm"
+        >
+          Sono d'accordo con i{" "}
+          <Link color="foreground" href="#" size="sm">
+            Termini di servizio
+          </Link>
+        </Checkbox>
+        <Button
+          className=" bg-foreground/10 dark:bg-foreground/20"
+          radius="lg"
+          startContent={<SignIn />}
+          type="submit"
+        >
+          Registrati
+        </Button>
+      </form>
+      <form
+        className={!login ? "hidden" : "flex flex-col gap-3"}
+        onSubmit={async (e) => registrazione(e)}
+      >
+        <Input
+          isClearable
+          classNames={{
+            label: "text-black/50 dark:text-white/90",
+            input: [
+              "bg-transparent",
+              "text-black/90 dark:text-white/90",
+              "placeholder:text-default-700/50 dark:placeholder:text-white/60",
+            ],
+            innerWrapper: "bg-transparent",
+            inputWrapper: [
+              "shadow-xl",
+              "bg-default-200/50",
+              "dark:bg-default/60",
+              "backdrop-blur-xl",
+              "backdrop-saturate-200",
+              "hover:bg-default-200/70",
+              "dark:hover:bg-default/70",
+              "group-data-[focus=true]:bg-default-200/50",
+              "dark:group-data-[focus=true]:bg-default/60",
+              "!cursor-text",
+            ],
+          }}
+          isRequired={true}
+          label="Email"
+          placeholder="Scrivi la tua email"
+          radius="lg"
+          startContent={<At />}
+          value={email}
+          onValueChange={setEmail}
+        />
+        <Input
+          isClearable
+          classNames={{
+            label: "text-black/50 dark:text-white/90",
+            input: [
+              "bg-transparent",
+              "text-black/90 dark:text-white/90",
+              "placeholder:text-default-700/50 dark:placeholder:text-white/60",
+            ],
+            innerWrapper: "bg-transparent",
+            inputWrapper: [
+              "shadow-xl",
+              "bg-default-200/50",
+              "dark:bg-default/60",
+              "backdrop-blur-xl",
+              "backdrop-saturate-200",
+              "hover:bg-default-200/70",
+              "dark:hover:bg-default/70",
+              "group-data-[focus=true]:bg-default-200/50",
+              "dark:group-data-[focus=true]:bg-default/60",
+              "!cursor-text",
+            ],
+          }}
+          isRequired={true}
+          label="Password"
+          placeholder="Scrivi la password"
+          radius="lg"
+          startContent={<Key />}
+          type="password"
+          value={password}
+          onValueChange={setPassword}
+        />
+        <Button
+          className="bg-foreground/10 dark:bg-foreground/20"
+          radius="lg"
+          startContent={<SignIn />}
+          type="submit"
+        >
+          Login
+        </Button>
+      </form>
+      <div className="flex items-center gap-4 py-2">
+        <Divider className="flex-1" />
+        <p className="shrink-0 text-sm text-default-600">Oppure</p>
+        <Divider className="flex-1" />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Button
+          className="bg-foreground/10 dark:bg-foreground/20"
+          startContent={<GoogleLogo size="1.5rem" />}
+        >
+          {!login ? "Registrati con Google" : "Entra con Google"}
+        </Button>
+      </div>
+      <p className="text-center text-small text-foreground/50">
+        {!login ? "Hai già un account?" : "Non hai ancora un account?"}{" "}
+        <Link color="foreground" size="sm" onPress={() => setLogin(!login)}>
+          {!login ? "Fai il login!" : "Registrati subito!"}
+        </Link>
+      </p>
+    </div>
+  );
+}
