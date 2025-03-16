@@ -11,7 +11,8 @@ import {MagnifyingGlass} from "@phosphor-icons/react";
 
 export default function Home() {
     return (
-        <div suppressHydrationWarning className="relative">
+        <div suppressHydrationWarning>
+            <div className="relative">
             <div className="absolute inset-0 w-full h-full">
                 <Image
                     src="/treno.jpg"
@@ -129,7 +130,77 @@ export default function Home() {
                     </div>
                 </div>
             </div>
+            </div>
+            <div className="mt-5 mx-5">
+                <span className="font-bold text-2xl">I nostri servizi</span>
+                <div className="grid grid-cols-3 gap-4 mt-3">
+                    <div>
+                        <svg viewBox="-6.4 -6.4 76.80 76.80" xmlns="http://www.w3.org/2000/svg" strokeWidth="3"
+                             stroke="#000000" fill="none">
+                            <g id="SVGRepo_bgCarrier" strokeWidth="0">
+                                <rect x="-6.4" y="-6.4" width="76.80" height="76.80" rx="38.4" fill="#57e389"
+                                      strokeWidth="0"></rect>
+                            </g>
+                            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M58.13,37.74,16.62,54.46,14.69,49s4.08-2.13,2.74-5.84-6.19-2.9-6.19-2.9L9.35,34.64,51,18.21l2.06,4.87S48.62,25.79,50,29.63s6.25,2.94,6.25,2.94Z"></path>
+                                <line x1="18.5" y1="31.04" x2="20.77" y2="36.18" strokeDasharray="9 4"></line>
+                                <line x1="21.83" y1="38.65" x2="23.75" y2="42.99" strokeDasharray="9 4"></line>
+                                <line x1="24.47" y1="45.04" x2="26.75" y2="50.18" strokeDasharray="9 4"></line>
+                                <path d="M9.4,34.54,41.52,10.71l3.38,4.06s-3.47,3.89-1,7.15"></path>
+                            </g>
+                        </svg>
+                        <p className="font-bold text-xl mt-2">MINOR COSTO ASSICURATO</p>
+                        <p>Offriamo a nostri clienti il miglior prezzo possibile, dandogli possibilità di pagare il meno
+                            possibile.</p>
+                    </div>
+                    <div>
+                        <svg viewBox="-6.4 -6.4 76.80 76.80" xmlns="http://www.w3.org/2000/svg" strokeWidth="3"
+                             stroke="#000000" fill="none">
+                            <g id="SVGRepo_bgCarrier" strokeWidth="0">
+                                <rect x="-6.4" y="-6.4" width="76.80" height="76.80" rx="38.4" fill="#57e389"
+                                      strokeWidth="0"></rect>
+                            </g>
+                            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M58.13,37.74,16.62,54.46,14.69,49s4.08-2.13,2.74-5.84-6.19-2.9-6.19-2.9L9.35,34.64,51,18.21l2.06,4.87S48.62,25.79,50,29.63s6.25,2.94,6.25,2.94Z"></path>
+                                <line x1="18.5" y1="31.04" x2="20.77" y2="36.18" strokeDasharray="9 4"></line>
+                                <line x1="21.83" y1="38.65" x2="23.75" y2="42.99" strokeDasharray="9 4"></line>
+                                <line x1="24.47" y1="45.04" x2="26.75" y2="50.18" strokeDasharray="9 4"></line>
+                                <path d="M9.4,34.54,41.52,10.71l3.38,4.06s-3.47,3.89-1,7.15"></path>
+                            </g>
+                        </svg>
+                        <span className="font-bold text-xl">MINOR COSTO ASSICURATO</span>
+                        <p>Offriamo a nostri clienti il miglior prezzo possibile, dandogli possibilità di pagare il meno
+                            possibile.</p>
+                    </div>
+                    <div>
+                        <svg viewBox="-6.4 -6.4 76.80 76.80" xmlns="http://www.w3.org/2000/svg" strokeWidth="3"
+                             stroke="#000000" fill="none">
+                            <g id="SVGRepo_bgCarrier" strokeWidth="0">
+                                <rect x="-6.4" y="-6.4" width="76.80" height="76.80" rx="38.4" fill="#57e389"
+                                      strokeWidth="0"></rect>
+                            </g>
+                            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M58.13,37.74,16.62,54.46,14.69,49s4.08-2.13,2.74-5.84-6.19-2.9-6.19-2.9L9.35,34.64,51,18.21l2.06,4.87S48.62,25.79,50,29.63s6.25,2.94,6.25,2.94Z"></path>
+                                <line x1="18.5" y1="31.04" x2="20.77" y2="36.18" strokeDasharray="9 4"></line>
+                                <line x1="21.83" y1="38.65" x2="23.75" y2="42.99" strokeDasharray="9 4"></line>
+                                <line x1="24.47" y1="45.04" x2="26.75" y2="50.18" strokeDasharray="9 4"></line>
+                                <path d="M9.4,34.54,41.52,10.71l3.38,4.06s-3.47,3.89-1,7.15"></path>
+                            </g>
+                        </svg>
+                        <span className="font-bold text-xl">MINOR COSTO ASSICURATO</span>
+                        <p>Offriamo a nostri clienti il miglior prezzo possibile, dandogli possibilità di pagare il meno
+                            possibile.</p>
+                    </div>
+                </div>
+            </div>
         </div>
+
     );
 }
 
