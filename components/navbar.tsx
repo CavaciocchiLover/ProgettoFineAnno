@@ -75,6 +75,9 @@ export const Navbar = () => {
           <Link href="#" color="foreground">About</Link>
         </NavbarItem>
         <NavbarItem>
+          <Link href="#" color="foreground">FAQ</Link>
+        </NavbarItem>
+        <NavbarItem>
           <Link href="#" color="foreground">Supporto</Link>
         </NavbarItem>
       </NavbarContent>
