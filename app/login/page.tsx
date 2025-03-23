@@ -5,7 +5,6 @@ import {
   At,
   Key,
   IdentificationCard,
-  GoogleLogo,
   SignIn,
 } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@heroui/button";
@@ -18,6 +17,8 @@ import {FormEvent, useMemo, useState} from "react";
 import { zxcvbn, zxcvbnOptions } from "@zxcvbn-ts/core";
 import * as zxcvbnCommonPackage from "@zxcvbn-ts/language-common";
 import * as zxcvbnItPackage from "@zxcvbn-ts/language-it";
+import {CredentialResponse, GoogleLogin} from "@react-oauth/google";
+import {useRouter} from "next/navigation";
 
 export default function LoginPage() {
   const oggi = today(getLocalTimeZone());
@@ -31,7 +32,10 @@ export default function LoginPage() {
   const [colore, setColore] = useState("");
   const [emailInvalida, setEmailInvalida] = useState(false);
   const [passInvalida, setPassInvalida] = useState(false);
+  const [errore, setErrore] = useState(false);
   const [login, setLogin] = useState(false);
+
+  const router = useRouter();
 
   const config_zxcvbn = {
     translations: zxcvbnItPackage.translations,
@@ -54,26 +58,78 @@ export default function LoginPage() {
   };
 
   async function registrazione(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    let form_invalido = false;
+    setErrore(false);
+      e.preventDefault();
+    let errori = 0;
 
     if (colore === "bg-gray-300" || colore === "bg-red-500") {
         setPassInvalida(true);
-        form_invalido = true;
+        errori += 1;
+    } else {
+        setPassInvalida(false);
     }
 
-    if (!email.match("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\\])/gm")) {
-        setEmailInvalida(true)
-        form_invalido = true;
-    }
-
-    if (form_invalido) {
-        //TODO
-        //Chiamo la funzione che manda i dati all'API
+    if (errori !== 1) {
+        fetch("http://localhost:8080/registrazione", {
+            method: "POST",
+            body: JSON.stringify({
+                email: email,
+                password: password,
+                nome: nome,
+                cognome: cognome,
+                data: dataNascita.toString(),
+            })
+        }).then((resp) => {
+            if (resp.status === 200) {
+                router.push('/');
+            } else {
+                setErrore(true);
+            }
+        })
+            .catch(() => {
+                setErrore(true);
+            })
     }
   }
 
-  return (
+    async function accessoGoogle(jwt: CredentialResponse) {
+        fetch("http://localhost:8080/accessoGoogle", {
+            method: "POST",
+            body: JSON.stringify({"token": jwt.credential})
+        }).then((resp) => {
+            if (resp.status === 200) {
+                router.push('/');
+            } else {
+                setErrore(true);
+            }
+        })
+            .catch(() => {
+                setErrore(true);
+            })
+    }
+
+    async function Login(e: FormEvent<HTMLFormElement>) {
+      e.preventDefault();
+      setErrore(false);
+        fetch("http://localhost:8080/login", {
+            method: "POST",
+            body: JSON.stringify({
+                email: email,
+                password: password,
+            })
+        }).then((resp) => {
+            if (resp.status === 200) {
+                router.push('/');
+            } else {
+                setErrore(true);
+            }
+        })
+            .catch(() => {
+                setErrore(true);
+            })
+    }
+
+    return (
     <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-background/60 px-8 pb-10 pt-6 shadow-small backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50">
       <p className="text-white pb-2 text-xl font-medium">
         {!login ? "Registrati" : "Login"}
@@ -112,14 +168,8 @@ export default function LoginPage() {
           radius="lg"
           startContent={<At />}
           value={email}
-          isInvalid={emailInvalida}
-          errorMessage="Email non valida"
-          onValueChange={(email) => {
-              if (email === "" && emailInvalida) {
-                  setEmailInvalida(false);
-              }
-              setEmail(email);
-          }}
+          onValueChange={setEmail}
+          type="email"
         />
         <Input
           isClearable
@@ -329,7 +379,7 @@ export default function LoginPage() {
       </form>
       <form
         className={!login ? "hidden" : "flex flex-col gap-3"}
-        onSubmit={async (e) => registrazione(e)}
+        onSubmit={async (e) => Login(e)}
       >
         <Input
           isClearable
@@ -409,18 +459,18 @@ export default function LoginPage() {
         <Divider className="flex-1" />
       </div>
       <div className="flex flex-col gap-2">
-        <Button
-          className="bg-foreground/10 dark:bg-foreground/20"
-          startContent={<GoogleLogo size="1.5rem" />}
-        >
-          {!login ? "Registrati con Google" : "Entra con Google"}
-        </Button>
+        <GoogleLogin
+            onSuccess={accessoGoogle}
+        onError={() => console.log("failed to login")}/>
       </div>
       <p className="text-center text-small text-foreground/50">
         {!login ? "Hai già un account?" : "Non hai ancora un account?"}{" "}
         <Link color="foreground" size="sm" onPress={() => setLogin(!login)}>
           {!login ? "Fai il login!" : "Registrati subito!"}
         </Link>
+      </p>
+      <p className={!errore ? "hidden" : "text-center bg-red-300 text-red-700 rounded-xl p-2"}>
+        Si è verificato un errore.
       </p>
     </div>
   );

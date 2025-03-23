@@ -9,6 +9,7 @@
   "lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix"
  },
  "dependencies": {
+  "@heroui/autocomplete": "^2.3.17",
   "@heroui/button": "2.2.13",
   "@heroui/card": "^2.2.15",
   "@heroui/checkbox": "^2.3.14",
@@ -30,6 +31,7 @@
   "@phosphor-icons/react": "^2.1.7",
   "@react-aria/ssr": "3.9.7",
   "@react-aria/visually-hidden": "3.8.19",
+  "@react-oauth/google": "^0.12.1",
   "@zxcvbn-ts/core": "^3.0.4",
   "@zxcvbn-ts/language-common": "^3.0.4",
   "@zxcvbn-ts/language-en": "^3.0.2",

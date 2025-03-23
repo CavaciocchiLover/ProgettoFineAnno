@@ -16,8 +16,51 @@ import googlePay from "../public/pagamento/google-pay.svg";
 import applePay from "../public/pagamento/Apple_Pay.svg";
 import paypal from "../public/pagamento/PayPal.png";
 import visa from "../public/pagamento/visa.svg";
+import {Autocomplete, AutocompleteItem} from "@heroui/autocomplete";
+import {useState} from "react";
+
+export type Stazione = {
+    nome: string;
+    codice: string;
+}
 
 export default function Home() {
+    const [partenza, setPartenza] = useState("");
+    const [arrivo, setArrivo] = useState("");
+    const [caricando, setCaricando] = useState(false);
+    const [stazioni, setStazioni] = useState<Stazione[]>([]);
+
+    async function CercoStazione(stazione: string) {
+        setStazioni([]);
+        setCaricando(true);
+        fetch("https://corsproxy.io/?url=http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/autocompletaStazione/" + stazione, {
+            method: "GET",
+        })
+            .then(res => {
+                if (res.status === 200) {
+                    res.text().then(lista => {
+                        let dati = lista.split("\n");
+                        let max;
+
+                        if (dati.length > 5) {
+                            for (let i = 0; i < 5; i++) {
+                                let riga = dati[i].split("|");
+                                setStazioni((recordPrecedente) => [...recordPrecedente, ...[{nome: riga[0], codice: riga[1]}]]);
+                            }
+                        } else {
+                            for (const dato of dati) {
+                                let riga = dato.split("|");
+                                setStazioni((recordPrecedente) => [...recordPrecedente, ...[{nome: riga[0], codice: riga[1]}]]);
+                            }
+                        }
+
+
+                        setCaricando(false);
+                    })
+                }
+            })
+    }
+
     return (<div suppressHydrationWarning className="bg-amber-50">
             <div className="relative">
                 <div className="absolute inset-0 w-full h-full">
@@ -49,16 +92,30 @@ export default function Home() {
                             }}
                         >
                             <form className="grid grid-cols-2 grid-flow-row gap-5">
-                                <Input
+                                <Autocomplete
                                     isRequired
-                                    classNames={{
-                                        input: ["placeholder:text-white placeholder:text-lg", "text-black/90 dark:text-white/90", "text-base",],
-                                        inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-0 border-t-0 border-l-0 border-r-0 group-data-[focus=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg",],
+                                    /*classNames={{
+                                        base: ["placeholder:text-white placeholder:text-lg", "text-black/90 dark:text-white/90", "text-base",],
+                                        listboxWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-0 border-t-0 border-l-0 border-r-0 group-data-[focus=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg",],
                                     }}
+
+                                     */
                                     placeholder="Da dove vuoi partire?"
                                     type="search"
                                     variant="bordered"
-                                />
+                                    defaultItems={stazioni}
+                                    isLoading={caricando}
+                                    onValueChange={(partenza: string) => {
+                                        setPartenza(partenza);
+                                        CercoStazione(partenza);
+                                    }}
+                                >
+                                    {(stazione) => (
+                                        <AutocompleteItem key={stazione["codice"]}>
+                                            {stazione["nome"]}
+                                        </AutocompleteItem>
+                                    )}
+                                </Autocomplete>
                                 <Input
                                     isRequired
                                     classNames={{
