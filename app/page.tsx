@@ -1,7 +1,7 @@
 "use client"
 
 import {DatePicker} from "@heroui/date-picker";
-import {fromDate, getLocalTimeZone, now, today, ZonedDateTime} from "@internationalized/date";
+import {getLocalTimeZone, now, today, ZonedDateTime} from "@internationalized/date";
 import {Navbar} from "@/components/navbar";
 import {NumberInput} from "@heroui/number-input";
 import Image from "next/image";
@@ -18,6 +18,7 @@ import paypal from "../public/pagamento/PayPal.png";
 import visa from "../public/pagamento/visa.svg";
 import {Autocomplete, AutocompleteItem} from "@heroui/autocomplete";
 import {FormEvent, useState} from "react";
+import Cookies from "js-cookie";
 
 export type Stazione = {
     nome: string; codice: string;
@@ -26,7 +27,7 @@ export type Stazione = {
 export default function Home() {
     const [partenza, setPartenza] = useState("");
     const [arrivo, setArrivo] = useState("");
-    const [data, setData] = useState(fromDate(new Date(), getLocalTimeZone()));
+    const [data, setData] = useState<ZonedDateTime | null>(now(getLocalTimeZone()));
     const [nPersone, setNPersone] = useState(0);
     const [caricando, setCaricando] = useState(false);
     const [stazioni, setStazioni] = useState<Stazione[]>([]);
@@ -48,7 +49,10 @@ export default function Home() {
                     const [nome, codice] = riga.split("|");
                     return {nome, codice};
                 })
-                .filter(item => item.nome && item.codice);
+                .filter(item => {
+                    console.log(item.codice);
+                    return item.nome && item.codice !== undefined
+                });
             setCaricando(false);
             return dati;
         } else {
@@ -58,20 +62,21 @@ export default function Home() {
 
     }
 
-    const CambioData = (data: ZonedDateTime | null) => {
-        if (data !== null)
-            setData(data);
-    }
-
-    function Redirect(e: FormEvent<HTMLFormElement>) {
+    async function Redirect(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const codPartenza = stazioni.find((stazione) => stazione.nome === partenza);
-        const codArrivo = stazioniArrivo.find((stazione) => stazione.nome === partenza);
+        const codArrivo = stazioniArrivo.find((stazione) => stazione.nome === arrivo);
 
         if (codPartenza !== undefined && codArrivo !== undefined) {
-            //router.push(`/ricerca?p=${codPartenza}&a=${codArrivo}&o=${data}&n=${nPersone}`);
+                Cookies.set("ricerca", JSON.stringify({
+                    partenza: codPartenza.codice,
+                    arrivo: codArrivo.codice,
+                    data: data?.toString(),
+                    nPersone: nPersone,
+                }));
+            router.push("/ricerca");
+
         }
-        console.log(`/ricerca?p=${codPartenza}&a=${codArrivo}&o=${data}&n=${nPersone}`);
     }
 
     return (<div suppressHydrationWarning className="bg-amber-50">
@@ -108,7 +113,7 @@ export default function Home() {
                                 inputProps={{
                                     classNames: {
                                         input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-sm",],
-                                        inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg"],
+                                        inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-0 border-t-0 border-l-0 border-r-0 focus-within:rounded-lg"],
                                     }
                                 }}
                                 placeholder="Da dove vuoi partire?"
@@ -134,7 +139,7 @@ export default function Home() {
                                 inputProps={{
                                     classNames: {
                                         input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-sm",],
-                                        inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg"],
+                                        inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-0 border-t-0 border-l-0 border-r-0 focus-within:rounded-lg"],
                                     }
                                 }}
                                 placeholder="Dove vuoi arrivare?"
@@ -159,22 +164,20 @@ export default function Home() {
                             <DatePicker
                                 hideTimeZone
                                 hourCycle={24}
-                                onChange={CambioData}
+                                onChange={setData}
                                 classNames={{
-                                    input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-sm",],
-                                    inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg"],
+                                    base: "dark",
+                                    input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-sm"],
+                                    inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "!cursor-text", "border-b-0 border-t-0 border-l-0 border-r-0 focus-within:rounded-lg"],
+                                    timeInputLabel: ["text-white"]
                                 }}
                                 calendarProps={{
                                     classNames: {
-                                        base: ["bg-zinc-950/30"],
+                                        base: "dark",
+                                        title: "text-white font-bold",
                                     }
                                 }}
-                                popoverProps={{
-                                    classNames: {
-                                        base: ["bg-zinc-950/30"],
-                                    }
-                                }}
-                                value={now(getLocalTimeZone())}
+                                value={data}
                                 label="Quando vuoi partire?"
                                 minValue={today(getLocalTimeZone())}
                                 firstDayOfWeek="mon"
@@ -182,8 +185,8 @@ export default function Home() {
                             <NumberInput
                                 isRequired
                                 classNames={{
-                                    input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-base",],
-                                    inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg",],
+                                    input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-base", ],
+                                    inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-0 border-t-0 border-l-0 border-r-0 focus-within:rounded-lg",],
                                 }}
                                 placeholder="Numero di persone"
                                 variant="bordered"
