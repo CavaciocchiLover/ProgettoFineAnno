@@ -1,6 +1,5 @@
 "use client"
 
-import {Input} from "@heroui/input";
 import {DatePicker} from "@heroui/date-picker";
 import {getLocalTimeZone, now, today} from "@internationalized/date";
 import {Navbar} from "@/components/navbar";
@@ -31,34 +30,27 @@ export default function Home() {
     const [stazioni, setStazioni] = useState<Stazione[]>([]);
 
     async function CercoStazione(stazione: string) {
-        setStazioni([]);
         setCaricando(true);
-        fetch("https://corsproxy.io/?url=http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/autocompletaStazione/" + stazione, {
-            method: "GET",
-        })
-            .then(res => {
-                if (res.status === 200) {
-                    res.text().then(lista => {
-                        let dati = lista.split("\n");
-                        let max;
 
-                        if (dati.length > 5) {
-                            for (let i = 0; i < 5; i++) {
-                                let riga = dati[i].split("|");
-                                setStazioni((recordPrecedente) => [...recordPrecedente, ...[{nome: riga[0], codice: riga[1]}]]);
-                            }
-                        } else {
-                            for (const dato of dati) {
-                                let riga = dato.split("|");
-                                setStazioni((recordPrecedente) => [...recordPrecedente, ...[{nome: riga[0], codice: riga[1]}]]);
-                            }
-                        }
+            const response = await fetch(`https://corsproxy.io/?url=http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/autocompletaStazione/${stazione}`);
+
+            if (response.ok) {
+                const testo = await response.text();
+                const righe = testo.split("\n").filter(riga => riga.trim() !== "");
 
 
-                        setCaricando(false);
+                const newStazioni = righe.slice(0, 5)
+                    .map(riga => {
+                        const [nome, codice] = riga.split("|");
+                        return { nome, codice };
                     })
-                }
-            })
+                    .filter(item => item.nome && item.codice);
+
+                setStazioni(newStazioni);
+            } else {
+                setStazioni([]);
+            }
+            setCaricando(false);
     }
 
     return (<div suppressHydrationWarning className="bg-amber-50">
@@ -78,7 +70,6 @@ export default function Home() {
                     className="relative z-10 flex h-full w-full items-start overflow-x-auto overflow-y-auto transition-colors duration-200 justify-center dark text-foreground">
                     <div
                         className="flex min-h-[48rem] w-full items-center justify-end overflow-hidden rounded-small p-2 sm:p-4 lg:p-8"
-
                     >
                         <div
                             className="flex w-full max-w-lg flex-col gap-4 rounded-large px-8 pb-10 pt-6 shadow-small"
@@ -93,56 +84,88 @@ export default function Home() {
                         >
                             <form className="grid grid-cols-2 grid-flow-row gap-5">
                                 <Autocomplete
-                                    isRequired
-                                    /*classNames={{
-                                        base: ["placeholder:text-white placeholder:text-lg", "text-black/90 dark:text-white/90", "text-base",],
-                                        listboxWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-0 border-t-0 border-l-0 border-r-0 group-data-[focus=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg",],
+                                    inputProps={{
+                                        classNames: {
+                                            input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-sm",],
+                                            inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg"],
+                                        }
                                     }}
-
-                                     */
                                     placeholder="Da dove vuoi partire?"
                                     type="search"
                                     variant="bordered"
-                                    defaultItems={stazioni}
+                                    items={stazioni}
                                     isLoading={caricando}
-                                    onValueChange={(partenza: string) => {
+                                    classNames={{
+                                        selectorButton: ["hidden"]
+                                    }}
+                                    onInputChange={(partenza: string) => {
                                         setPartenza(partenza);
-                                        CercoStazione(partenza);
+                                        if (partenza.length > 1) {
+                                            CercoStazione(partenza);
+                                        }
                                     }}
                                 >
                                     {(stazione) => (
-                                        <AutocompleteItem key={stazione["codice"]}>
-                                            {stazione["nome"]}
+                                        <AutocompleteItem key={stazione.codice}>
+                                            {stazione.nome}
                                         </AutocompleteItem>
                                     )}
                                 </Autocomplete>
-                                <Input
-                                    isRequired
-                                    classNames={{
-                                        input: ["placeholder:text-white placeholder:text-lg", "text-black/90 dark:text-white/90", "text-base",],
-                                        inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg",],
+                                <Autocomplete
+                                    inputProps={{
+                                        classNames: {
+                                            input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-sm",],
+                                            inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg"],
+                                        }
                                     }}
                                     placeholder="Dove vuoi arrivare?"
                                     type="search"
                                     variant="bordered"
-                                />
+                                    items={stazioni}
+                                    isLoading={caricando}
+                                    classNames={{
+                                        selectorButton: ["hidden"]
+                                    }}
+                                    onInputChange={(arrivo: string) => {
+                                        setArrivo(arrivo);
+                                        if (arrivo.length > 1) {
+                                            CercoStazione(arrivo);
+                                        }
+                                    }}
+                                >
+                                    {(stazione) => (
+                                        <AutocompleteItem key={stazione.codice}>
+                                            {stazione.nome}
+                                        </AutocompleteItem>
+                                    )}
+                                </Autocomplete>
                                 <DatePicker
                                     hideTimeZone
-                                    showMonthAndYearPickers
+                                    hourCycle={24}
                                     classNames={{
-                                        inputWrapper: "hover:bg-transparent focus:bg-transparent hover:rounded-lg rounded-none focus-within:bg-transparent bg-transparent border-b-2 border-red-500",
-                                        base: "bg-transparent",
-                                        input: "bg-transparent",
-                                        innerWrapper: "bg-transparent",
+                                        input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-sm",],
+                                        inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg"],
+                                    }}
+                                    calendarProps={{
+                                        classNames: {
+                                            base: ["bg-zinc-950/30"],
+                                        }
+                                    }}
+                                    popoverProps={{
+                                        classNames: {
+                                            base: ["bg-zinc-950/30"],
+                                        }
                                     }}
                                     defaultValue={now(getLocalTimeZone())}
                                     label="Quando vuoi partire?"
                                     minValue={today(getLocalTimeZone())}
+                                    firstDayOfWeek="mon"
+
                                 />
                                 <NumberInput
                                     isRequired
                                     classNames={{
-                                        input: ["placeholder:text-white placeholder:text-lg", "text-black/90 dark:text-white/90", "text-base",],
+                                        input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-base",],
                                         inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg",],
                                     }}
                                     placeholder="Numero di persone"

@@ -13,12 +13,13 @@ import { Divider } from "@heroui/divider";
 import { DateInput } from "@heroui/date-input";
 import { parseDate, getLocalTimeZone, today } from "@internationalized/date";
 import { Link } from "@heroui/link";
-import {FormEvent, useMemo, useState} from "react";
+import {FormEvent, useState} from "react";
 import { zxcvbn, zxcvbnOptions } from "@zxcvbn-ts/core";
 import * as zxcvbnCommonPackage from "@zxcvbn-ts/language-common";
 import * as zxcvbnItPackage from "@zxcvbn-ts/language-it";
 import {CredentialResponse, GoogleLogin} from "@react-oauth/google";
 import {useRouter} from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function LoginPage() {
   const oggi = today(getLocalTimeZone());
@@ -81,7 +82,14 @@ export default function LoginPage() {
             })
         }).then((resp) => {
             if (resp.status === 200) {
-                router.push('/');
+                resp.json()
+                    .then(token => {
+                        if (Cookies.get("token") !== "") {
+                            Cookies.remove("token");
+                        }
+                        Cookies.set("token", token["token"]);
+                        router.push('/');
+                    })
             } else {
                 setErrore(true);
             }
@@ -98,7 +106,14 @@ export default function LoginPage() {
             body: JSON.stringify({"token": jwt.credential})
         }).then((resp) => {
             if (resp.status === 200) {
-                router.push('/');
+                resp.json()
+                    .then(token => {
+                        if (Cookies.get("token") !== "") {
+                            Cookies.remove("token");
+                        }
+                        Cookies.set("token", token["token"]);
+                        router.push('/');
+                    })
             } else {
                 setErrore(true);
             }
@@ -119,7 +134,14 @@ export default function LoginPage() {
             })
         }).then((resp) => {
             if (resp.status === 200) {
-                router.push('/');
+                resp.json()
+                    .then(token => {
+                        if (Cookies.get("token") !== "") {
+                            Cookies.remove("token");
+                        }
+                        Cookies.set("token", token["token"]);
+                        router.push('/');
+                    })
             } else {
                 setErrore(true);
             }
