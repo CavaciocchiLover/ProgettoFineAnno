@@ -1,7 +1,7 @@
 "use client"
 
 import {DatePicker} from "@heroui/date-picker";
-import {getLocalTimeZone, now, today} from "@internationalized/date";
+import {fromDate, getLocalTimeZone, now, today, ZonedDateTime} from "@internationalized/date";
 import {Navbar} from "@/components/navbar";
 import {NumberInput} from "@heroui/number-input";
 import Image from "next/image";
@@ -9,6 +9,7 @@ import {Button} from "@heroui/button";
 import {MagnifyingGlass} from "@phosphor-icons/react";
 import {Card, CardBody, CardHeader} from "@heroui/card";
 import {Footer} from "@/components/footer";
+import {useRouter} from "next/navigation";
 
 import satis from "../public/pagamento/satis.png";
 import googlePay from "../public/pagamento/google-pay.svg";
@@ -16,177 +17,195 @@ import applePay from "../public/pagamento/Apple_Pay.svg";
 import paypal from "../public/pagamento/PayPal.png";
 import visa from "../public/pagamento/visa.svg";
 import {Autocomplete, AutocompleteItem} from "@heroui/autocomplete";
-import {useState} from "react";
+import {FormEvent, useState} from "react";
 
 export type Stazione = {
-    nome: string;
-    codice: string;
+    nome: string; codice: string;
 }
 
 export default function Home() {
     const [partenza, setPartenza] = useState("");
     const [arrivo, setArrivo] = useState("");
+    const [data, setData] = useState(fromDate(new Date(), getLocalTimeZone()));
+    const [nPersone, setNPersone] = useState(0);
     const [caricando, setCaricando] = useState(false);
     const [stazioni, setStazioni] = useState<Stazione[]>([]);
+    const [stazioniArrivo, setStazioniArrivo] = useState<Stazione[]>([]);
+
+    const router = useRouter();
 
     async function CercoStazione(stazione: string) {
         setCaricando(true);
 
-            const response = await fetch(`https://corsproxy.io/?url=http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/autocompletaStazione/${stazione}`);
+        const response = await fetch(`https://corsproxy.io/?url=http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/autocompletaStazione/${stazione}`);
 
-            if (response.ok) {
-                const testo = await response.text();
-                const righe = testo.split("\n").filter(riga => riga.trim() !== "");
+        if (response.ok) {
+            const testo = await response.text();
+            const righe = testo.split("\n").filter(riga => riga.trim() !== "");
 
-
-                const newStazioni = righe.slice(0, 5)
-                    .map(riga => {
-                        const [nome, codice] = riga.split("|");
-                        return { nome, codice };
-                    })
-                    .filter(item => item.nome && item.codice);
-
-                setStazioni(newStazioni);
-            } else {
-                setStazioni([]);
-            }
+            const dati = righe.slice(0, 5)
+                .map(riga => {
+                    const [nome, codice] = riga.split("|");
+                    return {nome, codice};
+                })
+                .filter(item => item.nome && item.codice);
             setCaricando(false);
+            return dati;
+        } else {
+            setCaricando(false);
+            return [];
+        }
+
+    }
+
+    const CambioData = (data: ZonedDateTime | null) => {
+        if (data !== null)
+            setData(data);
+    }
+
+    function Redirect(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        const codPartenza = stazioni.find((stazione) => stazione.nome === partenza);
+        const codArrivo = stazioniArrivo.find((stazione) => stazione.nome === partenza);
+
+        if (codPartenza !== undefined && codArrivo !== undefined) {
+            //router.push(`/ricerca?p=${codPartenza}&a=${codArrivo}&o=${data}&n=${nPersone}`);
+        }
+        console.log(`/ricerca?p=${codPartenza}&a=${codArrivo}&o=${data}&n=${nPersone}`);
     }
 
     return (<div suppressHydrationWarning className="bg-amber-50">
-            <div className="relative">
-                <div className="absolute inset-0 w-full h-full">
-                    <Image
-                        src="/treno.jpg"
-                        alt="Background"
-                        fill
-                        className="object-cover"
-                        priority
-                        quality={100}
-                    />
-                </div>
-                <Navbar/>
+        <div className="relative">
+            <div className="absolute inset-0 w-full h-full">
+                <Image
+                    src="/treno.jpg"
+                    alt="Background"
+                    fill
+                    className="object-cover"
+                    priority
+                    quality={100}
+                />
+            </div>
+            <Navbar/>
+            <div
+                className="relative z-10 flex h-full w-full items-start overflow-x-auto overflow-y-auto transition-colors duration-200 justify-center dark text-foreground">
                 <div
-                    className="relative z-10 flex h-full w-full items-start overflow-x-auto overflow-y-auto transition-colors duration-200 justify-center dark text-foreground">
+                    className="flex min-h-[48rem] w-full items-center justify-end overflow-hidden rounded-small p-2 sm:p-4 lg:p-8"
+                >
                     <div
-                        className="flex min-h-[48rem] w-full items-center justify-end overflow-hidden rounded-small p-2 sm:p-4 lg:p-8"
+                        className="flex w-full max-w-lg flex-col gap-4 rounded-large px-8 pb-10 pt-6 shadow-small"
+                        style={{
+                            background: "rgba(222,201,201,0.25)",
+                            borderRadius: "16px",
+                            boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+                            backdropFilter: "blur(4.7px)",
+                            border: "1px solid rgba(222,201,201,0.24)",
+                            WebkitBackdropFilter: "blur(4.7px)",
+                        }}
                     >
-                        <div
-                            className="flex w-full max-w-lg flex-col gap-4 rounded-large px-8 pb-10 pt-6 shadow-small"
-                            style={{
-                                background: "rgba(222,201,201,0.25)",
-                                borderRadius: "16px",
-                                boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-                                backdropFilter: "blur(4.7px)",
-                                border: "1px solid rgba(222,201,201,0.24)",
-                                WebkitBackdropFilter: "blur(4.7px)",
-                            }}
-                        >
-                            <form className="grid grid-cols-2 grid-flow-row gap-5">
-                                <Autocomplete
-                                    inputProps={{
-                                        classNames: {
-                                            input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-sm",],
-                                            inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg"],
-                                        }
-                                    }}
-                                    placeholder="Da dove vuoi partire?"
-                                    type="search"
-                                    variant="bordered"
-                                    items={stazioni}
-                                    isLoading={caricando}
-                                    classNames={{
-                                        selectorButton: ["hidden"]
-                                    }}
-                                    onInputChange={(partenza: string) => {
-                                        setPartenza(partenza);
-                                        if (partenza.length > 1) {
-                                            CercoStazione(partenza);
-                                        }
-                                    }}
-                                >
-                                    {(stazione) => (
-                                        <AutocompleteItem key={stazione.codice}>
-                                            {stazione.nome}
-                                        </AutocompleteItem>
-                                    )}
-                                </Autocomplete>
-                                <Autocomplete
-                                    inputProps={{
-                                        classNames: {
-                                            input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-sm",],
-                                            inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg"],
-                                        }
-                                    }}
-                                    placeholder="Dove vuoi arrivare?"
-                                    type="search"
-                                    variant="bordered"
-                                    items={stazioni}
-                                    isLoading={caricando}
-                                    classNames={{
-                                        selectorButton: ["hidden"]
-                                    }}
-                                    onInputChange={(arrivo: string) => {
-                                        setArrivo(arrivo);
-                                        if (arrivo.length > 1) {
-                                            CercoStazione(arrivo);
-                                        }
-                                    }}
-                                >
-                                    {(stazione) => (
-                                        <AutocompleteItem key={stazione.codice}>
-                                            {stazione.nome}
-                                        </AutocompleteItem>
-                                    )}
-                                </Autocomplete>
-                                <DatePicker
-                                    hideTimeZone
-                                    hourCycle={24}
-                                    classNames={{
+                        <form className="grid grid-cols-2 grid-flow-row gap-5" onSubmit={Redirect}>
+                            <Autocomplete
+                                inputProps={{
+                                    classNames: {
                                         input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-sm",],
                                         inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg"],
-                                    }}
-                                    calendarProps={{
-                                        classNames: {
-                                            base: ["bg-zinc-950/30"],
-                                        }
-                                    }}
-                                    popoverProps={{
-                                        classNames: {
-                                            base: ["bg-zinc-950/30"],
-                                        }
-                                    }}
-                                    defaultValue={now(getLocalTimeZone())}
-                                    label="Quando vuoi partire?"
-                                    minValue={today(getLocalTimeZone())}
-                                    firstDayOfWeek="mon"
-
-                                />
-                                <NumberInput
-                                    isRequired
-                                    classNames={{
-                                        input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-base",],
-                                        inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg",],
-                                    }}
-                                    placeholder="Numero di persone"
-                                    variant="bordered"
-                                    hideStepper
-                                    minValue={0}
-                                    aria-label="Numero di persone"
-                                />
-                                <Button
-                                    className="bg-foreground/10 dark:bg-foreground/20 col-span-2"
-                                    radius="lg"
-                                    startContent={<MagnifyingGlass/>}
-                                    type="submit"
-                                >
-                                    Cerca
-                                </Button>
-                            </form>
-                        </div>
+                                    }
+                                }}
+                                placeholder="Da dove vuoi partire?"
+                                type="search"
+                                variant="bordered"
+                                items={stazioni}
+                                isLoading={caricando}
+                                classNames={{
+                                    selectorButton: ["hidden"]
+                                }}
+                                onInputChange={(partenza: string) => {
+                                    setPartenza(partenza);
+                                    if (partenza.length > 1) {
+                                        CercoStazione(partenza).then((dati) => setStazioni(dati));
+                                    }
+                                }}
+                            >
+                                {(stazione) => (<AutocompleteItem key={stazione.codice}>
+                                        {stazione.nome}
+                                    </AutocompleteItem>)}
+                            </Autocomplete>
+                            <Autocomplete
+                                inputProps={{
+                                    classNames: {
+                                        input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-sm",],
+                                        inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg"],
+                                    }
+                                }}
+                                placeholder="Dove vuoi arrivare?"
+                                type="search"
+                                variant="bordered"
+                                items={stazioniArrivo}
+                                isLoading={caricando}
+                                classNames={{
+                                    selectorButton: ["hidden"]
+                                }}
+                                onInputChange={(arrivo: string) => {
+                                    setArrivo(arrivo);
+                                    if (arrivo.length > 1) {
+                                        CercoStazione(arrivo).then((dati) => setStazioniArrivo(dati));
+                                    }
+                                }}
+                            >
+                                {(stazione) => (<AutocompleteItem key={stazione.codice}>
+                                        {stazione.nome}
+                                    </AutocompleteItem>)}
+                            </Autocomplete>
+                            <DatePicker
+                                hideTimeZone
+                                hourCycle={24}
+                                onChange={CambioData}
+                                classNames={{
+                                    input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-sm",],
+                                    inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg"],
+                                }}
+                                calendarProps={{
+                                    classNames: {
+                                        base: ["bg-zinc-950/30"],
+                                    }
+                                }}
+                                popoverProps={{
+                                    classNames: {
+                                        base: ["bg-zinc-950/30"],
+                                    }
+                                }}
+                                value={now(getLocalTimeZone())}
+                                label="Quando vuoi partire?"
+                                minValue={today(getLocalTimeZone())}
+                                firstDayOfWeek="mon"
+                            />
+                            <NumberInput
+                                isRequired
+                                classNames={{
+                                    input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-base",],
+                                    inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-2 border-t-0 border-l-0 border-r-0 group-data-[hover=true]:border-sky-500 group-data-[hover=true]:border-sky-500 focus-within:rounded-lg",],
+                                }}
+                                placeholder="Numero di persone"
+                                variant="bordered"
+                                hideStepper
+                                minValue={0}
+                                value={nPersone}
+                                onValueChange={setNPersone}
+                                aria-label="Numero di persone"
+                            />
+                            <Button
+                                className="bg-foreground/10 dark:bg-foreground/20 col-span-2"
+                                radius="lg"
+                                startContent={<MagnifyingGlass/>}
+                                type="submit"
+                            >
+                                Cerca
+                            </Button>
+                        </form>
                     </div>
                 </div>
             </div>
+        </div>
         <div className="">
             <span className="w-px h-px block" aria-hidden style={{marginLeft: "0.25", marginTop: "20.5"}}></span>
             <span className="mx-5 font-bold text-2xl">I nostri servizi</span>
