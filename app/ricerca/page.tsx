@@ -15,8 +15,6 @@ import Cookies from "js-cookie";
 
 export default function RicercaPage() {
     const router = useRouter();
-    const [partenza, setPartenza] = useState("");
-    const [arrivo, setArrivo] = useState("");
     const [nPersone, setNPersone] = useState(0);
     const [treni, setTreni] = useState([{
         partenza: "Savigliano",
@@ -29,7 +27,7 @@ export default function RicercaPage() {
     const giorniPrima = useMemo(() => {
         let array = [];
         let temp = giorno;
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 6; i++) {
             temp = temp.cycle('day', -1);
             array.push(temp.toString());
         }
@@ -38,7 +36,7 @@ export default function RicercaPage() {
     const giorniDopo = useMemo(() => {
         let array = [];
         let temp = giorno;
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 6; i++) {
             temp = temp.cycle('day',+1);
             array.push(temp.toString());
         }
@@ -72,15 +70,51 @@ export default function RicercaPage() {
 
     useEffect(() => {
         const cookie = Cookies.get("ricerca");
-            if (cookie === undefined) {
-                router.push("/");
-            } else {
-                const json = JSON.parse(cookie);
-                setGiorno(parseZonedDateTime(json["data"]));
-                setPartenza(json["partenza"]);
-                setArrivo(json["arrivo"]);
-                setNPersone(json["nPersone"]);
-            }
+        if (cookie === undefined) {
+            router.push("/");
+        } else {
+            const json = JSON.parse(cookie);
+            setGiorno(parseZonedDateTime(json["data"]));
+            setNPersone(json["nPersone"]);
+
+            const tempo = new Date();
+            fetch("http://localhost:8080/ricerca", {
+                method: "POST",
+                body: JSON.stringify({
+                    cod_stazione_partenza: json["partenza"],
+                    cod_stazione_arrivo: json["arrivo"],
+                    timestamp: encodeURIComponent(tempo.toDateString() + " " + tempo.toTimeString())
+                })
+            }).then(async (res) => {
+                if (res.status === 200) {
+                    const registro = await res.json();
+                    for (const treno in registro) {
+                        fetch("https://corsproxy.io/?url=http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/cercaNumeroTrenoTrenoAutocomplete/" + registro[treno]["NumeroTreno"])
+                            .then(async (resp_dettagli) => {
+                                if (resp_dettagli.status === 200) {
+                                    const codici = (await resp_dettagli.text()).split("-");
+                                    fetch("https://corsproxy.io/?url=http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/andamentoTreno/" + codici[1] + "/" + codici[2] + "/" + codici[3])
+                                        .then(async (resp_fermate) => {
+                                            if(resp_fermate.status === 200) {
+                                                const fermate = (await resp_fermate.json())["fermate"];
+                                                let trovato = false;
+                                                let i = 0;
+                                                while (!trovato && i < fermate.length) {
+                                                    if (fermate[i].stazione === json["arrivo"]) {
+                                                        trovato = true;
+                                                        console.log(fermate[ireve])
+                                                    } else {
+                                                        i++;
+                                                    }
+                                                }
+                                            }
+                                        })
+                                }
+                            })
+                    }
+                }
+            })
+        }
 
     }, [router])
 
@@ -139,13 +173,13 @@ export default function RicercaPage() {
                             <p className="light font-bold text-default-800 text-xl">{treni[0]['partenza']}</p>
                             <p className="text-red-500 text-center text-lg">{treni[0]['oraPartenza']}</p>
                         </div>
-                        <div>{/*Durata del viaggio*/}</div>
                         <div className="flex flex-col gap-2 mx-[8%] flex-shrink-0">
                             <p className="light font-bold text-default-800 text-xl">{treni[0]['arrivo']}</p>
                             <p className="text-red-500 text-center text-lg">{treni[0]['oraArrivo']}</p>
                         </div>
-                        <div className="flex w-screen justify-end mr-5">
-                            <p>{treni[0]['costo']}</p>
+                        <div className="grid gap-2 w-screen justify-items-end mr-5">
+                            <p className="light text-default-800 text-lg">{"Durata viaggio: " + "1h"}</p>
+                            <p className="light text-default-800 text-lg">{"Costo: " + (parseFloat(treni[0]['costo'])*nPersone) + "€"}</p>
                         </div>
                     </CardBody>
                 </Card>
