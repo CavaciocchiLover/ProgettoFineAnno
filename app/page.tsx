@@ -38,21 +38,29 @@ export default function Home() {
     async function CercoStazione(stazione: string) {
         setCaricando(true);
 
-        const response = await fetch(`https://corsproxy.io/?url=http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/autocompletaStazione/${stazione}`);
+        const response = await fetch(`https://corsproxy.io/?url=https://www.lefrecce.it/Channels.Website.BFF.WEB/website/locations/search?name=${stazione}&limit=5`);
 
         if (response.ok) {
-            const testo = await response.text();
-            const righe = testo.split("\n").filter(riga => riga.trim() !== "");
+            const stazioni = await response.json();
+            let dati = []
 
-            const dati = righe.slice(0, 5)
-                .map(riga => {
-                    const [nome, codice] = riga.split("|");
-                    return {nome, codice};
-                })
-                .filter(item => {
-                    console.log(item.codice);
-                    return item.nome && item.codice !== undefined
-                });
+            if (stazioni.length > 5) {
+                for (let i = 0; i < 5; i++) {
+                    dati.push({
+                        nome: stazioni[i].name,
+                        codice: stazioni[i].id,
+                    })
+                }
+            } else {
+                for (const i in stazioni) {
+                    dati.push({
+                        nome: stazioni[i].name,
+                        codice: stazioni[i].id,
+                    })
+                }
+            }
+
+            // dati deve essere un array fatto di oggetti composti da nome e da codice
             setCaricando(false);
             return dati;
         } else {
