@@ -6,7 +6,7 @@ import {Card, CardBody, CardFooter} from "@heroui/card";
 import {getDayOfWeek, getLocalTimeZone, now, parseZonedDateTime, ZonedDateTime} from "@internationalized/date";
 import Cookies from "js-cookie";
 import {Info, Train, Warning} from "@phosphor-icons/react";
-import {Button} from "@heroui/button";
+import {Button, PressEvent} from "@heroui/button";
 import {Modal, ModalContent, ModalBody, ModalHeader, useDisclosure} from "@heroui/modal";
 import {Divider} from "@heroui/divider";
 
@@ -19,8 +19,9 @@ export default function RicercaPage() {
     const [fermate, setFermate] = useState([]);
     const [trenoSelezionato, setTrenoSelezionato] = useState({});
     const [giornoDopo, setGiornoDopo] = useState(-1);
-    //0 -> mostra fermate 1 -> errore per non aver fatto il login
+    //0 -> mostra fermate, 1 -> errore per non aver fatto il login, 2 -> mostra fermate specifiche
     const [modalTipo, setModalTipo] = useState(0);
+    const [fermateDaMostrare, setFermateDaMostrare] = useState<string[]>([]);
 
     const giorniPrima = useMemo(() => {
         let array = [];
@@ -203,8 +204,23 @@ export default function RicercaPage() {
         }
     }
 
-    function mostroFermate(index_fermata: number) {
-        console.log(fermate[index_fermata]);
+    function mostroFermate(index_fermata: number, fine: boolean) {
+        let fermateDaMostrare: string[] = [];
+        setFermateDaMostrare([]);
+        console.log(index_fermata);
+        console.log(fermate);
+        if (!fine) {
+            for (let i = 0; i <= index_fermata; i++) {
+                fermateDaMostrare.push(fermate[i]);
+            }
+        } else {
+            for (let i = index_fermata; i < fermate.length; i++) {
+                fermateDaMostrare.push(fermate[i]);
+            }
+        }
+        console.log(fermateDaMostrare);
+        setModalTipo(2);
+        setFermateDaMostrare(fermateDaMostrare);
     }
 
     function acquista(treno: {}) {
@@ -217,23 +233,30 @@ export default function RicercaPage() {
             treno["costo"] = treno["costo"] * nPersone;
             treno["nPersone"] = nPersone;
             Cookies.set("carrello", JSON.stringify(treno));
-            //router.push("/carrello");
+            router.push("/carrello");
         }
+    }
 
-
+    function cambioData(date: ZonedDateTime) {
+        console.log(date)
+        setGiorno(giorno.cycle('day', date.day - giorno.day))
     }
 
     return (<div className="w-full h-full">
             <div className="mb-2 flex flex-row justify-between gap-1">
                 {giorniPrima.map((x) => {
                     const data = parseZonedDateTime(x);
-                    return (<Card className="bg-foreground/30" key={x}>
-                            <CardBody className="text-center">
-                                <p className="text-sm text-black">{Mesi[data.month - 1]}</p>
-                                <p className="font-bold text-3xl text-black">{data.day}</p>
-                                <p className="text-sm text-black">{Giorni[getDayOfWeek(data, 'it-IT')]}</p>
-                            </CardBody>
-                        </Card>)
+                    return (
+                        <button key={x} onClick={() => cambioData(data)}>
+                            <Card className="bg-foreground/30">
+                                <CardBody className="text-center">
+                                    <p className="text-sm text-black">{Mesi[data.month - 1]}</p>
+                                    <p className="font-bold text-3xl text-black">{data.day}</p>
+                                    <p className="text-sm text-black">{Giorni[getDayOfWeek(data, 'it-IT')]}</p>
+                                </CardBody>
+                            </Card>
+                        </button>
+                        )
                 })}
                 <Card className="bg-emerald-300">
                     <CardBody className="text-center">
@@ -244,13 +267,17 @@ export default function RicercaPage() {
                 </Card>
                 {giorniDopo.map((x) => {
                     const data = parseZonedDateTime(x);
-                    return (<Card className="bg-foreground/30" key={x}>
-                            <CardBody className="text-center">
-                                <p className="text-sm text-black">{Mesi[data.month - 1]}</p>
-                                <p className="font-bold text-3xl text-black">{data.day}</p>
-                                <p className="text-sm text-black">{Giorni[getDayOfWeek(data, 'it-IT')]}</p>
-                            </CardBody>
-                        </Card>)
+                    return (
+                        <button key={x} onClick={() => cambioData(data)}>
+                            <Card className="bg-foreground/30" >
+                                <CardBody className="text-center">
+                                    <p className="text-sm text-black">{Mesi[data.month - 1]}</p>
+                                    <p className="font-bold text-3xl text-black">{data.day}</p>
+                                    <p className="text-sm text-black">{Giorni[getDayOfWeek(data, 'it-IT')]}</p>
+                                </CardBody>
+                            </Card>
+                        </button>
+                        )
                 })}
             </div>
             <div className="mt-5 flex flex-col gap-2">
@@ -384,6 +411,7 @@ export default function RicercaPage() {
                                                                  <Button
                                                                      className={"light text-default-800 text-md"}
                                                                      variant={"light"}
+                                                                     onPress={() => mostroFermate(i, false)}
                                                                  >
                                                                      Vedi fermate
                                                                  </Button>
@@ -403,7 +431,7 @@ export default function RicercaPage() {
                                                                  <Button
                                                                      className={"light text-default-800 text-md"}
                                                                      variant={"light"}
-                                                                     onPress={() => mostroFermate(i)}
+                                                                     onPress={() => mostroFermate(i, true)}
                                                                  >
                                                                      Vedi fermate
                                                                  </Button>
@@ -416,10 +444,35 @@ export default function RicercaPage() {
                                          }
                                      </div>
                                  ) : (
-                                     <div className="flex flex-col justify-center items-center p-3 text-center rounded-lg max-w-xs mx-auto">
-                                         <Warning size={50} color="#f9a804"/>
-                                         <p>Devi essere loggatə per poter acquistare un biglietto</p>
-                                     </div>
+                                     modalTipo === 1 ? (
+                                         <div className="flex flex-col justify-center items-center p-3 text-center rounded-lg max-w-xs mx-auto">
+                                             <Warning size={50} color="#f9a804"/>
+                                             <p>Devi essere loggatə per poter acquistare un biglietto</p>
+                                         </div>
+                                     ) : (
+                                         <div className="flex flex-col justify-center items-center p-6  rounded-lg max-w-xs mx-auto">
+                                             {
+                                                 fermateDaMostrare.map((stazione, i) => {
+                                                     if (i === 0) {
+                                                         return (
+                                                             <div className="flex flex-row gap-1" key={stazione + "_" + i}>
+                                                                <Train size={25} color="#000000" className="self-center"/>
+                                                                <div className="text-lg font-medium py-2">{stazione}</div>
+                                                             </div>
+                                                         )
+                                                     } else {
+                                                         return (
+                                                             <div className="flex flex-col justify-center items-center" key={stazione + "_" + i}>
+                                                                 <div className="h-10 w-0.5 bg-black"/>
+                                                                 <div className="text-lg font-medium py-2">{stazione}</div>
+                                                             </div>
+                                                         )
+                                                     }
+
+                                                 })
+                                             }
+                                         </div>
+                                     )
                                  )
                                 }
 
