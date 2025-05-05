@@ -28,7 +28,7 @@ export default function Home() {
     const [partenza, setPartenza] = useState("");
     const [arrivo, setArrivo] = useState("");
     const [data, setData] = useState<ZonedDateTime | null>(now(getLocalTimeZone()));
-    const [nPersone, setNPersone] = useState(0);
+    const [nPersone, setNPersone] = useState(1);
     const [caricando, setCaricando] = useState(false);
     const [stazioni, setStazioni] = useState<Stazione[]>([]);
     const [stazioniArrivo, setStazioniArrivo] = useState<Stazione[]>([]);
@@ -199,7 +199,7 @@ export default function Home() {
                                 placeholder="Numero di persone"
                                 variant="bordered"
                                 hideStepper
-                                minValue={0}
+                                minValue={1}
                                 value={nPersone}
                                 onValueChange={setNPersone}
                                 aria-label="Numero di persone"

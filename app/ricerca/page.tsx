@@ -6,7 +6,7 @@ import {Card, CardBody, CardFooter} from "@heroui/card";
 import {getDayOfWeek, getLocalTimeZone, now, parseZonedDateTime, ZonedDateTime} from "@internationalized/date";
 import Cookies from "js-cookie";
 import {Info, Train, Warning} from "@phosphor-icons/react";
-import {Button, PressEvent} from "@heroui/button";
+import {Button} from "@heroui/button";
 import {Modal, ModalContent, ModalBody, ModalHeader, useDisclosure} from "@heroui/modal";
 import {Divider} from "@heroui/divider";
 
@@ -16,7 +16,7 @@ export default function RicercaPage() {
     const [treni, setTreni] = useState([]);
     const [giorno, setGiorno] = useState<ZonedDateTime>(now(getLocalTimeZone()));
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
-    const [fermate, setFermate] = useState([]);
+    const [fermate, setFermate] = useState<string[]>([]);
     const [trenoSelezionato, setTrenoSelezionato] = useState({});
     const [giornoDopo, setGiornoDopo] = useState(-1);
     //0 -> mostra fermate, 1 -> errore per non aver fatto il login, 2 -> mostra fermate specifiche
@@ -151,81 +151,69 @@ export default function RicercaPage() {
         return numero < 10 ? `0${numero}` : `${numero}`;
     }
 
-    function dettagliTreno(json_treno: {}) {
+    async function dettagliTreno(json_treno: {}) {
         setTrenoSelezionato(json_treno);
         // @ts-ignore
         const cambi = json_treno["scalo"]["idTreni"];
         setFermate([]);
         for (const i in cambi) {
             const elenco_fermate: string[] = [];
-            fetch("https://corsproxy.io/?url=https://www.viaggiatreno.it/infomobilitamobile/resteasy/viaggiatreno/cercaNumeroTrenoTrenoAutocomplete/" + cambi[i])
-                .then(async (res) => {
-                    if (res.status === 200) {
-                        const testo = await res.text();
-                        const dati = testo.includes("\n") ? testo.split("\n")[0].split("|")[1].split("-") : testo.split("|")[1].split("-");
-                        fetch(`https://corsproxy.io/?url=https://www.viaggiatreno.it/infomobilitamobile/resteasy/viaggiatreno/andamentoTreno/${dati[1]}/${cambi[i]}/${dati[2]}`)
-                            .then(async (resp) => {
-                                if (resp.status === 200) {
-                                    const json = await resp.json();
-                                    let index = 0;
-                                    let stazione_partenza = -1;
-                                    let fine = false;
-                                        while (!fine && index < json["fermate"].length) {
-                                            if (json["fermate"][index]["stazione"] === json_treno["scalo"]["stazioneCambio"][i]){
-                                                stazione_partenza = index;
-                                                elenco_fermate.push(json_treno["scalo"]["stazioneCambio"][i]);
-                                            } else if (json["fermate"][index]["stazione"] === json_treno["scalo"]["stazioneCambio"][parseInt(i) + 1]){
-                                                fine = true;
-                                            }
+            const prima_richiesta = await fetch("https://corsproxy.io/?url=https://www.viaggiatreno.it/infomobilitamobile/resteasy/viaggiatreno/cercaNumeroTrenoTrenoAutocomplete/" + cambi[i])
+                if (prima_richiesta.status === 200) {
+                    const testo = await prima_richiesta.text();
+                    const dati = testo.includes("\n") ? testo.split("\n")[0].split("|")[1].split("-") : testo.split("|")[1].split("-");
+                    const seconda_richiesta = await fetch(`https://corsproxy.io/?url=https://www.viaggiatreno.it/infomobilitamobile/resteasy/viaggiatreno/andamentoTreno/${dati[1]}/${cambi[i]}/${dati[2]}`)
 
-                                            if ((index > stazione_partenza && stazione_partenza != -1) || fine) {
-                                                elenco_fermate.push(json["fermate"][index]["stazione"]);
-                                            }
-                                            index++;
-                                        }
-                                    // @ts-ignore
-                                    setFermate(prevFermate => [...prevFermate, ...elenco_fermate]);
-                                    setModalTipo(0);
-                                    onOpen();
-                                } else {
-                                    console.error(resp.statusText);
+                    if (seconda_richiesta.status === 200) {
+                            const json = await seconda_richiesta.json();
+                            let index = 0;
+                            let stazione_partenza = -1;
+                            let fine = false;
+                            while (!fine && index < json["fermate"].length) {
+                                if (json["fermate"][index]["stazione"] === json_treno["scalo"]["stazioneCambio"][i]){
+                                    stazione_partenza = index;
+                                    elenco_fermate.push(json_treno["scalo"]["stazioneCambio"][i]);
+                                } else if (json["fermate"][index]["stazione"] === json_treno["scalo"]["stazioneCambio"][parseInt(i) + 1]){
+                                    fine = true;
                                 }
-                            })
-                            .catch((err) => {
-                                console.error(err);
-                            })
+
+                                if ((index > stazione_partenza && stazione_partenza != -1) || fine) {
+                                    elenco_fermate.push(json["fermate"][index]["stazione"]);
+                                }
+                                index++;
+                            }
+                            setFermate(prevFermate => [...prevFermate, ...elenco_fermate]);
+                            setModalTipo(0);
+                            onOpen();
                     } else {
-                        console.error("oopsie")
+                        console.error(seconda_richiesta.statusText);
                     }
-                })
-                .catch((err) => {
-                    console.error(err);
-                })
+                } else {
+                    console.error(prima_richiesta.statusText);
+                }
         }
     }
 
     function mostroFermate(index_fermata: number, fine: boolean) {
-        let fermateDaMostrare: string[] = [];
+        let fermateFiltrate: string[] = [];
         setFermateDaMostrare([]);
-        console.log(index_fermata);
         console.log(fermate);
         if (!fine) {
             for (let i = 0; i <= index_fermata; i++) {
-                fermateDaMostrare.push(fermate[i]);
+                fermateFiltrate.push(fermate[i]);
             }
         } else {
             for (let i = index_fermata; i < fermate.length; i++) {
-                fermateDaMostrare.push(fermate[i]);
+                fermateFiltrate.push(fermate[i]);
             }
         }
-        console.log(fermateDaMostrare);
+        console.log(fermate);
         setModalTipo(2);
-        setFermateDaMostrare(fermateDaMostrare);
+        setFermateDaMostrare(fermateFiltrate);
     }
 
     function acquista(treno: {}) {
         const cookie = Cookies.get("token");
-        console.log(cookie);
         if (cookie === undefined) {
             setModalTipo(1);
             onOpen();
@@ -238,8 +226,10 @@ export default function RicercaPage() {
     }
 
     function cambioData(date: ZonedDateTime) {
-        console.log(date)
         setGiorno(giorno.cycle('day', date.day - giorno.day))
+        const json = JSON.parse(Cookies.get("ricerca")!);
+        json["data"] = giorno.toString();
+        Cookies.set("ricerca", JSON.stringify(json));
     }
 
     return (<div className="w-full h-full">
