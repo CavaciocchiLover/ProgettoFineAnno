@@ -12,7 +12,6 @@ import {Pagination} from "@heroui/pagination";
 import {RadioGroup} from "@heroui/radio";
 import {CustomRadio} from "@/components/CustomRadio";
 import paypal from "../../public/pagamento/PayPal.png";
-import googlePay from "../../public/pagamento/googlePay2.png";
 import Image from "next/image";
 import {NumberInput} from "@heroui/number-input";
 import {PaymentIcon} from "react-svg-credit-card-payment-icons";
@@ -37,7 +36,7 @@ export default function CarrelloPage() {
     const [citta, setCitta] = useState("");
     const [cap, setCap] = useState("");
     const [telefono, setTelefono] = useState("");
-    const [carta, setCarta] = useState();
+    const [carta, setCarta] = useState("");
     const [CVV, setCVV] = useState("");
     const [nominativoCarta, setNominativoCarta] = useState("");
     const [dataScadenza, setDataScadenza] = useState("");
@@ -62,7 +61,6 @@ export default function CarrelloPage() {
 
         if (nome.search(regex) !== -1 && cognome.search(regex) !== -1) {
             if (nomi[indexPasseggero] !== undefined && nomi[indexPasseggero] !== "") {
-                console.log("mi sparo");
                 setNomi(nomi.map((item, i) => {
                     if (i === indexPasseggero) {
                         return nome;
@@ -92,6 +90,32 @@ export default function CarrelloPage() {
             setNome(nomi[numero]);
             setCognome(cognome[numero]);
             setIndexPasseggero(numero);
+        }
+    }
+
+    function Compra() {
+        
+    }
+
+    function CercoSconto() {
+        if (codiceSconto.search(codiceSconto) !== -1) {
+            fetch("http://localhost:8080/sconto", {
+                method: "POST",
+                body: JSON.stringify({ codiceSconto: codiceSconto })
+            }).then(res => {
+                if (res.status === 200) {
+                    res.json()
+                        .then((data) => {
+                            setSconto(data["sconto"]);
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        })
+                }
+            })
+                .catch((err) => {
+                    console.log(err);
+                })
         }
     }
 
@@ -256,7 +280,6 @@ export default function CarrelloPage() {
                                         </CustomRadio>
                                         <CustomRadio description="" value="gpay">
                                             <div className="flex flex-row gap-2">
-                                                <Image src={googlePay} className="self-center" style={{width: "3rem", height: "auto"}} alt="googlePay"/>
                                                 <span>Google Pay</span>
                                             </div>
                                         </CustomRadio>
@@ -274,17 +297,7 @@ export default function CarrelloPage() {
                                             maxLength={16}
                                             className="bg-content1"
                                             value={carta}
-                                            onValueChange={(numeri) => {
-                                                if (numeri.toString().length >= 4) {
-                                                    const primoNumero = numeri.toString()[0];
-                                                    if (primoNumero === "4") {
-                                                        setTipo("Visa");
-                                                    } else if (primoNumero === "2" || primoNumero === "5") {
-                                                        setTipo("Mastercard")
-                                                    }
-                                                }
-                                            }}
-                                            isRequired={true}
+                                            onValueChange={setCarta}
                                         />
                                         <Input
                                             label="Titolare della carta"
@@ -295,7 +308,6 @@ export default function CarrelloPage() {
                                             className="bg-content1"
                                             value={nominativoCarta}
                                             onValueChange={setNominativoCarta}
-                                            isRequired={true}
                                         />
                                         <Input
                                             label="Scadenza"
@@ -306,7 +318,6 @@ export default function CarrelloPage() {
                                             className="bg-content1"
                                             value={dataScadenza}
                                             onValueChange={setDataScadenza}
-                                            isRequired={true}
                                         />
                                         <Input
                                             label="CVV"
@@ -317,7 +328,6 @@ export default function CarrelloPage() {
                                             className="bg-content1"
                                             value={CVV}
                                             onValueChange={setCVV}
-                                            isRequired={true}
                                         />
                                     </div>
                                 </div>
@@ -377,7 +387,8 @@ export default function CarrelloPage() {
                                         className="bg-content1"
                                         >
                                     </Input>
-                                    <Button>
+                                    <Button
+                                        onPress={() => CercoSconto()}>
                                         Applica
                                     </Button>
                                 </div>
@@ -388,7 +399,7 @@ export default function CarrelloPage() {
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-small text-default-500">Iva</span>
-                                        <span className="text-small font-semibold text-default-700">{(datiTreno["costo"] * 0.1) + "€"}</span>
+                                        <span className="text-small font-semibold text-default-700">{(datiTreno["costo"] * 0.1).toFixed(2) + "€"}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-small text-default-500">Sconto</span>
@@ -407,7 +418,8 @@ export default function CarrelloPage() {
                         <Button
                         size="lg"
                         color="primary"
-                        className="w-full">
+                        className="w-full"
+                        onPress={() => Compra()}>
                             Compra
                         </Button>
                     </div>
