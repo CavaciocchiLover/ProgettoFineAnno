@@ -58,8 +58,6 @@ export default function RicercaPage() {
             let tempo = giorno.toString();
             tempo = tempo.substring(0, tempo.indexOf("+"));
 
-
-
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
             const raw = JSON.stringify({
@@ -91,9 +89,11 @@ export default function RicercaPage() {
                     let scalo = {
                         numero: 0,
                         tempo: "",
-                        idTreni: [],
                         stazioneCambio: [],
                     };
+                    let idTreni: string[] = [];
+                    let sigla: string[] = [];
+
                     if (viaggio["price"] !== null) {
                         costo = viaggio["price"]["amount"];
                     }
@@ -101,14 +101,15 @@ export default function RicercaPage() {
                     if (viaggio["nodes"].length > 1) {
                         scalo.numero = viaggio["nodes"].length - 1;
                         let tempo = 0;
-
                         for (let i = 0; i < scalo.numero; i++) {
                             tempo = new Date(viaggio["nodes"][i + 1]["departureTime"]).getTime() - new Date(viaggio["nodes"][i]["arrivalTime"]).getTime();
-                            scalo.idTreni.push(viaggio["nodes"][i]["train"]["name"])
+                            idTreni.push(viaggio["nodes"][i]["train"]["name"])
+                            sigla.push(viaggio["nodes"][i]["train"]["acronym"])
                             scalo.stazioneCambio.push(viaggio["nodes"][i]["origin"].toUpperCase())
                             scalo.stazioneCambio.push(viaggio["nodes"][i]["destination"].toUpperCase())
                         }
-                        scalo.idTreni.push(viaggio["nodes"][scalo.numero]["train"]["name"])
+                        idTreni.push(viaggio["nodes"][scalo.numero]["train"]["name"])
+                        sigla.push(viaggio["nodes"][scalo.numero]["train"]["acronym"])
                         scalo.stazioneCambio.push(viaggio["destination"].toUpperCase())
                         //ms -> min
                         tempo = (tempo / 1000) / 60;
@@ -118,7 +119,9 @@ export default function RicercaPage() {
                         } else {
                             scalo.tempo = tempo + " min"
                         }
-
+                    } else {
+                        idTreni.push(viaggio["trains"][0]["name"])
+                        sigla.push(viaggio["trains"][0]["acronym"])
                     }
 
                     if (giornoDopo === -1 && item["nextDaySolution"]) {
@@ -134,7 +137,9 @@ export default function RicercaPage() {
                         oraArrivo: new Date(viaggio["arrivalTime"]),
                         costo: costo,
                         scalo: scalo,
-                        durata: viaggio["duration"]
+                        durata: viaggio["duration"],
+                        idTreni: idTreni,
+                        sigla: sigla,
                     };
                 });
 
@@ -154,7 +159,7 @@ export default function RicercaPage() {
     async function dettagliTreno(json_treno: {}) {
         setTrenoSelezionato(json_treno);
         // @ts-ignore
-        const cambi = json_treno["scalo"]["idTreni"];
+        const cambi = json_treno["idTreni"];
         setFermate([]);
         for (const i in cambi) {
             const elenco_fermate: string[] = [];
@@ -218,9 +223,21 @@ export default function RicercaPage() {
             setModalTipo(1);
             onOpen();
         } else {
-            treno["costo"] = treno["costo"] * nPersone;
-            treno["nPersone"] = nPersone;
-            Cookies.set("carrello", JSON.stringify(treno));
+            let idCompleto = [];
+            for (let i = 0; i < treno.idTreni.length; i++) {
+                idCompleto.push(treno.sigla[i] + " " + treno.idTreni[i])
+            }
+
+            let json = {
+                partenza: treno.partenza,
+                arrivo: treno.arrivo,
+                costo: treno.costo * nPersone,
+                nPersone: nPersone,
+                idTreni: idCompleto,
+                data_partenza: giorno.toString()
+
+            };
+            Cookies.set("carrello", JSON.stringify(json));
             router.push("/carrello");
         }
     }
@@ -280,10 +297,11 @@ export default function RicercaPage() {
                     scalo: {
                         numero: number,
                         tempo: string,
-                        idTreni: [],
                         stazioneCambio: [],
                     },
-                    durata: string
+                    durata: string,
+                    idTreni: [],
+                    sigla: []
                 }, i) => {
                         if (giornoDopo === i) {
                             return (
@@ -321,7 +339,7 @@ export default function RicercaPage() {
                                                 className={"text-default-800 text-md"}
                                                 variant={"solid"}
                                                 color="danger"
-                                                onPress={() => acquista(treno)}
+                                                onPress={() => acquista(treni[i])}
                                             >
                                                 Acquista
                                             </Button>

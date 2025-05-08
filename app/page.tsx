@@ -21,7 +21,8 @@ import {FormEvent, useState} from "react";
 import Cookies from "js-cookie";
 
 export type Stazione = {
-    nome: string; codice: string;
+    nome: string;
+    codice: string;
 }
 
 export default function Home() {
