@@ -17,6 +17,8 @@ import TiziaCarrello from "../../public/carrello_vuoto.png";
 import Image from "next/image";
 import {PaymentIcon} from "react-svg-credit-card-payment-icons";
 import luhn from "luhn";
+import {Modal, ModalBody, ModalContent, ModalHeader, useDisclosure} from "@heroui/modal";
+import QRCode from "react-qr-code";
 
 export type trenoJSON = {
     partenza: string;
@@ -55,6 +57,8 @@ export default function CarrelloPage() {
     const [tipo, setTipo] = useState("Visa");
     const [errore, setErrore] = useState(false);
     const [carrelloVuoto, setCarrelloVuoto] = useState(false);
+    const [valoreQRCode, setValoreQRCode] = useState("");
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
     useEffect(() => {
         const carrelloCookie = Cookies.get("carrello");
@@ -134,9 +138,13 @@ export default function CarrelloPage() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                id_treno: datiTreno["idTreni"],
+                partenza: datiTreno["partenza"],
+                arrivo: datiTreno["arrivo"],
                 nominativo: nominativi,
                 data_partenza: datiTreno["data_partenza"],
+                metodo: metodo,
+                costo: datiTreno["costo"] - sconto,
+                data: new Date().toISOString(),
                 token: token,
             })
         })
@@ -144,7 +152,10 @@ export default function CarrelloPage() {
                 if (res.status === 200) {
                     res.json()
                         .then(data => {
-                            console.log(data)
+                            if (data.length === 1) {
+                                setValoreQRCode(data[0])
+                                onOpen();
+                            }
                         })
                         .catch(err => {
                             console.log(err);
@@ -553,6 +564,33 @@ export default function CarrelloPage() {
                                 </div>
                             </div>
                         </div>
+                        <>
+                            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                                <ModalContent>
+                                    <>
+                                        <ModalHeader className="flex flex-col gap-2">Il pagamento è avvenuto con successo</ModalHeader>
+                                        <ModalBody>
+                                            {
+                                                nPersone === 1 ? (
+                                                    <div className="grid justify-center justify-items-center">
+                                                        <p className="mb-2">{"Ecco il tuo biglietto per " + datiTreno["partenza"] + " - " + datiTreno["arrivo"]}</p>
+                                                        <QRCode
+                                                            size={200}
+                                                            value={valoreQRCode}
+                                                            viewBox={`0 0 256 256`}/>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center justify-center">
+                                                        Puoi trovare i tuoi biglietti nell'area dedicata a te.
+                                                    </div>
+                                                )
+                                            }
+
+                                        </ModalBody>
+                                    </>
+                                </ModalContent>
+                            </Modal>
+                        </>
                     </div>
                     </div>
 
