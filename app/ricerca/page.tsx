@@ -160,59 +160,135 @@ export default function RicercaPage() {
         setTrenoSelezionato(json_treno);
         // @ts-ignore
         const cambi = json_treno["idTreni"];
+        // Clear the fermate array before adding new stations
         setFermate([]);
+        
+        // Create an array to collect all stations from all segments
+        let allStations: string[] = [];
+        
+        // Process each train segment
         for (const i in cambi) {
-            const elenco_fermate: string[] = [];
-            const prima_richiesta = await fetch("https://corsproxy.io/?url=https://www.viaggiatreno.it/infomobilitamobile/resteasy/viaggiatreno/cercaNumeroTrenoTrenoAutocomplete/" + cambi[i])
+            try {
+                // Get train details
+                const prima_richiesta = await fetch("https://corsproxy.io/?url=https://www.viaggiatreno.it/infomobilitamobile/resteasy/viaggiatreno/cercaNumeroTrenoTrenoAutocomplete/" + cambi[i])
+                
                 if (prima_richiesta.status === 200) {
                     const testo = await prima_richiesta.text();
-                    const dati = testo.includes("\n") ? testo.split("\n")[0].split("|")[1].split("-") : testo.split("|")[1].split("-");
+                    const vec = testo.split("\n");
+                    let dati: string[] = [];
+                    console.log(vec);
+                    if (vec.length === 2) {
+                        dati = vec[0].split("|")[1].split("-");
+                    } else {
+                        dati = testo.split("|")[1].split("-");
+                    }
+                    
+                    // Get all stations for this train
                     const seconda_richiesta = await fetch(`https://corsproxy.io/?url=https://www.viaggiatreno.it/infomobilitamobile/resteasy/viaggiatreno/andamentoTreno/${dati[1]}/${cambi[i]}/${dati[2]}`)
 
                     if (seconda_richiesta.status === 200) {
-                            const json = await seconda_richiesta.json();
-                            let index = 0;
-                            let stazione_partenza = -1;
-                            let fine = false;
-                            while (!fine && index < json["fermate"].length) {
-                                if (json["fermate"][index]["stazione"] === json_treno["scalo"]["stazioneCambio"][i]){
-                                    stazione_partenza = index;
-                                    elenco_fermate.push(json_treno["scalo"]["stazioneCambio"][i]);
-                                } else if (json["fermate"][index]["stazione"] === json_treno["scalo"]["stazioneCambio"][parseInt(i) + 1]){
-                                    fine = true;
-                                }
-
-                                if ((index > stazione_partenza && stazione_partenza != -1) || fine) {
-                                    elenco_fermate.push(json["fermate"][index]["stazione"]);
-                                }
-                                index++;
+                        const json = await seconda_richiesta.json();
+                        let segmentStations: string[] = [];
+                        let index = 0;
+                        let stazione_partenza = -1;
+                        let fine = false;
+                        
+                        // Find the start and end stations for this segment
+                        while (index < json["fermate"].length) {
+                            const currentStation = json["fermate"][index]["stazione"];
+                            
+                            // Check if this is the starting station for this segment
+                            if (currentStation === json_treno["scalo"]["stazioneCambio"][parseInt(i)]) {
+                                stazione_partenza = index;
                             }
-                            setFermate(prevFermate => [...prevFermate, ...elenco_fermate]);
-                            setModalTipo(0);
-                            onOpen();
+                            
+                            // Check if this is the ending station for this segment
+                            if (parseInt(i) + 1 < json_treno["scalo"]["stazioneCambio"].length && 
+                                currentStation === json_treno["scalo"]["stazioneCambio"][parseInt(i) + 1]) {
+                                fine = true;
+                            }
+                            
+                            // Add station if it's between start and end (inclusive)
+                            if (stazione_partenza !== -1 && (index >= stazione_partenza)) {
+                                segmentStations.push(currentStation);
+                                
+                                // If we reached the end station, stop collecting
+                                if (fine) {
+                                    break;
+                                }
+                            }
+                            
+                            index++;
+                        }
+                        
+                        // Add this segment's stations to the full list
+                        // If this isn't the first segment, avoid duplicating the connection station
+                        if (allStations.length > 0 && segmentStations.length > 0 && 
+                            allStations[allStations.length - 1] === segmentStations[0]) {
+                            // Remove the first station from this segment as it's already in the list
+                            segmentStations.shift();
+                        }
+                        
+                        allStations = [...allStations, ...segmentStations];
                     } else {
-                        console.error(seconda_richiesta.statusText);
+                        console.error("Error fetching train stations:", seconda_richiesta.statusText);
                     }
                 } else {
-                    console.error(prima_richiesta.statusText);
+                    console.error("Error fetching train details:", prima_richiesta.statusText);
                 }
+            } catch (error) {
+                console.error("Error processing train segment:", error);
+            }
         }
+        
+        // Update the fermate state with all stations
+        setFermate(allStations);
+        setModalTipo(0);
+        onOpen();
     }
 
     function mostroFermate(index_fermata: number, fine: boolean) {
+        // Get the specific segment's stations based on the connection point index
         let fermateFiltrate: string[] = [];
         setFermateDaMostrare([]);
-        console.log(fermate);
-        if (!fine) {
-            for (let i = 0; i <= index_fermata; i++) {
-                fermateFiltrate.push(fermate[i]);
-            }
-        } else {
-            for (let i = index_fermata; i < fermate.length; i++) {
-                fermateFiltrate.push(fermate[i]);
+        
+        // Find the correct segment in the fermate array
+        // We need to determine the start and end indices for this segment
+        let startIndex = 0;
+        let endIndex = fermate.length - 1;
+        let currentSegmentStart = 0;
+        
+        // @ts-ignore
+        const connectionPoints = trenoSelezionato["scalo"]["stazioneCambio"];
+        
+        // Find the correct segment boundaries in the fermate array
+        for (let i = 0; i < connectionPoints.length; i++) {
+            // Find this connection point in the fermate array
+            const pointIndex = fermate.findIndex(station => station === connectionPoints[i]);
+            
+            if (pointIndex !== -1) {
+                if (i === index_fermata) {
+                    // This is our starting connection point
+                    startIndex = pointIndex;
+                    currentSegmentStart = i;
+                }
+                
+                if (i === index_fermata + 1) {
+                    // This is our ending connection point
+                    endIndex = pointIndex;
+                }
             }
         }
-        console.log(fermate);
+        
+        // If we're looking at the last segment, go to the end of the array
+        if (index_fermata === connectionPoints.length - 1) {
+            endIndex = fermate.length - 1;
+        }
+        
+        // Extract the stations for this segment
+        fermateFiltrate = fermate.slice(startIndex, endIndex + 1);
+        
+        // Set the modal to show these stations
         setModalTipo(2);
         setFermateDaMostrare(fermateFiltrate);
     }
