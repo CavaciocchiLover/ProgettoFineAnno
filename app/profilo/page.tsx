@@ -12,13 +12,17 @@ import { User, Ticket, PencilSimple, Check, X, Key, Warning } from "@phosphor-ic
 import Image from "next/image";
 import QRCode from "react-qr-code";
 import { Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, useDisclosure } from "@heroui/modal";
+import {DateInput} from "@heroui/date-input";
+import {DateValue, getLocalTimeZone, parseDate} from "@internationalized/date";
+import {I18nProvider, useDateFormatter} from "@react-aria/i18n";
+import {zxcvbn} from "@zxcvbn-ts/core";
 
 // Types
 type UserProfile = {
     nome: string;
     cognome: string;
     email: string;
-    telefono?: string;
+    data_nascita: DateValue;
 };
 
 type PasswordData = {
@@ -54,8 +58,6 @@ export default function ProfiloPage() {
     });
     const [passwordError, setPasswordError] = useState("");
     const [passwordSuccess, setPasswordSuccess] = useState(false);
-    
-    // Modal controls
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const { 
         isOpen: isPasswordModalOpen, 
@@ -68,6 +70,8 @@ export default function ProfiloPage() {
         onOpenChange: onDeleteModalOpenChange 
     } = useDisclosure();
 
+    const formatter = useDateFormatter({dateStyle: "full"});
+
     useEffect(() => {
         const token = Cookies.get("token");
         if (!token) {
@@ -75,24 +79,37 @@ export default function ProfiloPage() {
             return;
         }
 
-        fetchUserProfile(token);
+        fetch("http://localhost:8080/info", {
+            method: "GET",
+            headers: {"Authorization": token}
+        })
+            .then((resp) => {
+                if (resp.ok) {
+                    resp.json()
+                        .then((dati) => {
+                            const profilo = {
+                                nome: dati["nome"],
+                                cognome:dati["cognome"],
+                                email: dati["email"],
+                                data_nascita: parseDate(dati["data_nascita"])
+                            };
+                            setProfile(profilo);
+                            setTempProfile(profilo);
+                            setLoading(false);
+                        })
+                        .catch((e) => {
+                            console.error(e);
+                        })
+                } else {
+                    console.error(resp.status)
+                }
+            })
+            .catch((e) => {
+                console.error(e);
+            })
         
         fetchUserTickets(token);
     }, [router]);
-
-    const fetchUserProfile = (token: string) => {
-        setTimeout(() => {
-            const mockProfile = {
-                nome: "Mario",
-                cognome: "Rossi",
-                email: "mario.rossi@example.com",
-                telefono: "+39 123 456 7890"
-            };
-            setProfile(mockProfile);
-            setTempProfile(mockProfile);
-            setLoading(false);
-        }, 500);
-    };
 
     const fetchUserTickets = (token: string) => {
         setTimeout(() => {
@@ -161,68 +178,54 @@ export default function ProfiloPage() {
     const handleTabChange = (key: React.Key) => {
         setActiveTab(key.toString());
     };
-    
-    const handleUpdatePassword = () => {
-        // Reset states
+
+    function cambioPassword() {
         setPasswordError("");
         setPasswordSuccess(false);
-        
-        // Validation
+
         if (passwordData.newPassword.length < 8) {
             setPasswordError("La nuova password deve essere di almeno 8 caratteri");
             return;
         }
-        
+
         if (passwordData.newPassword !== passwordData.confirmPassword) {
             setPasswordError("Le password non coincidono");
             return;
         }
-        
-        // In a real app, make API call to update password
+
+        if (zxcvbn(passwordData.newPassword as string).score < 3) {
+            setPasswordError("La password non è abbastanza sicura");
+            return;
+        }
+
         const token = Cookies.get("token");
         if (!token) return;
-        
-        // Simulating API call for now
-        setTimeout(() => {
-            setPasswordSuccess(true);
-            setPasswordData({
-                currentPassword: "",
-                newPassword: "",
-                confirmPassword: ""
-            });
-            
-            // In a real app, you would make a fetch call like:
-            /*
-            fetch("http://localhost:8080/updatePassword", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    token: token,
-                    currentPassword: passwordData.currentPassword,
-                    newPassword: passwordData.newPassword
-                })
+
+        fetch("http://localhost:8080/info", {
+            method: "PUT",
+            headers: {
+                "Authorization": token,
+            },
+            body: JSON.stringify({
+                "password_vecchia" : passwordData.currentPassword,
+                "password_nuova": passwordData.newPassword,
             })
-            .then(res => {
-                if (res.status === 200) {
-                    setPasswordSuccess(true);
-                    setPasswordData({
-                        currentPassword: "",
-                        newPassword: "",
-                        confirmPassword: ""
-                    });
-                } else {
-                    setPasswordError("Password attuale non corretta");
-                }
-            })
+        }).then((resp) => {
+            if (resp.status === 200) {
+                setPasswordSuccess(true);
+                setPasswordData({
+                    currentPassword: "",
+                    newPassword: "",
+                    confirmPassword: ""
+                });
+            } else {
+                setPasswordError("La password attuale non è corretta")
+            }
+        })
             .catch(() => {
-                setPasswordError("Si è verificato un errore. Riprova più tardi.");
-            });
-            */
-        }, 1000);
-    };
-    
+                setPasswordError("Si è verificato un errore")
+            })
+    }
     const handleDeleteAccount = () => {
         // In a real app, make API call to delete account
         const token = Cookies.get("token");
@@ -258,17 +261,6 @@ export default function ProfiloPage() {
             });
             */
         }, 1000);
-    };
-
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleString('it-IT', { 
-            day: '2-digit', 
-            month: '2-digit', 
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
     };
 
     if (loading) {
@@ -385,22 +377,22 @@ export default function ProfiloPage() {
                                         )}
                                     </div>
                                     <div className="flex flex-col">
-                                        <p className="text-small text-default-500">Telefono</p>
+                                        <p className="text-small text-default-500">Data di nascita</p>
                                         {editMode ? (
-                                            <Input 
-                                                value={tempProfile?.telefono}
-                                                onChange={(e) => handleInputChange('telefono', e.target.value)}
-                                                className="max-w-md"
-                                            />
+                                                <DateInput
+                                                    granularity="day"
+                                                    value={tempProfile?.data_nascita}
+                                                    onChange={(e) => handleInputChange('data_nascita', e!.toString())}
+                                                    className="max-w-md"
+                                                />
                                         ) : (
-                                            <p>{profile?.telefono || 'Non impostato'}</p>
+                                            <p>{formatter.format(tempProfile!.data_nascita.toDate(getLocalTimeZone())) || 'Non impostato'}</p>
                                         )}
                                     </div>
                                 </div>
                             </CardBody>
                             <CardFooter>
                                 <div className="flex flex-col w-full gap-4">
-                                    {/* Password change button */}
                                     <div className="flex flex-col gap-2">
                                         <div className="flex items-center gap-2">
                                             <Key size={20} />
@@ -411,7 +403,7 @@ export default function ProfiloPage() {
                                             color="warning" 
                                             variant="flat" 
                                             className="mt-2 max-w-xs"
-                                            onClick={onPasswordModalOpen}
+                                            onPress={() => onPasswordModalOpen}
                                         >
                                             Modifica Password
                                         </Button>
@@ -474,10 +466,10 @@ export default function ProfiloPage() {
                                                     </span>
                                                 </div>
                                                 <p className="text-sm text-gray-600">
-                                                    {formatDate(ticket.data_partenza)}
+                                                    {ticket.data_partenza}
                                                 </p>
                                                 <p className="text-xs text-gray-500 mt-1">
-                                                    Acquistato il {formatDate(ticket.data_acquisto)}
+                                                    Acquistato il {ticket.data_acquisto}
                                                 </p>
                                             </div>
                                             <div className="text-right">
@@ -513,7 +505,7 @@ export default function ProfiloPage() {
                                                 {selectedTicket.partenza} → {selectedTicket.arrivo}
                                             </h3>
                                             <p className="text-center text-gray-600">
-                                                {formatDate(selectedTicket.data_partenza)}
+                                                {selectedTicket.data_partenza}
                                             </p>
                                         </div>
                                         <Divider />
@@ -532,7 +524,7 @@ export default function ProfiloPage() {
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-gray-500">Data acquisto</span>
-                                                <span>{formatDate(selectedTicket.data_acquisto)}</span>
+                                                <span>{selectedTicket.data_acquisto}</span>
                                             </div>
                                         </div>
                                         <Button 
@@ -594,10 +586,10 @@ export default function ProfiloPage() {
                                 </div>
                             </ModalBody>
                             <ModalFooter>
-                                <Button color="default" variant="light" onClick={onClose}>
+                                <Button color="default" variant="light" onPress={() => onClose}>
                                     Annulla
                                 </Button>
-                                <Button color="warning" onClick={handleUpdatePassword}>
+                                <Button color="warning" onPress={() => cambioPassword}>
                                     Aggiorna Password
                                 </Button>
                             </ModalFooter>
