@@ -9,12 +9,11 @@ import { Input } from "@heroui/input";
 import { Divider } from "@heroui/divider";
 import { Tabs, Tab } from "@heroui/tabs";
 import { User, Ticket, PencilSimple, Check, X, Key, Warning } from "@phosphor-icons/react";
-import Image from "next/image";
 import QRCode from "react-qr-code";
 import { Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, useDisclosure } from "@heroui/modal";
 import {DateInput} from "@heroui/date-input";
-import {DateValue, getLocalTimeZone, parseDate} from "@internationalized/date";
-import {I18nProvider, useDateFormatter} from "@react-aria/i18n";
+import {DateValue, getLocalTimeZone, parseDate, today} from "@internationalized/date";
+import {useDateFormatter} from "@react-aria/i18n";
 import {zxcvbn} from "@zxcvbn-ts/core";
 
 // Types
@@ -22,7 +21,7 @@ type UserProfile = {
     nome: string;
     cognome: string;
     email: string;
-    data_nascita: DateValue;
+    data_nascita: DateValue | null;
 };
 
 type PasswordData = {
@@ -91,7 +90,7 @@ export default function ProfiloPage() {
                                 nome: dati["nome"],
                                 cognome:dati["cognome"],
                                 email: dati["email"],
-                                data_nascita: parseDate(dati["data_nascita"])
+                                data_nascita: dati["data_nascita"] !== undefined ? parseDate(dati["data_nascita"]) : null
                             };
                             setProfile(profilo);
                             setTempProfile(profilo);
@@ -144,9 +143,36 @@ export default function ProfiloPage() {
     };
 
     const handleSaveProfile = () => {
-        // In a real app, make API call to save profile
-        setProfile(tempProfile);
-        setEditMode(false);
+        if (!(tempProfile?.nome === "" || tempProfile?.cognome === "" || tempProfile?.email === "" || tempProfile?.data_nascita === null || tempProfile!.data_nascita!.compare(today(getLocalTimeZone()).subtract({years: 18})) > 0)) {
+            const token = Cookies.get("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+
+            fetch("http://localhost:8080/modifica", {
+                method: "POST",
+                headers: {"Authorization": token, "Content-Type": "application/json"},
+                body: JSON.stringify({
+                    "nome": tempProfile?.nome,
+                    "cognome": tempProfile?.cognome,
+                    "email": tempProfile?.email,
+                    "data": tempProfile?.data_nascita.toString(),
+                })
+            })
+                .then((resp) => {
+                    if (resp.status === 200) {
+                        setProfile(tempProfile);
+                        setEditMode(false);
+                    } else {
+                        console.error(resp.status);
+                    }
+                })
+                .catch((e) => {
+                    console.error(e);
+                })
+        }
+
     };
 
     const handleCancelEdit = () => {
@@ -154,7 +180,7 @@ export default function ProfiloPage() {
         setEditMode(false);
     };
 
-    const handleInputChange = (field: keyof UserProfile, value: string) => {
+    const handleInputChange = (field: keyof UserProfile, value: string | DateValue) => {
         if (tempProfile) {
             setTempProfile({
                 ...tempProfile,
@@ -230,46 +256,24 @@ export default function ProfiloPage() {
         // In a real app, make API call to delete account
         const token = Cookies.get("token");
         if (!token) return;
-        
-        // Simulating API call for now
-        setTimeout(() => {
-            // Clear cookies and redirect to home
-            Cookies.remove("token");
-            router.push("/");
-            
-            // In a real app, you would make a fetch call like:
-            /*
-            fetch("http://localhost:8080/deleteAccount", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    token: token
-                })
-            })
-            .then(res => {
-                if (res.status === 200) {
-                    Cookies.remove("token");
-                    router.push("/");
-                } else {
-                    // Handle error
-                }
-            })
-            .catch(() => {
-                // Handle error
-            });
-            */
-        }, 1000);
-    };
 
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <p>Caricamento...</p>
-            </div>
-        );
-    }
+        fetch("http://localhost:8080/cancella", {
+            method: "DELETE",
+            headers: {
+                "Authorization": token,
+            }
+        }).then((resp) => {
+            if (resp.status === 200) {
+                Cookies.remove("token");
+                router.push("/");
+            } else {
+                console.error(resp.status);
+            }
+        })
+            .catch((e) => {
+                console.error(e);
+            })
+    };
 
     return (
         <div className="light flex flex-col lg:flex-row w-full gap-4">
@@ -311,8 +315,8 @@ export default function ProfiloPage() {
                                     <Button 
                                         isIconOnly 
                                         color="warning" 
-                                        variant="light" 
-                                        onClick={handleEditProfile}
+                                        variant="light"
+                                        onPress={handleEditProfile}
                                     >
                                         <PencilSimple size={20} />
                                     </Button>
@@ -321,16 +325,16 @@ export default function ProfiloPage() {
                                         <Button 
                                             isIconOnly 
                                             color="success" 
-                                            variant="light" 
-                                            onClick={handleSaveProfile}
+                                            variant="light"
+                                            onPress={handleSaveProfile}
                                         >
                                             <Check size={20} />
                                         </Button>
                                         <Button 
                                             isIconOnly 
                                             color="danger" 
-                                            variant="light" 
-                                            onClick={handleCancelEdit}
+                                            variant="light"
+                                            onPress={handleCancelEdit}
                                         >
                                             <X size={20} />
                                         </Button>
@@ -382,11 +386,12 @@ export default function ProfiloPage() {
                                                 <DateInput
                                                     granularity="day"
                                                     value={tempProfile?.data_nascita}
-                                                    onChange={(e) => handleInputChange('data_nascita', e!.toString())}
+                                                    onChange={(e) => handleInputChange('data_nascita', e!)}
+                                                    maxValue={today(getLocalTimeZone())}
                                                     className="max-w-md"
                                                 />
                                         ) : (
-                                            <p>{formatter.format(tempProfile!.data_nascita.toDate(getLocalTimeZone())) || 'Non impostato'}</p>
+                                            <p>{tempProfile?.data_nascita !== null ? formatter.format(tempProfile?.data_nascita.toDate(getLocalTimeZone()) as Date) : 'Non impostato'}</p>
                                         )}
                                     </div>
                                 </div>
@@ -420,7 +425,7 @@ export default function ProfiloPage() {
                                             color="danger" 
                                             variant="flat" 
                                             className="mt-2 max-w-xs"
-                                            onClick={onDeleteModalOpen}
+                                            onPress={onDeleteModalOpen}
                                         >
                                             Elimina Account
                                         </Button>
@@ -530,7 +535,7 @@ export default function ProfiloPage() {
                                         <Button 
                                             color="warning" 
                                             className="w-full mt-2"
-                                            onClick={onClose}
+                                            onPress={onClose}
                                         >
                                             Chiudi
                                         </Button>
@@ -619,10 +624,10 @@ export default function ProfiloPage() {
                                 </div>
                             </ModalBody>
                             <ModalFooter>
-                                <Button color="default" variant="light" onClick={onClose}>
+                                <Button color="default" variant="light" onPress={onClose}>
                                     Annulla
                                 </Button>
-                                <Button color="danger" onClick={handleDeleteAccount}>
+                                <Button color="danger" onPress={handleDeleteAccount}>
                                     Elimina Account
                                 </Button>
                             </ModalFooter>

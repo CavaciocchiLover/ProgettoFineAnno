@@ -107,7 +107,7 @@ export const Navbar = ({path}: NavbarProps) => {
             >
                 <NavbarItem>
                     <div className="flex flex-row self-center gap-3">
-                        <Badge color="danger" content="1" isInvisible={carrello === undefined || pagina === "carrello"}>
+                        <Badge color="danger" content="1" isInvisible={token === undefined || carrello === undefined || pagina === "carrello" || pagina === "login"}>
                             <Link href="/carrello" color="foreground" className={token === undefined || pagina === "carrello" ? "hidden" : ""}>
                                 <ShoppingCart color="#000000" size={32}/>
                             </Link>
