@@ -16,8 +16,7 @@ import {cloneElement, useEffect, useState} from "react";
 import {Link} from "@heroui/link";
 import Cookies from "js-cookie";
 import {Badge} from "@heroui/badge";
-import {ShoppingCart} from "@phosphor-icons/react";
-import {usePathname} from "next/navigation";
+import {ShoppingCart, User, SignOut, CaretDown} from "@phosphor-icons/react";
 
 const plex = IBM_Plex_Sans({
     weight: '400',
@@ -92,13 +91,7 @@ export const Navbar = ({path}: NavbarProps) => {
                     <Link href="/" color="foreground">Cerca biglietto</Link>
                 </NavbarItem>
                 <NavbarItem>
-                    <Link href="#" color="foreground">About</Link>
-                </NavbarItem>
-                <NavbarItem>
-                    <Link href="#" color="foreground">FAQ</Link>
-                </NavbarItem>
-                <NavbarItem>
-                    <Link href="#" color="foreground">Supporto</Link>
+                    <Link href="/faq" color="foreground">FAQ</Link>
                 </NavbarItem>
             </NavbarContent>
             <NavbarContent
@@ -107,13 +100,49 @@ export const Navbar = ({path}: NavbarProps) => {
             >
                 <NavbarItem>
                     <div className="flex flex-row self-center gap-3">
-                        <Badge color="danger" content="1" isInvisible={token === undefined || carrello === undefined || pagina === "carrello" || pagina === "login"}>
-                            <Link href="/carrello" color="foreground" className={token === undefined || pagina === "carrello" ? "hidden" : ""}>
-                                <ShoppingCart color="#000000" size={32}/>
-                            </Link>
-                        </Badge>
-                        <Button href="/login" as={Link} color="warning" className={pagina === "login" ? "hidden" : ""}
-                                variant="shadow">{token !== undefined ? "Logout" : "Login"}</Button>
+                        {token !== undefined ? (
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <Button 
+                                        color="warning" 
+                                        variant="shadow" 
+                                        className={pagina === "login" ? "hidden" : ""}
+                                        endContent={<CaretDown size={18} />}
+                                    >
+                                        Account
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu aria-label="Account Actions">
+                                    <DropdownItem key="profilo" startContent={<User size={18} />}>
+                                        <Link color="foreground" href="/profilo">
+                                            Profilo
+                                        </Link>
+                                    </DropdownItem>
+                                    <DropdownItem key="carrello" startContent={<ShoppingCart size={18} />}>
+                                        <Badge color="danger" content="1" isInvisible={carrello === undefined || pagina === "carrello" || pagina === "login"}>
+                                            <Link href="/carrello" color="foreground" className={pagina === "carrello" ? "hidden" : ""}>
+                                                Carello
+                                            </Link>
+                                        </Badge>
+                                    </DropdownItem>
+                                    <DropdownItem key="logout" startContent={<SignOut size={18} />} className="text-danger" color="danger">
+                                        <Link color="foreground" href="/login">
+                                            Logout
+                                        </Link>
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        ) : (
+                            <Button 
+                                href="/login" 
+                                as={Link} 
+                                color="warning" 
+                                className={pagina === "login" ? "hidden" : ""}
+                                variant="shadow"
+                            >
+                                Login
+                            </Button>
+                        )}
                     </div>
 
                 </NavbarItem>

@@ -160,16 +160,12 @@ export default function RicercaPage() {
         setTrenoSelezionato(json_treno);
         // @ts-ignore
         const cambi = json_treno["idTreni"];
-        // Clear the fermate array before adding new stations
         setFermate([]);
         
-        // Create an array to collect all stations from all segments
         let allStations: string[] = [];
         
-        // Process each train segment
         for (const i in cambi) {
             try {
-                // Get train details
                 const prima_richiesta = await fetch("https://corsproxy.io/?url=https://www.viaggiatreno.it/infomobilitamobile/resteasy/viaggiatreno/cercaNumeroTrenoTrenoAutocomplete/" + cambi[i])
                 
                 if (prima_richiesta.status === 200) {
@@ -183,7 +179,6 @@ export default function RicercaPage() {
                         dati = testo.split("|")[1].split("-");
                     }
                     
-                    // Get all stations for this train
                     const seconda_richiesta = await fetch(`https://corsproxy.io/?url=https://www.viaggiatreno.it/infomobilitamobile/resteasy/viaggiatreno/andamentoTreno/${dati[1]}/${cambi[i]}/${dati[2]}`)
 
                     if (seconda_richiesta.status === 200) {
@@ -193,26 +188,21 @@ export default function RicercaPage() {
                         let stazione_partenza = -1;
                         let fine = false;
                         
-                        // Find the start and end stations for this segment
                         while (index < json["fermate"].length) {
                             const currentStation = json["fermate"][index]["stazione"];
                             
-                            // Check if this is the starting station for this segment
                             if (currentStation === json_treno["scalo"]["stazioneCambio"][parseInt(i)]) {
                                 stazione_partenza = index;
                             }
                             
-                            // Check if this is the ending station for this segment
-                            if (parseInt(i) + 1 < json_treno["scalo"]["stazioneCambio"].length && 
+                            if (parseInt(i) + 1 < json_treno["scalo"]["stazioneCambio"].length &&
                                 currentStation === json_treno["scalo"]["stazioneCambio"][parseInt(i) + 1]) {
                                 fine = true;
                             }
                             
-                            // Add station if it's between start and end (inclusive)
                             if (stazione_partenza !== -1 && (index >= stazione_partenza)) {
                                 segmentStations.push(currentStation);
                                 
-                                // If we reached the end station, stop collecting
                                 if (fine) {
                                     break;
                                 }
@@ -221,11 +211,8 @@ export default function RicercaPage() {
                             index++;
                         }
                         
-                        // Add this segment's stations to the full list
-                        // If this isn't the first segment, avoid duplicating the connection station
-                        if (allStations.length > 0 && segmentStations.length > 0 && 
+                        if (allStations.length > 0 && segmentStations.length > 0 &&
                             allStations[allStations.length - 1] === segmentStations[0]) {
-                            // Remove the first station from this segment as it's already in the list
                             segmentStations.shift();
                         }
                         
@@ -240,47 +227,37 @@ export default function RicercaPage() {
                 console.error("Error processing train segment:", error);
             }
         }
-        
-        // Update the fermate state with all stations
         setFermate(allStations);
         setModalTipo(0);
         onOpen();
     }
 
     function mostroFermate(index_fermata: number, fine: boolean) {
-        // Get the specific segment's stations based on the connection point index
         let fermateFiltrate: string[] = [];
         setFermateDaMostrare([]);
-        
-        // Find the correct segment in the fermate array
-        // We need to determine the start and end indices for this segment
+
         let startIndex = 0;
         let endIndex = fermate.length - 1;
         let currentSegmentStart = 0;
         
         // @ts-ignore
         const connectionPoints = trenoSelezionato["scalo"]["stazioneCambio"];
-        
-        // Find the correct segment boundaries in the fermate array
+
         for (let i = 0; i < connectionPoints.length; i++) {
-            // Find this connection point in the fermate array
             const pointIndex = fermate.findIndex(station => station === connectionPoints[i]);
             
             if (pointIndex !== -1) {
                 if (i === index_fermata) {
-                    // This is our starting connection point
                     startIndex = pointIndex;
                     currentSegmentStart = i;
                 }
                 
                 if (i === index_fermata + 1) {
-                    // This is our ending connection point
                     endIndex = pointIndex;
                 }
             }
         }
-        
-        // If we're looking at the last segment, go to the end of the array
+
         if (index_fermata === connectionPoints.length - 1) {
             endIndex = fermate.length - 1;
         }
@@ -397,8 +374,7 @@ export default function RicercaPage() {
                                             </div>
                                             <div className="grid gap-2 w-screen justify-items-end mr-5">
                                                 <p className="light text-default-800 text-lg">{"Durata viaggio: " + treno["durata"]}</p>
-                                                <p className="light text-default-800 text-lg">{"Costo: " + (treno['costo'] * nPersone) + "€"}</p>
-
+                                                <p className="light text-default-800 text-lg">{treno['costo'] === 0 ? "Non prenotabile" : "Costo: " + (treno['costo'] * nPersone) + "€"}</p>
                                             </div>
                                         </CardBody>
                                         <Divider/>
@@ -412,7 +388,7 @@ export default function RicercaPage() {
                                                 {treno["scalo"]["numero"] + " cambi/o, " + treno["scalo"]["tempo"]}
                                             </Button>
                                             <Button
-                                                className={"text-default-800 text-md"}
+                                                className={treno['costo'] === 0 ? "hidden" : "text-default-800 text-md"}
                                                 variant={"solid"}
                                                 color="danger"
                                                 onPress={() => acquista(treni[i])}
@@ -438,8 +414,7 @@ export default function RicercaPage() {
                                             </div>
                                             <div className="grid gap-2 w-screen justify-items-end mr-5">
                                                 <p className="light text-default-800 text-lg">{"Durata viaggio: " + treno["durata"]}</p>
-                                                <p className="light text-default-800 text-lg">{"Costo: " + (treno['costo'] * nPersone) + "€"}</p>
-
+                                                <p className="light text-default-800 text-lg">{treno['costo'] === 0 ? "Non prenotabile" : "Costo: " + (treno['costo'] * nPersone) + "€"}</p>
                                             </div>
                                         </CardBody>
                                         <Divider/>
@@ -453,7 +428,7 @@ export default function RicercaPage() {
                                                 {treno["scalo"]["numero"] + " cambi/o, " + treno["scalo"]["tempo"]}
                                             </Button>
                                             <Button
-                                                className={"text-default-800 text-md"}
+                                                className={treno['costo'] === 0 ? "hidden" : "text-default-800 text-md"}
                                                 variant={"solid"}
                                                 color="danger"
                                                 onPress={() => acquista(treno)}

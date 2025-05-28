@@ -19,6 +19,7 @@ import {PaymentIcon} from "react-svg-credit-card-payment-icons";
 import luhn from "luhn";
 import {Modal, ModalBody, ModalContent, ModalHeader, useDisclosure} from "@heroui/modal";
 import QRCode from "react-qr-code";
+import {getLocalTimeZone, parseZonedDateTime, today} from "@internationalized/date";
 
 export type trenoJSON = {
     partenza: string;
@@ -67,6 +68,13 @@ export default function CarrelloPage() {
             router.push("/");
         } else {
             const json = JSON.parse(carrelloCookie);
+            const data = parseZonedDateTime(json["data_partenza"]);
+
+            if (data.compare(today(getLocalTimeZone())) > 0) {
+                Cookies.remove("carrello");
+                router.push("/");
+            }
+
             setDatiTreno(json);
             setNPersone(json.nPersone);
         }

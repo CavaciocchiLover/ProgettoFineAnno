@@ -12,9 +12,17 @@ import { User, Ticket, PencilSimple, Check, X, Key, Warning } from "@phosphor-ic
 import QRCode from "react-qr-code";
 import { Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, useDisclosure } from "@heroui/modal";
 import {DateInput} from "@heroui/date-input";
-import {DateValue, getLocalTimeZone, parseDate, today} from "@internationalized/date";
+import {
+    DateValue,
+    getLocalTimeZone,
+    parseDate,
+    parseZonedDateTime,
+    today,
+    ZonedDateTime
+} from "@internationalized/date";
 import {useDateFormatter} from "@react-aria/i18n";
 import {zxcvbn} from "@zxcvbn-ts/core";
+import {Link} from "@heroui/link";
 
 // Types
 type UserProfile = {
@@ -31,14 +39,11 @@ type PasswordData = {
 };
 
 type TicketData = {
-    id: string;
+    id_biglietto: string;
     partenza: string;
     arrivo: string;
-    data_partenza: string;
     nominativo: string;
-    costo: number;
-    data_acquisto: string;
-    qrcode: string;
+    dataPartenza: string;
 };
 
 export default function ProfiloPage() {
@@ -69,7 +74,7 @@ export default function ProfiloPage() {
         onOpenChange: onDeleteModalOpenChange 
     } = useDisclosure();
 
-    const formatter = useDateFormatter({dateStyle: "full"});
+    const formatter = useDateFormatter({day: "numeric", month: "long", year: "numeric", hour: "numeric", minute: "numeric"});
 
     useEffect(() => {
         const token = Cookies.get("token");
@@ -107,36 +112,30 @@ export default function ProfiloPage() {
                 console.error(e);
             })
         
-        fetchUserTickets(token);
-    }, [router]);
-
-    const fetchUserTickets = (token: string) => {
-        setTimeout(() => {
-            const mockTickets = [
-                {
-                    id: "TKT-123456",
-                    partenza: "Milano",
-                    arrivo: "Roma",
-                    data_partenza: "2025-05-20T10:30:00",
-                    nominativo: "Mario Rossi",
-                    costo: 45.50,
-                    data_acquisto: "2025-05-10T14:23:45",
-                    qrcode: "TICKET-123456-MILANO-ROMA"
-                },
-                {
-                    id: "TKT-789012",
-                    partenza: "Roma",
-                    arrivo: "Napoli",
-                    data_partenza: "2025-06-15T08:15:00",
-                    nominativo: "Mario Rossi",
-                    costo: 35.00,
-                    data_acquisto: "2025-05-12T09:17:30",
-                    qrcode: "TICKET-789012-ROMA-NAPOLI"
+        fetch("http://localhost:8080/biglietti", {
+            method: "GET",
+            headers: {"Authorization": token}
+        })
+            .then((resp) => {
+                if (resp.ok) {
+                    resp.text()
+                        .then((dati) => {
+                            if (dati.length !== 0) {
+                                const tickets = JSON.parse(dati);
+                                setTickets(tickets);
+                            }
+                        })
+                        .catch((e) => {
+                            console.error(e);
+                        })
+                } else {
+                    console.error(resp.status)
                 }
-            ];
-            setTickets(mockTickets);
-        }, 700);
-    };
+            })
+            .catch((e) => {
+                console.error(e);
+            })
+    }, [router]);
 
     const handleEditProfile = () => {
         setEditMode(true);
@@ -449,6 +448,7 @@ export default function ProfiloPage() {
                                 <Button 
                                     color="warning" 
                                     className="mt-4"
+                                    as={Link}
                                     href="/"
                                 >
                                     Cerca un Biglietto
@@ -456,9 +456,10 @@ export default function ProfiloPage() {
                             </div>
                         ) : (
                             <div className="space-y-3">
-                                {tickets.map((ticket) => (
+                                {
+                                    tickets.map((ticket) => (
                                     <div 
-                                        key={ticket.id} 
+                                        key={ticket.id_biglietto}
                                         className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer"
                                         onClick={() => handleViewTicket(ticket)}
                                     >
@@ -467,19 +468,12 @@ export default function ProfiloPage() {
                                                 <div className="flex items-center gap-2">
                                                     <h3 className="font-medium">{ticket.partenza} → {ticket.arrivo}</h3>
                                                     <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
-                                                        {new Date(ticket.data_partenza) > new Date() ? 'Attivo' : 'Utilizzato'}
+                                                        {parseZonedDateTime(ticket.dataPartenza).day === 0 ? 'Attivo' : 'Scaduto'}
                                                     </span>
                                                 </div>
                                                 <p className="text-sm text-gray-600">
-                                                    {ticket.data_partenza}
+                                                    {formatter.format(parseZonedDateTime(ticket.dataPartenza).toDate())}
                                                 </p>
-                                                <p className="text-xs text-gray-500 mt-1">
-                                                    Acquistato il {ticket.data_acquisto}
-                                                </p>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="font-medium">{ticket.costo.toFixed(2)} €</p>
-                                                <p className="text-xs text-gray-500">{ticket.id}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -503,33 +497,21 @@ export default function ProfiloPage() {
                                 {selectedTicket && (
                                     <div className="space-y-4">
                                         <div className="flex justify-center bg-gray-50 p-4 rounded">
-                                            <QRCode value={selectedTicket.qrcode} size={180} />
+                                            <QRCode value={selectedTicket.id_biglietto} size={180} />
                                         </div>
                                         <div>
                                             <h3 className="text-lg font-semibold text-center">
                                                 {selectedTicket.partenza} → {selectedTicket.arrivo}
                                             </h3>
                                             <p className="text-center text-gray-600">
-                                                {selectedTicket.data_partenza}
+                                                {formatter.format(parseZonedDateTime(selectedTicket.dataPartenza).toDate())}
                                             </p>
                                         </div>
                                         <Divider />
                                         <div className="space-y-2">
                                             <div className="flex justify-between">
-                                                <span className="text-gray-500">Biglietto №</span>
-                                                <span>{selectedTicket.id}</span>
-                                            </div>
-                                            <div className="flex justify-between">
                                                 <span className="text-gray-500">Passeggero</span>
                                                 <span>{selectedTicket.nominativo}</span>
-                                            </div>
-                                            <div className="flex justify-between">
-                                                <span className="text-gray-500">Prezzo</span>
-                                                <span>{selectedTicket.costo.toFixed(2)} €</span>
-                                            </div>
-                                            <div className="flex justify-between">
-                                                <span className="text-gray-500">Data acquisto</span>
-                                                <span>{selectedTicket.data_acquisto}</span>
                                             </div>
                                         </div>
                                         <Button 
