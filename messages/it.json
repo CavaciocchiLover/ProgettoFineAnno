@@ -8,6 +8,38 @@
     "login": "Accedi",
     "logout": "Esci"
   },
+  "cartPage": {
+    "title": "I tuoi biglietti",
+    "passengerData": "Dati passeggeri",
+    "firstName": "Nome",
+    "lastName": "Cognome",
+    "next": "Avanti",
+    "confirm": "Conferma",
+    "billingInformation": "Informazioni per la fatturazione",
+    "address": "Indirizzo di domicilio",
+    "city": "Città",
+    "zipCode": "CAP",
+    "country": "Paese",
+    "phoneNumber": "Numero di telefono",
+    "paymentMethod": "Metodo di pagamento",
+    "creditCard": "Carta di credito",
+    "paypal": "Paypal",
+    "googlePay": "Google Pay",
+    "cardNumber": "Numero di carta",
+    "cardholderName": "Titolare della carta",
+    "discountCode": "Codice sconto",
+    "apply": "Applica",
+    "invalidCode": "Il codice non è valido.",
+    "tickets": "Biglietti",
+    "vat": "Iva",
+    "discount": "Sconto",
+    "total": "Totale",
+    "buy": "Compra",
+    "emptyCart": "Il tuo carrello è vuoto, clicca qui per cercare i biglietti per il tuo prossimo viaggio",
+    "paymentSuccess": "Il pagamento è avvenuto con successo",
+    "yourTicket": "Ecco il tuo biglietto per",
+    "findTickets": "Puoi trovare i tuoi biglietti nell'area dedicata a te."
+  },
   "footer": {
     "home": "Cerca biglietto",
     "profile": "Area riservata",
@@ -60,5 +92,247 @@
     "stationNotFound": "Stazione non trovata",
     "connectionError": "Errore di connessione",
     "tryAgain": "Riprova più tardi"
+  },
+  "loginPage": {
+    "register": "Registrati",
+    "login": "Login",
+    "email": {
+      "label": "Email",
+      "placeholder": "Scrivi la tua email"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Scrivi la password",
+      "invalid": "Password non valida",
+      "confirm": {
+        "label": "Conferma password",
+        "placeholder": "Riscrivi la password",
+        "notMatching": "Le password non sono uguali"
+      }
+    },
+    "personalInfo": {
+      "firstName": {
+        "label": "Nome",
+        "placeholder": "Scrivi il tuo nome"
+      },
+      "lastName": {
+        "label": "Cognome",
+        "placeholder": "Scrivi il tuo cognome"
+      },
+      "birthDate": "Data di nascita"
+    },
+    "termsAndConditions": {
+      "agreement": "Sono d'accordo con i",
+      "termsLink": "Termini di servizio"
+    },
+    "buttons": {
+      "register": "Registrati",
+      "login": "Login"
+    },
+    "divider": "Oppure",
+    "accountQuestion": {
+      "haveAccount": "Hai già un account?",
+      "noAccount": "Non hai ancora un account?"
+    },
+    "accountAction": {
+      "login": "Fai il login!",
+      "register": "Registrati subito!"
+    },
+    "errors": {
+      "general": "Si è verificato un errore."
+    }
+  },
+  "faqPage": {
+    "title": "Domande Frequenti",
+    "contact": "Per ulteriori domande, contatta il nostro servizio clienti",
+    "tabs": {
+      "general": "Domande Generali",
+      "tickets": "Biglietti e Prenotazioni",
+      "travel": "Informazioni di Viaggio",
+      "services": "Servizi e Strutture"
+    },
+    "general": {
+      "whatIsTrainsoup": {
+        "question": "Che cos'è Trainsoup?",
+        "answer": "Trainsoup è una piattaforma online per prenotare biglietti ferroviari, trovare orari dei treni e ottenere informazioni sui viaggi in treno in tutto il paese. Il nostro obiettivo è rendere il viaggio in treno più facile e accessibile per tutti."
+      },
+      "contactCustomerService": {
+        "question": "Come posso contattare il servizio clienti?",
+        "answer": "Puoi raggiungere il nostro team di assistenza clienti inviandoci un'email a supporto@trainsoup.com. Il nostro servizio clienti è disponibile dal lunedì al venerdì, dalle 9:00 alle 17:00."
+      },
+      "mobileApp": {
+        "question": "Esiste un'app mobile Trainsoup?",
+        "answer": "Al momento, non esiste ancora nessuna app per i dispositivi mobili."
+      },
+      "createAccount": {
+        "question": "Come creo un account?",
+        "answer": "Clicca sul pulsante 'Login' nell'angolo in alto a destra della pagina, quindi seleziona 'Crea un account'. Inserisci i tuoi dati inclusi nome, email e password, e sei pronto!"
+      }
+    },
+    "tickets": {
+      "bookTicket": {
+        "question": "Come prenoto un biglietto?",
+        "answer": "Puoi prenotare un biglietto utilizzando la funzione 'Cerca biglietto' sulla nostra homepage. Inserisci le stazioni di partenza e arrivo, la data e l'ora desiderate, e segui le istruzioni per completare la prenotazione."
+      },
+      "cancelTicket": {
+        "question": "Posso annullare il mio biglietto?",
+        "answer": "Sì, i biglietti possono essere annullati fino a 24 ore prima della partenza. Vai sul tuo account, trova la prenotazione e seleziona 'Annulla biglietto'."
+      },
+      "receiveTicket": {
+        "question": "Come ricevo il mio biglietto?",
+        "answer": "Dopo la prenotazione, il tuo biglietto sarà disponibile in formato elettronico nel tuo account. Puoi scegliere di stamparlo o mostrare il biglietto elettronico sul tuo dispositivo mobile."
+      },
+      "discounts": {
+        "question": "Sono disponibili sconti?",
+        "answer": "Sì, offriamo vari sconti per studenti, anziani, famiglie e viaggiatori frequenti. Controlla la sezione 'Sconti' durante la prenotazione del biglietto per vedere le opzioni disponibili."
+      }
+    },
+    "travel": {
+      "arrivalTime": {
+        "question": "Con quanto anticipo devo arrivare in stazione?",
+        "answer": "Consigliamo di arrivare almeno 15-20 minuti prima della partenza."
+      },
+      "luggage": {
+        "question": "Posso portare bagagli sul treno?",
+        "answer": "Sì, i passeggeri possono portare bagagli a bordo. La maggior parte dei treni ha portabagagli sopraelevati per oggetti più piccoli e aree dedicate per bagagli più grandi. Potrebbero esserci restrizioni su dimensioni e quantità per alcuni tipi di treno."
+      },
+      "pets": {
+        "question": "Gli animali domestici sono ammessi sui treni?",
+        "answer": "I piccoli animali domestici in trasportini appropriati sono generalmente ammessi sulla maggior parte dei treni. I cani più grandi potrebbero richiedere un biglietto e una museruola. Gli animali di servizio sono sempre ammessi. Controlla le regole specifiche al momento della prenotazione."
+      },
+      "delays": {
+        "question": "Cosa succede se il mio treno è in ritardo o cancellato?",
+        "answer": "In caso di ritardi o cancellazioni, hai diritto a un risarcimento a seconda della durata del ritardo e del motivo."
+      }
+    },
+    "services": {
+      "wifi": {
+        "question": "C'è il Wi-Fi sui treni?",
+        "answer": "Molti dei nostri treni ad alta velocità e intercity offrono Wi-Fi gratuito. La disponibilità è indicata al momento della prenotazione e sui display informativi dei treni nelle stazioni."
+      },
+      "food": {
+        "question": "Ci sono cibo e bevande disponibili a bordo?",
+        "answer": "I treni a lunga percorrenza e ad alta velocità hanno tipicamente un bar o una carrozza ristorante che offre snack, pasti e bevande. Alcuni servizi premium includono rinfreschi gratuiti."
+      },
+      "accessibility": {
+        "question": "Esiste l'accessibilità per passeggeri a mobilità ridotta?",
+        "answer": "Sì, ci impegniamo a rendere il viaggio in treno accessibile a tutti. La maggior parte delle stazioni e dei treni moderni dispone di strutture per passeggeri a mobilità ridotta. Puoi richiedere assistenza speciale al momento della prenotazione."
+      },
+      "powerOutlets": {
+        "question": "Ci sono prese di corrente sui treni?",
+        "answer": "La maggior parte dei treni ad alta velocità e a lunga percorrenza è dotata di prese di corrente ai posti. Queste informazioni sono disponibili quando si controllano i dettagli del treno durante la prenotazione."
+      }
+    }
+  },
+  "ricercaPage": {
+    "months": [
+      "Gennaio", 
+      "Febbraio", 
+      "Marzo", 
+      "Aprile", 
+      "Maggio", 
+      "Giugno", 
+      "Luglio", 
+      "Agosto", 
+      "Settembre", 
+      "Ottobre", 
+      "Novembre", 
+      "Dicembre"
+    ],
+    "days": [
+      "Domenica", 
+      "Lunedì", 
+      "Martedì", 
+      "Mercoledì", 
+      "Giovedì", 
+      "Venerdì", 
+      "Sabato"
+    ],
+    "nextDaySolution": "I viaggi successivi sono previsti per il giorno dopo",
+    "journeyDuration": "Durata viaggio:",
+    "cost": "Costo:",
+    "notBookable": "Non prenotabile",
+    "changes": "cambi/o,",
+    "seeStops": "Vedi fermate",
+    "buy": "Acquista",
+    "modal": {
+      "title": "Fermate del treno",
+      "loginRequired": "Devi essere loggatə per poter acquistare un biglietto"
+    }
+  },
+  "profilePage": {
+    "navigation": {
+      "profile": "Profilo",
+      "tickets": "Biglietti"
+    },
+    "personalInfo": {
+      "title": "Informazioni Personali",
+      "fields": {
+        "firstName": "Nome",
+        "lastName": "Cognome",
+        "email": "Email",
+        "birthDate": "Data di nascita",
+        "notSet": "Non impostato"
+      }
+    },
+    "securitySection": {
+      "title": "Password",
+      "description": "Modifica la tua password per mantenere il tuo account sicuro",
+      "changePassword": "Modifica Password"
+    },
+    "dangerZone": {
+      "title": "Zona pericolosa",
+      "description": "L'eliminazione dell'account è permanente e non può essere annullata.",
+      "deleteAccount": "Elimina Account"
+    },
+    "ticketsSection": {
+      "title": "I miei Biglietti",
+      "noTickets": "Non hai ancora acquistato nessun biglietto",
+      "searchTicket": "Cerca un Biglietto",
+      "ticketStatus": {
+        "active": "Attivo",
+        "expired": "Scaduto"
+      },
+      "passenger": "Passeggero"
+    },
+    "modalTitles": {
+      "ticketDetails": "Dettagli Biglietto",
+      "changePassword": "Modifica Password",
+      "confirmDelete": "Conferma eliminazione account"
+    },
+    "buttons": {
+      "save": "Salva",
+      "cancel": "Annulla",
+      "close": "Chiudi",
+      "update": "Aggiorna Password",
+      "delete": "Elimina Account"
+    },
+    "passwordModal": {
+      "currentPassword": {
+        "label": "Password attuale",
+        "placeholder": "Inserisci la tua password attuale"
+      },
+      "newPassword": {
+        "label": "Nuova password",
+        "placeholder": "Inserisci la nuova password"
+      },
+      "confirmPassword": {
+        "label": "Conferma password",
+        "placeholder": "Conferma la nuova password"
+      },
+      "errors": {
+        "tooShort": "La nuova password deve essere di almeno 8 caratteri",
+        "notMatching": "Le password non coincidono",
+        "notSecure": "La password non è abbastanza sicura",
+        "wrongCurrent": "La password attuale non è corretta",
+        "general": "Si è verificato un errore"
+      },
+      "success": "Password aggiornata con successo!"
+    },
+    "deleteModal": {
+      "warning": "Questa azione è irreversibile",
+      "description": "Tutti i tuoi dati personali e i tuoi biglietti verranno eliminati permanentemente.",
+      "confirmation": "Sei sicuro di voler eliminare il tuo account?"
+    }
   }
 }

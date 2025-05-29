@@ -1,0 +1,338 @@
+{
+  "navbar": {
+    "home": "Buscar billete",
+    "faq": "FAQ",
+    "account": "Cuenta",
+    "profile": "Perfil",
+    "Cart": "Carrito",
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión"
+  },
+  "cartPage": {
+    "title": "Tus billetes",
+    "passengerData": "Datos del pasajero",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "next": "Siguiente",
+    "confirm": "Confirmar",
+    "billingInformation": "Información de facturación",
+    "address": "Dirección",
+    "city": "Ciudad",
+    "zipCode": "Código postal",
+    "country": "País",
+    "phoneNumber": "Número de teléfono",
+    "paymentMethod": "Método de pago",
+    "creditCard": "Tarjeta de crédito",
+    "paypal": "Paypal",
+    "googlePay": "Google Pay",
+    "cardNumber": "Número de tarjeta",
+    "cardholderName": "Titular de la tarjeta",
+    "discountCode": "Código de descuento",
+    "apply": "Aplicar",
+    "invalidCode": "El código no es válido.",
+    "tickets": "Billetes",
+    "vat": "IVA",
+    "discount": "Descuento",
+    "total": "Total",
+    "buy": "Comprar",
+    "emptyCart": "Tu carrito está vacío, haz clic aquí para buscar billetes para tu próximo viaje",
+    "paymentSuccess": "El pago se ha realizado con éxito",
+    "yourTicket": "Aquí está tu billete para",
+    "findTickets": "Puedes encontrar tus billetes en el área dedicada a ti."
+  },
+  "footer": {
+    "home": "Buscar billete",
+    "profile": "Área personal",
+    "privacyPolicy": "Política de privacidad",
+    "allRightsReserved": "© 2025 Trainsoup. Todos los derechos reservados."
+  },
+  "homePage": {
+    "departureStation": "¿Desde dónde quieres partir?",
+    "arrivalStation": "¿A dónde quieres llegar?",
+    "departureDate": "¿Cuándo quieres salir?",
+    "passengers": "Número de personas",
+    "searchButton": "Buscar",
+    "services": {
+      "title": "Nuestros servicios",
+      "ecoFriendly": {
+        "title": "Viajes ecológicos",
+        "description": "Viajar con nosotros significa elegir un transporte sostenible que reduce las emisiones de CO2 en comparación con otros medios, contribuyendo a la protección del medio ambiente."
+      },
+      "loyaltyProgram": {
+        "title": "Programa de fidelidad",
+        "description": "Cada vez que compras un billete, tienes la oportunidad de acumular puntos para canjear por ofertas ventajosas y numerosos premios en el futuro."
+      },
+      "customerSupport": {
+        "title": "Asistencia inmediata",
+        "description": "Para cualquier problema, nuestro equipo de atención al cliente está disponible para resolverlo tanto por chat como por teléfono."
+      }
+    }
+  },
+  "searchPage": {
+    "loading": "Cargando resultados...",
+    "noResults": "No se encontraron resultados",
+    "filter": "Filtrar resultados",
+    "sort": "Ordenar por",
+    "price": "Precio",
+    "duration": "Duración",
+    "departureTime": "Hora de salida",
+    "arrivalTime": "Hora de llegada"
+  },
+  "trainDetails": {
+    "train": "Tren",
+    "departure": "Salida",
+    "arrival": "Llegada",
+    "duration": "Duración",
+    "price": "Precio",
+    "availableSeats": "Asientos disponibles",
+    "bookNow": "Reservar ahora"
+  },
+  "errors": {
+    "requiredField": "Campo obligatorio",
+    "stationNotFound": "Estación no encontrada",
+    "connectionError": "Error de conexión",
+    "tryAgain": "Inténtalo más tarde"
+  },
+  "loginPage": {
+    "register": "Registrarse",
+    "login": "Iniciar sesión",
+    "email": {
+      "label": "Email",
+      "placeholder": "Escribe tu email"
+    },
+    "password": {
+      "label": "Contraseña",
+      "placeholder": "Escribe la contraseña",
+      "invalid": "Contraseña no válida",
+      "confirm": {
+        "label": "Confirmar contraseña",
+        "placeholder": "Reescribe la contraseña",
+        "notMatching": "Las contraseñas no coinciden"
+      }
+    },
+    "personalInfo": {
+      "firstName": {
+        "label": "Nombre",
+        "placeholder": "Escribe tu nombre"
+      },
+      "lastName": {
+        "label": "Apellido",
+        "placeholder": "Escribe tu apellido"
+      },
+      "birthDate": "Fecha de nacimiento"
+    },
+    "termsAndConditions": {
+      "agreement": "Estoy de acuerdo con los",
+      "termsLink": "Términos de servicio"
+    },
+    "buttons": {
+      "register": "Registrarse",
+      "login": "Iniciar sesión"
+    },
+    "divider": "O",
+    "accountQuestion": {
+      "haveAccount": "¿Ya tienes una cuenta?",
+      "noAccount": "¿Aún no tienes cuenta?"
+    },
+    "accountAction": {
+      "login": "¡Inicia sesión!",
+      "register": "¡Regístrate ahora!"
+    },
+    "errors": {
+      "general": "Se ha producido un error."
+    }
+  },
+  "faqPage": {
+    "title": "Preguntas Frecuentes",
+    "contact": "Para más preguntas, contacta con nuestro servicio al cliente",
+    "tabs": {
+      "general": "Preguntas Generales",
+      "tickets": "Billetes y Reservas",
+      "travel": "Información de Viaje",
+      "services": "Servicios e Instalaciones"
+    },
+    "general": {
+      "whatIsTrainsoup": {
+        "question": "¿Qué es Trainsoup?",
+        "answer": "Trainsoup es una plataforma online para reservar billetes de tren, encontrar horarios de trenes y obtener información sobre viajes en tren por todo el país. Nuestro objetivo es hacer que viajar en tren sea más fácil y accesible para todos."
+      },
+      "contactCustomerService": {
+        "question": "¿Cómo puedo contactar con el servicio al cliente?",
+        "answer": "Puedes contactar con nuestro equipo de atención al cliente enviándonos un email a soporte@trainsoup.com. Nuestro servicio al cliente está disponible de lunes a viernes, de 9:00 a 17:00."
+      },
+      "mobileApp": {
+        "question": "¿Existe una app móvil de Trainsoup?",
+        "answer": "Actualmente, todavía no existe ninguna app para dispositivos móviles."
+      },
+      "createAccount": {
+        "question": "¿Cómo creo una cuenta?",
+        "answer": "Haz clic en el botón 'Iniciar sesión' en la esquina superior derecha de la página, luego selecciona 'Crear una cuenta'. Introduce tus datos incluyendo nombre, email y contraseña, ¡y listo!"
+      }
+    },
+    "tickets": {
+      "bookTicket": {
+        "question": "¿Cómo reservo un billete?",
+        "answer": "Puedes reservar un billete utilizando la función 'Buscar billete' en nuestra página de inicio. Introduce las estaciones de salida y llegada, la fecha y hora deseadas, y sigue las instrucciones para completar la reserva."
+      },
+      "cancelTicket": {
+        "question": "¿Puedo cancelar mi billete?",
+        "answer": "Sí, los billetes pueden ser cancelados hasta 24 horas antes de la salida. Ve a tu cuenta, encuentra la reserva y selecciona 'Cancelar billete'."
+      },
+      "receiveTicket": {
+        "question": "¿Cómo recibo mi billete?",
+        "answer": "Después de la reserva, tu billete estará disponible en formato electrónico en tu cuenta. Puedes elegir imprimirlo o mostrar el billete electrónico en tu dispositivo móvil."
+      },
+      "discounts": {
+        "question": "¿Hay descuentos disponibles?",
+        "answer": "Sí, ofrecemos varios descuentos para estudiantes, personas mayores, familias y viajeros frecuentes. Comprueba la sección 'Descuentos' durante la reserva del billete para ver las opciones disponibles."
+      }
+    },
+    "travel": {
+      "arrivalTime": {
+        "question": "¿Con cuánta antelación debo llegar a la estación?",
+        "answer": "Recomendamos llegar al menos 15-20 minutos antes de la salida."
+      },
+      "luggage": {
+        "question": "¿Puedo llevar equipaje en el tren?",
+        "answer": "Sí, los pasajeros pueden llevar equipaje a bordo. La mayoría de los trenes tienen portaequipajes elevados para objetos más pequeños y áreas dedicadas para equipajes más grandes. Puede haber restricciones en tamaño y cantidad para algunos tipos de tren."
+      },
+      "pets": {
+        "question": "¿Se permiten mascotas en los trenes?",
+        "answer": "Las mascotas pequeñas en transportines adecuados generalmente están permitidas en la mayoría de los trenes. Los perros más grandes pueden requerir un billete y un bozal. Los animales de servicio siempre están permitidos. Consulta las reglas específicas al hacer la reserva."
+      },
+      "delays": {
+        "question": "¿Qué sucede si mi tren se retrasa o se cancela?",
+        "answer": "En caso de retrasos o cancelaciones, tienes derecho a una compensación dependiendo de la duración del retraso y el motivo."
+      }
+    },
+    "services": {
+      "wifi": {
+        "question": "¿Hay Wi-Fi en los trenes?",
+        "answer": "Muchos de nuestros trenes de alta velocidad e intercity ofrecen Wi-Fi gratuito. La disponibilidad se indica en el momento de la reserva y en las pantallas informativas de los trenes en las estaciones."
+      },
+      "food": {
+        "question": "¿Hay comida y bebida disponibles a bordo?",
+        "answer": "Los trenes de larga distancia y alta velocidad típicamente tienen un bar o un coche restaurante que ofrece snacks, comidas y bebidas. Algunos servicios premium incluyen refrescos gratuitos."
+      },
+      "accessibility": {
+        "question": "¿Existe accesibilidad para pasajeros con movilidad reducida?",
+        "answer": "Sí, nos comprometemos a hacer que viajar en tren sea accesible para todos. La mayoría de las estaciones y trenes modernos disponen de instalaciones para pasajeros con movilidad reducida. Puedes solicitar asistencia especial al hacer la reserva."
+      },
+      "powerOutlets": {
+        "question": "¿Hay enchufes en los trenes?",
+        "answer": "La mayoría de los trenes de alta velocidad y larga distancia están equipados con enchufes en los asientos. Esta información está disponible cuando se comprueban los detalles del tren durante la reserva."
+      }
+    }
+  },
+  "ricercaPage": {
+    "months": [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre"
+    ],
+    "days": [
+      "Domingo",
+      "Lunes",
+      "Martes",
+      "Miércoles",
+      "Jueves",
+      "Viernes",
+      "Sábado"
+    ],
+    "nextDaySolution": "Los siguientes viajes están programados para el día siguiente",
+    "journeyDuration": "Duración del viaje:",
+    "cost": "Precio:",
+    "notBookable": "No reservable",
+    "changes": "cambio/s,",
+    "seeStops": "Ver paradas",
+    "buy": "Comprar",
+    "modal": {
+      "title": "Paradas del tren",
+      "loginRequired": "Debes iniciar sesión para poder comprar un billete"
+    }
+  },
+  "profilePage": {
+    "navigation": {
+      "profile": "Perfil",
+      "tickets": "Billetes"
+    },
+    "personalInfo": {
+      "title": "Información Personal",
+      "fields": {
+        "firstName": "Nombre",
+        "lastName": "Apellido",
+        "email": "Email",
+        "birthDate": "Fecha de nacimiento",
+        "notSet": "No establecido"
+      }
+    },
+    "securitySection": {
+      "title": "Contraseña",
+      "description": "Modifica tu contraseña para mantener tu cuenta segura",
+      "changePassword": "Modificar Contraseña"
+    },
+    "dangerZone": {
+      "title": "Zona peligrosa",
+      "description": "La eliminación de la cuenta es permanente y no se puede deshacer.",
+      "deleteAccount": "Eliminar Cuenta"
+    },
+    "ticketsSection": {
+      "title": "Mis Billetes",
+      "noTickets": "Aún no has comprado ningún billete",
+      "searchTicket": "Buscar un Billete",
+      "ticketStatus": {
+        "active": "Activo",
+        "expired": "Caducado"
+      },
+      "passenger": "Pasajero"
+    },
+    "modalTitles": {
+      "ticketDetails": "Detalles del Billete",
+      "changePassword": "Modificar Contraseña",
+      "confirmDelete": "Confirmar eliminación de cuenta"
+    },
+    "buttons": {
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "close": "Cerrar",
+      "update": "Actualizar Contraseña",
+      "delete": "Eliminar Cuenta"
+    },
+    "passwordModal": {
+      "currentPassword": {
+        "label": "Contraseña actual",
+        "placeholder": "Introduce tu contraseña actual"
+      },
+      "newPassword": {
+        "label": "Nueva contraseña",
+        "placeholder": "Introduce la nueva contraseña"
+      },
+      "confirmPassword": {
+        "label": "Confirmar contraseña",
+        "placeholder": "Confirma la nueva contraseña"
+      },
+      "errors": {
+        "tooShort": "La nueva contraseña debe tener al menos 8 caracteres",
+        "notMatching": "Las contraseñas no coinciden",
+        "notSecure": "La contraseña no es lo suficientemente segura",
+        "wrongCurrent": "La contraseña actual no es correcta",
+        "general": "Se ha producido un error"
+      },
+      "success": "¡Contraseña actualizada con éxito!"
+    },
+    "deleteModal": {
+      "warning": "Esta acción es irreversible",
+      "description": "Todos tus datos personales y tus billetes se eliminarán permanentemente.",
+      "confirmation": "¿Estás seguro de que quieres eliminar tu cuenta?"
+    }
+  }
+}

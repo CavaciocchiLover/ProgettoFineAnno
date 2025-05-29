@@ -15,11 +15,9 @@ import {IT, GB, ES} from "country-flag-icons/react/3x2";
 import {cloneElement, useEffect, useState} from "react";
 import {Link} from "@heroui/link";
 import Cookies from "js-cookie";
-import {Badge} from "@heroui/badge";
 import {ShoppingCart, User, SignOut, CaretDown} from "@phosphor-icons/react";
-import {Divider} from "@heroui/divider";
 import {useTranslations} from "next-intl";
-import {usePathname} from "next/navigation";
+import Image from "next/image";
 
 const plex = IBM_Plex_Sans({
     weight: '400',
@@ -57,7 +55,6 @@ export const Navbar = ({path}: NavbarProps) => {
     const [token, setToken] = useState<string | undefined>("");
     const [pagina, setPagina] = useState("");
     const locale = useTranslations('navbar');
-    const localeCookie = Cookies.get("NEXT_LOCALE");
 
     useEffect(() => {
         setToken(Cookies.get("token"));
@@ -66,13 +63,20 @@ export const Navbar = ({path}: NavbarProps) => {
           setPagina(path);
         }
 
-        if(localeCookie !== undefined || localeCookie !== "it") {
+        let tipoLang = "it";
+        if (locale("home") === "Find ticket") {
+            tipoLang = "en";
+        } else if (locale("home") === "Buscar billete") {
+            tipoLang = "es";
+        }
+
+        if (tipoLang !== "it") {
             let trovato = false;
             let i = 0;
             while (!trovato && i < items.length) {
-                if (items[i]["key"] === localeCookie) {
+                if (items[i]["key"] === tipoLang) {
                     selectedItem = items[i];
-                    items = items.filter((item) => item.key !== localeCookie);
+                    items = items.filter((item) => item.key !== tipoLang);
                     items.push({
                         key: "it",
                         label: "Italiano",
@@ -92,7 +96,7 @@ export const Navbar = ({path}: NavbarProps) => {
             <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
                 <NavbarBrand as="li" className="gap-3 max-w-fit">
                     <NextLink className="flex justify-start items-center gap-1" href="/">
-                        <Train/>
+                        <Image src="/logo.png" height="40" width="40" alt="logo"/>
                         <p
                             className={"font-medium text-black "}
                         >

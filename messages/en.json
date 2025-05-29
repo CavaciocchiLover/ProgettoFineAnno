@@ -8,6 +8,38 @@
     "login": "Login",
     "logout": "Logout"
   },
+  "cartPage": {
+    "title": "Your tickets",
+    "passengerData": "Passenger data",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "next": "Next",
+    "confirm": "Confirm",
+    "billingInformation": "Billing information",
+    "address": "Address",
+    "city": "City",
+    "zipCode": "ZIP code",
+    "country": "Country",
+    "phoneNumber": "Phone number",
+    "paymentMethod": "Payment method",
+    "creditCard": "Credit card",
+    "paypal": "Paypal",
+    "googlePay": "Google Pay",
+    "cardNumber": "Card number",
+    "cardholderName": "Cardholder name",
+    "discountCode": "Discount code",
+    "apply": "Apply",
+    "invalidCode": "The code is not valid.",
+    "tickets": "Tickets",
+    "vat": "VAT",
+    "discount": "Discount",
+    "total": "Total",
+    "buy": "Buy",
+    "emptyCart": "Your cart is empty, click here to search for tickets for your next trip",
+    "paymentSuccess": "The payment was successful",
+    "yourTicket": "Here is your ticket for",
+    "findTickets": "You can find your tickets in your dedicated area."
+  },
   "footer": {
     "home": "Find ticket",
     "profile": "Reserved area",
@@ -15,10 +47,10 @@
     "allRightsReserved": "© 2025 Trainsoup. All rights reserved."
   },
   "homePage": {
-    "departureStation": "From",
-    "arrivalStation": "To",
+    "departureStation": "From where do you want to depart?",
+    "arrivalStation": "Where do you want to arrive?",
     "departureDate": "When do you want to depart?",
-    "passengers": "People taking the train",
+    "passengers": "Number of people",
     "searchButton": "Search",
     "services": {
       "title": "Our services",
@@ -55,61 +87,252 @@
     "availableSeats": "Available seats",
     "bookNow": "Book now"
   },
-  "profilePage": {
-    "personalInfo": "Personal Information",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "email": "Email",
-    "birthDate": "Date of Birth",
-    "notSet": "Not set",
-    "password": "Password",
-    "passwordDescription": "Change your password to keep your account secure",
-    "changePassword": "Change Password",
-    "dangerZone": "Danger Zone",
-    "deleteAccountWarning": "Account deletion is permanent and cannot be undone.",
-    "deleteAccount": "Delete Account",
-    "myTickets": "My Tickets",
-    "noTickets": "You haven't purchased any tickets yet",
-    "findTicket": "Find a Ticket",
-    "ticketStatus": {
-      "active": "Active",
-      "expired": "Expired"
-    },
-    "ticketDetails": "Ticket Details",
-    "passenger": "Passenger",
-    "close": "Close"
-  },
-  "passwordChange": {
-    "title": "Change Password",
-    "currentPassword": "Current password",
-    "currentPasswordPlaceholder": "Enter your current password",
-    "newPassword": "New password",
-    "newPasswordPlaceholder": "Enter new password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm new password",
-    "success": "Password successfully updated!",
-    "cancel": "Cancel",
-    "update": "Update Password",
-    "errors": {
-      "tooShort": "The new password must be at least 8 characters",
-      "notMatching": "Passwords do not match",
-      "notSecure": "The password is not secure enough",
-      "wrongCurrent": "The current password is incorrect",
-      "generic": "An error occurred"
-    }
-  },
-  "deleteAccountModal": {
-    "title": "Confirm account deletion",
-    "irreversible": "This action is irreversible",
-    "warning": "All your personal data and tickets will be permanently deleted.",
-    "confirmation": "Are you sure you want to delete your account?",
-    "cancel": "Cancel",
-    "delete": "Delete Account"
-  },
   "errors": {
     "requiredField": "Required field",
     "stationNotFound": "Station not found",
     "connectionError": "Connection error",
     "tryAgain": "Try again later"
+  },
+  "loginPage": {
+    "register": "Register",
+    "login": "Login",
+    "email": {
+      "label": "Email",
+      "placeholder": "Enter your email"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Enter your password",
+      "invalid": "Invalid password",
+      "confirm": {
+        "label": "Confirm password",
+        "placeholder": "Reenter your password",
+        "notMatching": "Passwords do not match"
+      }
+    },
+    "personalInfo": {
+      "firstName": {
+        "label": "First name",
+        "placeholder": "Enter your first name"
+      },
+      "lastName": {
+        "label": "Last name",
+        "placeholder": "Enter your last name"
+      },
+      "birthDate": "Date of birth"
+    },
+    "termsAndConditions": {
+      "agreement": "I agree with the",
+      "termsLink": "Terms of service"
+    },
+    "buttons": {
+      "register": "Register",
+      "login": "Login"
+    },
+    "divider": "Or",
+    "accountQuestion": {
+      "haveAccount": "Already have an account?",
+      "noAccount": "Don't have an account yet?"
+    },
+    "accountAction": {
+      "login": "Login now!",
+      "register": "Register now!"
+    },
+    "errors": {
+      "general": "An error occurred."
+    }
+  },
+  "faqPage": {
+    "title": "Frequently Asked Questions",
+    "contact": "For further questions, contact our customer service",
+    "tabs": {
+      "general": "General Questions",
+      "tickets": "Tickets and Bookings",
+      "travel": "Travel Information",
+      "services": "Services and Facilities"
+    },
+    "general": {
+      "whatIsTrainsoup": {
+        "question": "What is Trainsoup?",
+        "answer": "Trainsoup is an online platform for booking train tickets, finding train schedules, and getting information about train travel throughout the country. Our goal is to make train travel easier and more accessible for everyone."
+      },
+      "contactCustomerService": {
+        "question": "How can I contact customer service?",
+        "answer": "You can reach our customer support team by sending us an email at support@trainsoup.com. Our customer service is available Monday to Friday, from 9:00 AM to 5:00 PM."
+      },
+      "mobileApp": {
+        "question": "Is there a Trainsoup mobile app?",
+        "answer": "At the moment, there is no app for mobile devices yet."
+      },
+      "createAccount": {
+        "question": "How do I create an account?",
+        "answer": "Click on the 'Login' button in the top right corner of the page, then select 'Create an account'. Enter your details including name, email, and password, and you're ready to go!"
+      }
+    },
+    "tickets": {
+      "bookTicket": {
+        "question": "How do I book a ticket?",
+        "answer": "You can book a ticket using the 'Find ticket' function on our homepage. Enter your departure and arrival stations, your desired date and time, and follow the instructions to complete the booking."
+      },
+      "cancelTicket": {
+        "question": "Can I cancel my ticket?",
+        "answer": "Yes, tickets can be canceled up to 24 hours before departure. Go to your account, find the booking, and select 'Cancel ticket'."
+      },
+      "receiveTicket": {
+        "question": "How do I receive my ticket?",
+        "answer": "After booking, your ticket will be available in electronic format in your account. You can choose to print it or show the electronic ticket on your mobile device."
+      },
+      "discounts": {
+        "question": "Are discounts available?",
+        "answer": "Yes, we offer various discounts for students, seniors, families, and frequent travelers. Check the 'Discounts' section when booking your ticket to see the available options."
+      }
+    },
+    "travel": {
+      "arrivalTime": {
+        "question": "How early should I arrive at the station?",
+        "answer": "We recommend arriving at least 15-20 minutes before departure."
+      },
+      "luggage": {
+        "question": "Can I bring luggage on the train?",
+        "answer": "Yes, passengers can bring luggage on board. Most trains have overhead racks for smaller items and dedicated areas for larger luggage. There may be restrictions on size and quantity for some types of trains."
+      },
+      "pets": {
+        "question": "Are pets allowed on trains?",
+        "answer": "Small pets in appropriate carriers are generally allowed on most trains. Larger dogs may require a ticket and a muzzle. Service animals are always allowed. Check the specific rules when booking."
+      },
+      "delays": {
+        "question": "What happens if my train is delayed or canceled?",
+        "answer": "In case of delays or cancellations, you are entitled to compensation depending on the length of the delay and the reason."
+      }
+    },
+    "services": {
+      "wifi": {
+        "question": "Is there Wi-Fi on trains?",
+        "answer": "Many of our high-speed and intercity trains offer free Wi-Fi. Availability is indicated when booking and on train information displays at stations."
+      },
+      "food": {
+        "question": "Are food and drinks available on board?",
+        "answer": "Long-distance and high-speed trains typically have a bar or restaurant car offering snacks, meals, and drinks. Some premium services include complimentary refreshments."
+      },
+      "accessibility": {
+        "question": "Is there accessibility for passengers with reduced mobility?",
+        "answer": "Yes, we are committed to making train travel accessible to everyone. Most stations and modern trains have facilities for passengers with reduced mobility. You can request special assistance when booking."
+      },
+      "powerOutlets": {
+        "question": "Are there power outlets on trains?",
+        "answer": "Most high-speed and long-distance trains are equipped with power outlets at the seats. This information is available when checking train details during booking."
+      }
+    }
+  },
+  "ricercaPage": {
+    "months": [
+      "January", 
+      "February", 
+      "March", 
+      "April", 
+      "May", 
+      "June", 
+      "July", 
+      "August", 
+      "September", 
+      "October", 
+      "November", 
+      "December"
+    ],
+    "days": [
+      "Sunday", 
+      "Monday", 
+      "Tuesday", 
+      "Wednesday", 
+      "Thursday", 
+      "Friday", 
+      "Saturday"
+    ],
+    "nextDaySolution": "The next trips are scheduled for the following day",
+    "journeyDuration": "Journey duration:",
+    "cost": "Cost:",
+    "notBookable": "Not bookable",
+    "changes": "change(s),",
+    "seeStops": "See stops",
+    "buy": "Buy",
+    "modal": {
+      "title": "Train stops",
+      "loginRequired": "You must be logged in to purchase a ticket"
+    }
+  },
+  "profilePage": {
+    "navigation": {
+      "profile": "Profile",
+      "tickets": "Tickets"
+    },
+    "personalInfo": {
+      "title": "Personal Information",
+      "fields": {
+        "firstName": "First name",
+        "lastName": "Last name",
+        "email": "Email",
+        "birthDate": "Date of birth",
+        "notSet": "Not set"
+      }
+    },
+    "securitySection": {
+      "title": "Password",
+      "description": "Change your password to keep your account secure",
+      "changePassword": "Change Password"
+    },
+    "dangerZone": {
+      "title": "Danger Zone",
+      "description": "Account deletion is permanent and cannot be undone.",
+      "deleteAccount": "Delete Account"
+    },
+    "ticketsSection": {
+      "title": "My Tickets",
+      "noTickets": "You haven't purchased any tickets yet",
+      "searchTicket": "Find a Ticket",
+      "ticketStatus": {
+        "active": "Active",
+        "expired": "Expired"
+      },
+      "passenger": "Passenger"
+    },
+    "modalTitles": {
+      "ticketDetails": "Ticket Details",
+      "changePassword": "Change Password",
+      "confirmDelete": "Confirm account deletion"
+    },
+    "buttons": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "close": "Close",
+      "update": "Update Password",
+      "delete": "Delete Account"
+    },
+    "passwordModal": {
+      "currentPassword": {
+        "label": "Current password",
+        "placeholder": "Enter your current password"
+      },
+      "newPassword": {
+        "label": "New password",
+        "placeholder": "Enter new password"
+      },
+      "confirmPassword": {
+        "label": "Confirm password",
+        "placeholder": "Confirm new password"
+      },
+      "errors": {
+        "tooShort": "The new password must be at least 8 characters",
+        "notMatching": "Passwords do not match",
+        "notSecure": "The password is not secure enough",
+        "wrongCurrent": "The current password is incorrect",
+        "general": "An error occurred"
+      },
+      "success": "Password successfully updated!"
+    },
+    "deleteModal": {
+      "warning": "This action is irreversible",
+      "description": "All your personal data and tickets will be permanently deleted.",
+      "confirmation": "Are you sure you want to delete your account?"
+    }
   }
 }

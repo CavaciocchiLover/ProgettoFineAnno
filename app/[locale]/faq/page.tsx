@@ -5,9 +5,11 @@ import { Tabs, Tab } from "@heroui/tabs";
 import { Divider } from "@heroui/divider";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 export default function FAQ() {
     const [selected, setSelected] = useState("general");
+    const t = useTranslations('faqPage');
 
     // Animation variants
     const containerVariants = {
@@ -65,7 +67,7 @@ export default function FAQ() {
                         }
                     }}
                 >
-                    Domande Frequenti
+                    {t('title')}
                 </motion.h1>
 
                 <Tabs
@@ -85,7 +87,7 @@ export default function FAQ() {
                                 whileTap={{ scale: 0.95 }}
                                 className={selected === "general" ? "text-black" : "text-gray-700"}
                             >
-                                Domande Generali
+                                {t('tabs.general')}
                             </motion.span>
                         }
                         className={`text-base font-medium px-4 py-2`}
@@ -99,7 +101,7 @@ export default function FAQ() {
                                 className={selected === "tickets" ? "text-black" : "text-gray-700"}
 
                             >
-                                Biglietti e Prenotazioni
+                                {t('tabs.tickets')}
                             </motion.span>
                         }
                         className={`text-base font-medium px-4 py-2`}
@@ -112,7 +114,7 @@ export default function FAQ() {
                                 whileTap={{ scale: 0.95 }}
                                 className={selected === "travel" ? "text-black" : "text-gray-700"}
                             >
-                                Informazioni di Viaggio
+                                {t('tabs.travel')}
                             </motion.span>
                         }
                         className={"text-base font-medium px-4 py-2"}
@@ -125,7 +127,7 @@ export default function FAQ() {
                                 whileTap={{ scale: 0.95 }}
                                 className={selected === "services" ? "text-black" : "text-gray-700"}
                             >
-                                Servizi e Strutture
+                                {t('tabs.services')}
                             </motion.span>
                         }
                         className={`text-base font-medium px-4 py-2`}
@@ -157,23 +159,23 @@ export default function FAQ() {
                                     exit="exit"
                                 >
                                     <FAQItem 
-                                        question="Che cos'è Trainsoup?" 
-                                        answer="Trainsoup è una piattaforma online per prenotare biglietti ferroviari, trovare orari dei treni e ottenere informazioni sui viaggi in treno in tutto il paese. Il nostro obiettivo è rendere il viaggio in treno più facile e accessibile per tutti."
+                                        question={t('general.whatIsTrainsoup.question')} 
+                                        answer={t('general.whatIsTrainsoup.answer')}
                                         index={0}
                                     />
                                     <FAQItem 
-                                        question="Come posso contattare il servizio clienti?" 
-                                        answer="Puoi raggiungere il nostro team di assistenza clienti inviandoci un'email a supporto@trainsoup.com. Il nostro servizio clienti è disponibile dal lunedì al venerdì, dalle 9:00 alle 17:00."
+                                        question={t('general.contactCustomerService.question')} 
+                                        answer={t('general.contactCustomerService.answer')}
                                         index={1}
                                     />
                                     <FAQItem 
-                                        question="Esiste un'app mobile Trainsoup?" 
-                                        answer="Al momento, non esiste ancora nessuna app per i dispositivi mobili."
+                                        question={t('general.mobileApp.question')} 
+                                        answer={t('general.mobileApp.answer')}
                                         index={2}
                                     />
                                     <FAQItem 
-                                        question="Come creo un account?" 
-                                        answer="Clicca sul pulsante 'Login' nell'angolo in alto a destra della pagina, quindi seleziona 'Crea un account'. Inserisci i tuoi dati inclusi nome, email e password, e sei pronto!"
+                                        question={t('general.createAccount.question')} 
+                                        answer={t('general.createAccount.answer')}
                                         index={3}
                                     />
                                 </motion.div>
@@ -189,23 +191,23 @@ export default function FAQ() {
                                     exit="exit"
                                 >
                                     <FAQItem 
-                                        question="Come prenoto un biglietto?" 
-                                        answer="Puoi prenotare un biglietto utilizzando la funzione 'Cerca biglietto' sulla nostra homepage. Inserisci le stazioni di partenza e arrivo, la data e l'ora desiderate, e segui le istruzioni per completare la prenotazione."
+                                        question={t('tickets.bookTicket.question')} 
+                                        answer={t('tickets.bookTicket.answer')}
                                         index={0}
                                     />
                                     <FAQItem 
-                                        question="Posso annullare il mio biglietto?" 
-                                        answer="Sì, i biglietti possono essere annullati fino a 24 ore prima della partenza. Vai sul tuo account, trova la prenotazione e seleziona 'Annulla biglietto'."
+                                        question={t('tickets.cancelTicket.question')} 
+                                        answer={t('tickets.cancelTicket.answer')}
                                         index={1}
                                     />
                                     <FAQItem 
-                                        question="Come ricevo il mio biglietto?" 
-                                        answer="Dopo la prenotazione, il tuo biglietto sarà disponibile in formato elettronico nel tuo account. Puoi scegliere di stamparlo o mostrare il biglietto elettronico sul tuo dispositivo mobile."
+                                        question={t('tickets.receiveTicket.question')} 
+                                        answer={t('tickets.receiveTicket.answer')}
                                         index={2}
                                     />
                                     <FAQItem 
-                                        question="Sono disponibili sconti?" 
-                                        answer="Sì, offriamo vari sconti per studenti, anziani, famiglie e viaggiatori frequenti. Controlla la sezione 'Sconti' durante la prenotazione del biglietto per vedere le opzioni disponibili."
+                                        question={t('tickets.discounts.question')} 
+                                        answer={t('tickets.discounts.answer')}
                                         index={3}
                                     />
                                 </motion.div>
@@ -221,23 +223,23 @@ export default function FAQ() {
                                     exit="exit"
                                 >
                                     <FAQItem 
-                                        question="Con quanto anticipo devo arrivare in stazione?" 
-                                        answer="Consigliamo di arrivare almeno 15-20 minuti prima della partenza."
+                                        question={t('travel.arrivalTime.question')} 
+                                        answer={t('travel.arrivalTime.answer')}
                                         index={0}
                                     />
                                     <FAQItem 
-                                        question="Posso portare bagagli sul treno?" 
-                                        answer="Sì, i passeggeri possono portare bagagli a bordo. La maggior parte dei treni ha portabagagli sopraelevati per oggetti più piccoli e aree dedicate per bagagli più grandi. Potrebbero esserci restrizioni su dimensioni e quantità per alcuni tipi di treno."
+                                        question={t('travel.luggage.question')} 
+                                        answer={t('travel.luggage.answer')}
                                         index={1}
                                     />
                                     <FAQItem 
-                                        question="Gli animali domestici sono ammessi sui treni?" 
-                                        answer="I piccoli animali domestici in trasportini appropriati sono generalmente ammessi sulla maggior parte dei treni. I cani più grandi potrebbero richiedere un biglietto e una museruola. Gli animali di servizio sono sempre ammessi. Controlla le regole specifiche al momento della prenotazione."
+                                        question={t('travel.pets.question')} 
+                                        answer={t('travel.pets.answer')}
                                         index={2}
                                     />
                                     <FAQItem 
-                                        question="Cosa succede se il mio treno è in ritardo o cancellato?" 
-                                        answer="In caso di ritardi o cancellazioni, hai diritto a un risarcimento a seconda della durata del ritardo e del motivo."
+                                        question={t('travel.delays.question')} 
+                                        answer={t('travel.delays.answer')}
                                         index={3}
                                     />
                                 </motion.div>
@@ -253,23 +255,23 @@ export default function FAQ() {
                                     exit="exit"
                                 >
                                     <FAQItem 
-                                        question="C'è il Wi-Fi sui treni?" 
-                                        answer="Molti dei nostri treni ad alta velocità e intercity offrono Wi-Fi gratuito. La disponibilità è indicata al momento della prenotazione e sui display informativi dei treni nelle stazioni."
+                                        question={t('services.wifi.question')} 
+                                        answer={t('services.wifi.answer')}
                                         index={0}
                                     />
                                     <FAQItem 
-                                        question="Ci sono cibo e bevande disponibili a bordo?" 
-                                        answer="I treni a lunga percorrenza e ad alta velocità hanno tipicamente un bar o una carrozza ristorante che offre snack, pasti e bevande. Alcuni servizi premium includono rinfreschi gratuiti."
+                                        question={t('services.food.question')} 
+                                        answer={t('services.food.answer')}
                                         index={1}
                                     />
                                     <FAQItem 
-                                        question="Esiste l'accessibilità per passeggeri a mobilità ridotta?" 
-                                        answer="Sì, ci impegniamo a rendere il viaggio in treno accessibile a tutti. La maggior parte delle stazioni e dei treni moderni dispone di strutture per passeggeri a mobilità ridotta. Puoi richiedere assistenza speciale al momento della prenotazione."
+                                        question={t('services.accessibility.question')} 
+                                        answer={t('services.accessibility.answer')}
                                         index={2}
                                     />
                                     <FAQItem 
-                                        question="Ci sono prese di corrente sui treni?" 
-                                        answer="La maggior parte dei treni ad alta velocità e a lunga percorrenza è dotata di prese di corrente ai posti. Queste informazioni sono disponibili quando si controllano i dettagli del treno durante la prenotazione."
+                                        question={t('services.powerOutlets.question')} 
+                                        answer={t('services.powerOutlets.answer')}
                                         index={3}
                                     />
                                 </motion.div>
@@ -284,7 +286,7 @@ export default function FAQ() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1.2, duration: 0.8 }}
                 >
-                    <p>Per ulteriori domande, contatta il nostro servizio clienti</p>
+                    <p>{t('contact')}</p>
                 </motion.div>
             </motion.div>
     );

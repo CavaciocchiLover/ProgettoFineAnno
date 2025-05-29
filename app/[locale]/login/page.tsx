@@ -20,6 +20,7 @@ import * as zxcvbnItPackage from "@zxcvbn-ts/language-it";
 import {CredentialResponse, GoogleLogin} from "@react-oauth/google";
 import {useRouter} from "next/navigation";
 import Cookies from "js-cookie";
+import {useTranslations} from "next-intl";
 
 export default function LoginPage() {
   const oggi = today(getLocalTimeZone());
@@ -31,11 +32,10 @@ export default function LoginPage() {
   const [dataNascita, setDataNascita] = useState(parseDate(oggi.toString()));
   const [segmentiRiempiti, setsegmentiRiempiti] = useState(0);
   const [colore, setColore] = useState("");
-  const [emailInvalida, setEmailInvalida] = useState(false);
   const [passInvalida, setPassInvalida] = useState(false);
   const [errore, setErrore] = useState(false);
   const [login, setLogin] = useState(false);
-
+  const locale = useTranslations('loginPage');
   const router = useRouter();
 
   const config_zxcvbn = {
@@ -154,7 +154,7 @@ export default function LoginPage() {
     return (
     <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-background/60 px-8 pb-10 pt-6 shadow-small backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50">
       <p className="text-white pb-2 text-xl font-medium">
-        {!login ? "Registrati" : "Login"}
+        {!login ? locale('register') : locale('login')}
       </p>
       <form
         className={!login ? "flex flex-col gap-3" : "hidden"}
@@ -185,8 +185,8 @@ export default function LoginPage() {
             ],
           }}
           isRequired={true}
-          label="Email"
-          placeholder="Scrivi la tua email"
+          label={locale("email.label")}
+          placeholder={locale("email.placeholder")}
           radius="lg"
           startContent={<At />}
           value={email}
@@ -218,10 +218,10 @@ export default function LoginPage() {
             ],
           }}
           isRequired={true}
-          label="Password"
-          placeholder="Scrivi la password"
+          label={locale("password.label")}
+          placeholder={locale("password.placeholder")}
           isInvalid={passInvalida}
-          errorMessage="Password non valida"
+          errorMessage={locale("password.invalid")}
           radius="lg"
           startContent={<Key />}
           type="password"
@@ -268,16 +268,16 @@ export default function LoginPage() {
             ],
           }}
           isRequired={true}
-          label="Conferma password"
-          placeholder="Riscrivi la password"
+          label={locale("password.confirm.label")}
+          placeholder={locale("password.confirm.placeholder")}
           isInvalid={passInvalida}
-          errorMessage="Password non valida"
+          errorMessage={locale("password.confirm.notMatching")}
           radius="lg"
           startContent={<Key />}
           type="password"
           validate={() => {
             if (passwordConferma !== password) {
-              return "Le password non sono uguali";
+              return locale("password.confirm.notMatching");
             }
           }}
           value={passwordConferma}
@@ -308,8 +308,8 @@ export default function LoginPage() {
             ],
           }}
           isRequired={true}
-          label="Nome"
-          placeholder="Scrivi il tuo nome"
+          label={locale("personalInfo.firstName.label")}
+          placeholder={locale("personalInfo.firstName.placeholder")}
           radius="lg"
           startContent={<IdentificationCard />}
           value={nome}
@@ -340,8 +340,8 @@ export default function LoginPage() {
             ],
           }}
           isRequired={true}
-          label="Cognome"
-          placeholder="Scrivi il tuo cognome"
+          label={locale("personalInfo.lastName.label")}
+          placeholder={locale("personalInfo.lastName.placeholder")}
           radius="lg"
           startContent={<IdentificationCard />}
           value={cognome}
@@ -371,7 +371,7 @@ export default function LoginPage() {
             ],
           }}
           isRequired={true}
-          label="Data di nascita"
+          label={locale("personalInfo.birthDate")}
           value={dataNascita}
           //@ts-ignore
           onChange={setDataNascita}
@@ -385,9 +385,9 @@ export default function LoginPage() {
           isRequired={true}
           size="sm"
         >
-          Sono d'accordo con i{" "}
+            {locale("termsAndConditions.agreement") + " "}
           <Link color="foreground" href="#" size="sm">
-            Termini di servizio
+              {locale("termsAndConditions.termsLink")}
           </Link>
         </Checkbox>
         <Button
@@ -396,7 +396,7 @@ export default function LoginPage() {
           startContent={<SignIn />}
           type="submit"
         >
-          Registrati
+            {locale("buttons.register")}
         </Button>
       </form>
       <form
@@ -427,8 +427,8 @@ export default function LoginPage() {
             ],
           }}
           isRequired={true}
-          label="Email"
-          placeholder="Scrivi la tua email"
+          label={locale("email.label")}
+          placeholder={locale("email.placeholder")}
           radius="lg"
           startContent={<At />}
           value={email}
@@ -458,8 +458,8 @@ export default function LoginPage() {
             ],
           }}
           isRequired={true}
-          label="Password"
-          placeholder="Scrivi la password"
+          label={locale("password.label")}
+          placeholder={locale("password.placeholder")}
           radius="lg"
           startContent={<Key />}
           type="password"
@@ -472,12 +472,12 @@ export default function LoginPage() {
           startContent={<SignIn />}
           type="submit"
         >
-          Login
+          {locale("buttons.login")}
         </Button>
       </form>
       <div className="flex items-center gap-4 py-2">
         <Divider className="flex-1" />
-        <p className="shrink-0 text-sm text-default-600">Oppure</p>
+        <p className="shrink-0 text-sm text-default-600">{locale("divider")}</p>
         <Divider className="flex-1" />
       </div>
       <div className="flex flex-col gap-2">
@@ -486,13 +486,13 @@ export default function LoginPage() {
         onError={() => console.log("failed to login")}/>
       </div>
       <p className="text-center text-small text-foreground/50">
-        {!login ? "Hai già un account?" : "Non hai ancora un account?"}{" "}
+        {!login ? locale("accountQuestion.haveAccount") : locale("accountQuestion.noAccount")}{" "}
         <Link color="foreground" size="sm" onPress={() => setLogin(!login)}>
-          {!login ? "Fai il login!" : "Registrati subito!"}
+          {!login ? locale("accountAction.login") : locale("accountAction.register")}
         </Link>
       </p>
       <p className={!errore ? "hidden" : "text-center bg-red-300 text-red-700 rounded-xl p-2"}>
-        Si è verificato un errore.
+        {locale("errors.general")}
       </p>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
+import {useTranslations} from "next-intl";
 import Cookies from "js-cookie";
 import {Divider} from "@heroui/divider";
 import {Button} from "@heroui/button";
@@ -11,15 +12,14 @@ import {Card, CardBody, CardFooter, CardHeader} from "@heroui/card";
 import {Pagination} from "@heroui/pagination";
 import {RadioGroup} from "@heroui/radio";
 import {CustomRadio} from "@/components/CustomRadio";
-import paypal from "../../public/pagamento/PayPal.png";
-import googlePay from "../../public/pagamento/googlePay2.png";
-import TiziaCarrello from "../../public/carrello_vuoto.png";
+import paypal from "../../../public/pagamento/PayPal.png";
+import googlePay from "../../../public/pagamento/googlePay2.png";
+import TiziaCarrello from "../../../public/carrello_vuoto.png";
 import Image from "next/image";
 import {PaymentIcon} from "react-svg-credit-card-payment-icons";
 import luhn from "luhn";
 import {Modal, ModalBody, ModalContent, ModalHeader, useDisclosure} from "@heroui/modal";
 import QRCode from "react-qr-code";
-import {getLocalTimeZone, parseZonedDateTime, today} from "@internationalized/date";
 
 export type trenoJSON = {
     partenza: string;
@@ -31,6 +31,7 @@ export type trenoJSON = {
 }
 
 export default function CarrelloPage() {
+    const t = useTranslations('cartPage');
     const router = useRouter();
     const [datiTreno, setDatiTreno] = useState<trenoJSON>({});
     const [nPersone, setNPersone] = useState(0);
@@ -248,7 +249,7 @@ export default function CarrelloPage() {
 
                         </div>
                         <Image src={TiziaCarrello} alt="carrello vuoto"/>
-                        <p>Il tuo carrello è vuoto, clicca qui per cercare i biglietti per il tuo prossimo viaggio</p>
+                        <p>{t('emptyCart')}</p>
                     </div>
                 ) : (
                     <div className="flex flex-col h-full w-full">
@@ -259,14 +260,14 @@ export default function CarrelloPage() {
                                     <div>
                                         <Card className={confermaVisibile !== nPersone ? "bg-content1" : "hidden"}>
                                             <CardHeader className="text-foreground-800">
-                                                Dati passeggeri
+                                                {t('passengerData')}
                                             </CardHeader>
                                             <CardBody>
                                                 <div className="flex flex-wrap items-center gap-4 sm:flex-nowrap">
                                                     <Input
-                                                        label={"Nome"}
+                                                        label={t('firstName')}
                                                         labelPlacement="outside"
-                                                        placeholder="Inserisci il nome"
+                                                        placeholder={t('firstName')}
                                                         variant="bordered"
                                                         type="text"
                                                         className="bg-content1"
@@ -275,9 +276,9 @@ export default function CarrelloPage() {
                                                         isRequired={true}
                                                     />
                                                     <Input
-                                                        label={"Cognome"}
+                                                        label={t('lastName')}
                                                         labelPlacement="outside"
-                                                        placeholder="Inserisci il cognome"
+                                                        placeholder={t('lastName')}
                                                         variant="bordered"
                                                         type="text"
                                                         className="bg-content1"
@@ -296,23 +297,23 @@ export default function CarrelloPage() {
                                                         color="success"
                                                         onPress={() => ControlloAnagrafico()}
                                                     >
-                                                        {nPersone === 1 ? "Conferma" : "Avanti"}
+                                                        {nPersone === 1 ? t('confirm') : t('next')}
                                                     </Button>
                                                     <Button
                                                         className={confermaVisibile === nPersone && nPersone !== 1  ? "text-default-800 text-md" : "hidden"}
                                                         variant={"solid"}
                                                         color="danger"
                                                     >
-                                                        Conferma
+                                                        {t('confirm')}
                                                     </Button>
                                                 </div>
                                             </CardFooter>
                                         </Card>
                                         <div className={confermaVisibile === nPersone ? "flex flex-col gap-4" : "hidden"}>
-                                            <span className="relative text-foreground-800">Informazioni per la fatturazione</span>
+                                            <span className="relative text-foreground-800">{t('billingInformation')}</span>
                                             <div className="flex flex-wrap items-center gap-4 sm:flex-nowrap">
                                                 <Input
-                                                    label="Nome"
+                                                    label={t('firstName')}
                                                     labelPlacement="outside"
                                                     placeholder="  "
                                                     variant="bordered"
@@ -323,7 +324,7 @@ export default function CarrelloPage() {
                                                     isRequired={true}
                                                 />
                                                 <Input
-                                                    label="Cognome"
+                                                    label={t('lastName')}
                                                     labelPlacement="outside"
                                                     placeholder="   "
                                                     variant="bordered"
@@ -336,7 +337,7 @@ export default function CarrelloPage() {
                                             </div>
                                             <div className="flex flex-wrap items-center gap-4 sm:flex-nowrap">
                                                 <Input
-                                                    label="Indirizzo di domicilio"
+                                                    label={t('address')}
                                                     labelPlacement="outside"
                                                     placeholder="  "
                                                     variant="bordered"
@@ -349,7 +350,7 @@ export default function CarrelloPage() {
                                             </div>
                                             <div className="flex flex-wrap items-center gap-4 sm:flex-nowrap">
                                                 <Input
-                                                    label="Città"
+                                                    label={t('city')}
                                                     labelPlacement="outside"
                                                     placeholder="  "
                                                     variant="bordered"
@@ -360,7 +361,7 @@ export default function CarrelloPage() {
                                                     isRequired={true}
                                                 />
                                                 <Input
-                                                    label="CAP"
+                                                    label={t('zipCode')}
                                                     labelPlacement="outside"
                                                     placeholder="   "
                                                     variant="bordered"
@@ -373,7 +374,7 @@ export default function CarrelloPage() {
                                             </div>
                                             <div className="flex flex-wrap items-center gap-4 sm:flex-nowrap">
                                                 <Input
-                                                    label="Paese"
+                                                    label={t('country')}
                                                     labelPlacement="outside"
                                                     placeholder="  "
                                                     variant="bordered"
@@ -384,7 +385,7 @@ export default function CarrelloPage() {
                                                     isRequired={true}
                                                 />
                                                 <Input
-                                                    label="Numero di telefono"
+                                                    label={t('phoneNumber')}
                                                     labelPlacement="outside"
                                                     placeholder="   "
                                                     variant="bordered"
@@ -397,31 +398,31 @@ export default function CarrelloPage() {
                                                     isRequired={true}
                                                 />
                                             </div>
-                                            <span className="text-foreground-800 mt-4">Metodo di pagamento</span>
+                                            <span className="text-foreground-800 mt-4">{t('paymentMethod')}</span>
                                             <div className="flex flex-col flex-wrap gap-4">
                                                 <RadioGroup value={metodo} onValueChange={setMetodo}>
                                                     <CustomRadio description="" value="carta">
                                                         <div className="flex flex-row gap-2 mx-2.5">
                                                             <CreditCard size={25} className="self-center"/>
-                                                            <span>Carta di credito</span>
+                                                            <span>{t('creditCard')}</span>
                                                         </div>
                                                     </CustomRadio>
                                                     <CustomRadio description="" value="paypal">
                                                         <div className="flex flex-row gap-2 mx-2.5">
                                                             <Image src={paypal} className="self-center" style={{width: "1.4rem", height: "auto"}} alt="paypal"/>
-                                                            <span>Paypal</span>
+                                                            <span>{t('paypal')}</span>
                                                         </div>
                                                     </CustomRadio>
                                                     <CustomRadio description="" value="gpay">
                                                         <div className="flex flex-row gap-2">
                                                             <Image src={googlePay} className="self-center" style={{width: "3rem", height: "auto"}} alt="googlePay"/>
-                                                            <span>Google Pay</span>
+                                                            <span>{t('googlePay')}</span>
                                                         </div>
                                                     </CustomRadio>
                                                 </RadioGroup>
                                                 <div className={metodo === "carta" ? "gap-4 flex flex-col flex-wrap" : "hidden"}>
                                                     <Input
-                                                        label="Numero di carta"
+                                                        label={t('cardNumber')}
                                                         labelPlacement="outside"
                                                         placeholder="  "
                                                         type="number"
@@ -448,10 +449,10 @@ export default function CarrelloPage() {
                                                         onKeyDown={handleKeyDown}
                                                         onPaste={handlePaste}
                                                         onValueChange={setCarta}
-
+                                            
                                                     />
                                                     <Input
-                                                        label="Titolare della carta"
+                                                        label={t('cardholderName')}
                                                         labelPlacement="outside"
                                                         placeholder="  "
                                                         variant="bordered"
@@ -480,7 +481,7 @@ export default function CarrelloPage() {
                                 className="light w-full rounded-medium bg-content2 px-2 py-4 md:px-6 md:py-8 lg:w-[340px] lg:flex-none">
                                 <div>
                                     <h2 className="font-medium text-default-800 mb-1">
-                                        I tuoi biglietti
+                                        {t('title')}
                                     </h2>
                                     <Divider/>
                                     <ul>
@@ -521,7 +522,7 @@ export default function CarrelloPage() {
                                     <div>
                                         <div className="mb-4 mt-6 flex items-end gap-2">
                                             <Input
-                                                label={"Codice sconto"}
+                                                label={t('discountCode')}
                                                 labelPlacement="outside"
                                                 placeholder="  "
                                                 variant="bordered"
@@ -533,41 +534,41 @@ export default function CarrelloPage() {
                                             </Input>
                                             <Button
                                                 onPress={() => CercoSconto()}>
-                                                Applica
+                                                {t('apply')}
                                             </Button>
                                         </div>
                                         <p className={!errore ? "hidden" : "text-center bg-red-300 text-red-700 rounded-xl p-2"}>
-                                            Il codice non è valido.
+                                            {t('invalidCode')}
                                         </p>
                                         <div className="flex flex-col gap-4 py-4">
                                             <div className="flex justify-between">
-                                                <span className="text-small text-default-500">Biglietti</span>
+                                                <span className="text-small text-default-500">{t('tickets')}</span>
                                                 <span className="text-small font-semibold text-default-700">{datiTreno["costo"] + "€"}</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-small text-default-500">Iva</span>
+                                                <span className="text-small text-default-500">{t('vat')}</span>
                                                 <span className="text-small font-semibold text-default-700">{(datiTreno["costo"] * 0.1).toFixed(2) + "€"}</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-small text-default-500">Sconto</span>
+                                                <span className="text-small text-default-500">{t('discount')}</span>
                                                 <span className={sconto > 0 ? "text-small font-semibold text-success" : "text-small text-default-700 font-semibold"}>{sconto > 0 ? `-${sconto}€` : "0€"}</span>
                                             </div>
                                             <Divider/>
                                             <div className="flex justify-between">
-                                                <span className="text-small text-default-500">Totale</span>
+                                                <span className="text-small text-default-500">{t('total')}</span>
                                                 <span className="text-small font-semibold text-default-700">{`${datiTreno["costo"] - sconto}€`}</span>
                                             </div>
-
+                                        
                                         </div>
-                                    </div>
-                                </div>
-                                <div className="mt-4">
-                                    <Button
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="mt-4">
+                                                                            <Button
                                         size="lg"
                                         color="primary"
                                         className="w-full"
                                         onPress={() => Compra()}>
-                                        Compra
+                                        {t('buy')}
                                     </Button>
                                 </div>
                             </div>
@@ -576,12 +577,12 @@ export default function CarrelloPage() {
                             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                                 <ModalContent>
                                     <>
-                                        <ModalHeader className="flex flex-col gap-2">Il pagamento è avvenuto con successo</ModalHeader>
+                                        <ModalHeader className="flex flex-col gap-2">{t('paymentSuccess')}</ModalHeader>
                                         <ModalBody>
                                             {
                                                 nPersone === 1 ? (
                                                     <div className="grid justify-center justify-items-center">
-                                                        <p className="mb-2">{"Ecco il tuo biglietto per " + datiTreno["partenza"] + " - " + datiTreno["arrivo"]}</p>
+                                                        <p className="mb-2">{t('yourTicket')} {datiTreno["partenza"]} - {datiTreno["arrivo"]}</p>
                                                         <QRCode
                                                             size={200}
                                                             value={valoreQRCode}
@@ -589,7 +590,7 @@ export default function CarrelloPage() {
                                                     </div>
                                                 ) : (
                                                     <div className="flex items-center justify-center">
-                                                        Puoi trovare i tuoi biglietti nell'area dedicata a te.
+                                                        {t('findTickets')}
                                                     </div>
                                                 )
                                             }

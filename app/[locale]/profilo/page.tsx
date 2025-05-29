@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { Card, CardBody, CardHeader, CardFooter } from "@heroui/card";
@@ -8,6 +8,7 @@ import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Divider } from "@heroui/divider";
 import { Tabs, Tab } from "@heroui/tabs";
+import { useTranslations } from "next-intl";
 import { User, Ticket, PencilSimple, Check, X, Key, Warning } from "@phosphor-icons/react";
 import QRCode from "react-qr-code";
 import { Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, useDisclosure } from "@heroui/modal";
@@ -18,7 +19,6 @@ import {
     parseDate,
     parseZonedDateTime,
     today,
-    ZonedDateTime
 } from "@internationalized/date";
 import {useDateFormatter} from "@react-aria/i18n";
 import {zxcvbn} from "@zxcvbn-ts/core";
@@ -46,6 +46,7 @@ type TicketData = {
 };
 
 export default function ProfiloPage() {
+    const t = useTranslations('profilePage');
     const router = useRouter();
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [tickets, setTickets] = useState<TicketData[]>([]);
@@ -206,23 +207,23 @@ export default function ProfiloPage() {
         setPasswordSuccess(false);
 
         if (passwordData.newPassword.length < 8) {
-            setPasswordError("La nuova password deve essere di almeno 8 caratteri");
+            setPasswordError(t('passwordModal.errors.tooShort'));
             return;
         }
-
+    
         if (passwordData.newPassword !== passwordData.confirmPassword) {
-            setPasswordError("Le password non coincidono");
+            setPasswordError(t('passwordModal.errors.notMatching'));
             return;
         }
-
+    
         if (zxcvbn(passwordData.newPassword as string).score < 3) {
-            setPasswordError("La password non è abbastanza sicura");
+            setPasswordError(t('passwordModal.errors.notSecure'));
             return;
         }
-
+    
         const token = Cookies.get("token");
         if (!token) return;
-
+    
         fetch("http://localhost:8080/info", {
             method: "PUT",
             headers: {
@@ -241,11 +242,11 @@ export default function ProfiloPage() {
                     confirmPassword: ""
                 });
             } else {
-                setPasswordError("La password attuale non è corretta")
+                setPasswordError(t('passwordModal.errors.wrongCurrent'));
             }
         })
             .catch(() => {
-                setPasswordError("Si è verificato un errore")
+                setPasswordError(t('passwordModal.errors.general'));
             })
     }
     const handleDeleteAccount = () => {
@@ -292,8 +293,8 @@ export default function ProfiloPage() {
                             selectedKey={activeTab}
                             onSelectionChange={handleTabChange}
                         >
-                            <Tab key="profile" title="Profilo" />
-                            <Tab key="tickets" title={`Biglietti (${tickets.length})`} />
+                            <Tab key="profile" title={t('navigation.profile')} />
+                            <Tab key="tickets" title={`${t('navigation.tickets')} (${tickets.length})`} />
                         </Tabs>
                     </CardBody>
                 </Card>
@@ -306,7 +307,7 @@ export default function ProfiloPage() {
                         {/* Profile card */}
                         <Card className="mb-4">
                             <CardHeader className="flex justify-between items-center">
-                                <h2 className="text-xl font-semibold">Informazioni Personali</h2>
+                                <h2 className="text-xl font-semibold">{t('personalInfo.title')}</h2>
                                 {!editMode ? (
                                     <Button 
                                         isIconOnly 
@@ -340,7 +341,7 @@ export default function ProfiloPage() {
                             <CardBody>
                                 <div className="space-y-4">
                                     <div className="flex flex-col">
-                                        <p className="text-small text-default-500">Nome</p>
+                                        <p className="text-small text-default-500">{t('personalInfo.fields.firstName')}</p>
                                         {editMode ? (
                                             <Input 
                                                 value={tempProfile?.nome}
@@ -352,7 +353,7 @@ export default function ProfiloPage() {
                                         )}
                                     </div>
                                     <div className="flex flex-col">
-                                        <p className="text-small text-default-500">Cognome</p>
+                                        <p className="text-small text-default-500">{t('personalInfo.fields.lastName')}</p>
                                         {editMode ? (
                                             <Input 
                                                 value={tempProfile?.cognome}
@@ -364,7 +365,7 @@ export default function ProfiloPage() {
                                         )}
                                     </div>
                                     <div className="flex flex-col">
-                                        <p className="text-small text-default-500">Email</p>
+                                        <p className="text-small text-default-500">{t('personalInfo.fields.email')}</p>
                                         {editMode ? (
                                             <Input 
                                                 value={tempProfile?.email}
@@ -377,7 +378,7 @@ export default function ProfiloPage() {
                                         )}
                                     </div>
                                     <div className="flex flex-col">
-                                        <p className="text-small text-default-500">Data di nascita</p>
+                                        <p className="text-small text-default-500">{t('personalInfo.fields.birthDate')}</p>
                                         {editMode ? (
                                                 <DateInput
                                                     granularity="day"
@@ -387,7 +388,7 @@ export default function ProfiloPage() {
                                                     className="max-w-md"
                                                 />
                                         ) : (
-                                            <p>{tempProfile?.data_nascita !== null ? formatter.format(tempProfile?.data_nascita.toDate(getLocalTimeZone()) as Date) : 'Non impostato'}</p>
+                                            <p>{tempProfile?.data_nascita !== null ? formatter.format(tempProfile?.data_nascita.toDate(getLocalTimeZone()) as Date) : t('personalInfo.fields.notSet')}</p>
                                         )}
                                     </div>
                                 </div>
@@ -397,16 +398,16 @@ export default function ProfiloPage() {
                                     <div className="flex flex-col gap-2">
                                         <div className="flex items-center gap-2">
                                             <Key size={20} />
-                                            <span>Password</span>
+                                            <span>{t('securitySection.title')}</span>
                                         </div>
-                                        <p className="text-small text-default-500">Modifica la tua password per mantenere il tuo account sicuro</p>
+                                        <p className="text-small text-default-500">{t('securitySection.description')}</p>
                                         <Button 
                                             color="warning" 
                                             variant="flat" 
                                             className="mt-2 max-w-xs"
-                                            onPress={() => onPasswordModalOpen}
+                                            onPress={onPasswordModalOpen}
                                         >
-                                            Modifica Password
+                                            {t('securitySection.changePassword')}
                                         </Button>
                                     </div>
                                     
@@ -414,16 +415,16 @@ export default function ProfiloPage() {
                                     <div className="flex flex-col gap-2 mt-4 pt-4 border-t">
                                         <div className="flex items-center gap-2">
                                             <Warning size={20} className="text-danger" />
-                                            <span className="text-danger">Zona pericolosa</span>
+                                            <span className="text-danger">{t('dangerZone.title')}</span>
                                         </div>
-                                        <p className="text-small text-default-500">L'eliminazione dell'account è permanente e non può essere annullata.</p>
+                                        <p className="text-small text-default-500">{t('dangerZone.description')}</p>
                                         <Button 
                                             color="danger" 
                                             variant="flat" 
                                             className="mt-2 max-w-xs"
                                             onPress={onDeleteModalOpen}
                                         >
-                                            Elimina Account
+                                            {t('dangerZone.deleteAccount')}
                                         </Button>
                                     </div>
                                 </div>
@@ -435,20 +436,20 @@ export default function ProfiloPage() {
                 {activeTab === "tickets" && (
                     <Card>
                     <CardHeader>
-                        <h2 className="text-xl font-semibold">I miei Biglietti</h2>
+                        <h2 className="text-xl font-semibold">{t('ticketsSection.title')}</h2>
                     </CardHeader>
                     <CardBody>
                         {tickets.length === 0 ? (
                             <div className="text-center p-8">
                                 <Ticket size={48} className="mx-auto mb-2 text-gray-400" />
-                                <p className="text-gray-500">Non hai ancora acquistato nessun biglietto</p>
+                                <p className="text-gray-500">{t('ticketsSection.noTickets')}</p>
                                 <Button 
                                     color="warning" 
                                     className="mt-4"
                                     as={Link}
                                     href="/"
                                 >
-                                    Cerca un Biglietto
+                                    {t('ticketsSection.searchTicket')}
                                 </Button>
                             </div>
                         ) : (
@@ -465,11 +466,11 @@ export default function ProfiloPage() {
                                                 <div className="flex items-center gap-2">
                                                     <h3 className="font-medium">{ticket.partenza} → {ticket.arrivo}</h3>
                                                     <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
-                                                        {parseZonedDateTime(ticket.dataPartenza).day === 0 ? 'Attivo' : 'Scaduto'}
+                                                        {(new Date(ticket.dataPartenza)).getDay() === 0 ? t('ticketsSection.ticketStatus.active') : t('ticketsSection.ticketStatus.expired')}
                                                     </span>
                                                 </div>
                                                 <p className="text-sm text-gray-600">
-                                                    {formatter.format(parseZonedDateTime(ticket.dataPartenza).toDate())}
+                                                    {formatter.format(new Date(ticket.dataPartenza))}
                                                 </p>
                                             </div>
                                         </div>
@@ -488,7 +489,7 @@ export default function ProfiloPage() {
                     {(onClose: () => void) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1">
-                                Dettagli Biglietto
+                                {t('modalTitles.ticketDetails')}
                             </ModalHeader>
                             <ModalBody className="pb-6">
                                 {selectedTicket && (
@@ -501,13 +502,13 @@ export default function ProfiloPage() {
                                                 {selectedTicket.partenza} → {selectedTicket.arrivo}
                                             </h3>
                                             <p className="text-center text-gray-600">
-                                                {formatter.format(parseZonedDateTime(selectedTicket.dataPartenza).toDate())}
+                                                {formatter.format(new Date(selectedTicket.dataPartenza))}
                                             </p>
                                         </div>
                                         <Divider />
                                         <div className="space-y-2">
                                             <div className="flex justify-between">
-                                                <span className="text-gray-500">Passeggero</span>
+                                                <span className="text-gray-500">{t('ticketsSection.passenger')}</span>
                                                 <span>{selectedTicket.nominativo}</span>
                                             </div>
                                         </div>
@@ -516,7 +517,7 @@ export default function ProfiloPage() {
                                             className="w-full mt-2"
                                             onPress={onClose}
                                         >
-                                            Chiudi
+                                            {t('buttons.close')}
                                         </Button>
                                     </div>
                                 )}
@@ -532,7 +533,7 @@ export default function ProfiloPage() {
                     {(onClose: () => void) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1">
-                                Modifica Password
+                                {t('modalTitles.changePassword')}
                             </ModalHeader>
                             <ModalBody>
                                 <div className="space-y-4">
@@ -543,27 +544,27 @@ export default function ProfiloPage() {
                                     )}
                                     {passwordSuccess && (
                                         <div className="p-2 bg-success-50 text-success border border-success-200 rounded-md">
-                                            Password aggiornata con successo!
+                                            {t('passwordModal.success')}
                                         </div>
                                     )}
                                     <Input
                                         type="password"
-                                        label="Password attuale"
-                                        placeholder="Inserisci la tua password attuale"
+                                        label={t('passwordModal.currentPassword.label')}
+                                        placeholder={t('passwordModal.currentPassword.placeholder')}
                                         value={passwordData.currentPassword}
                                         onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
                                     />
                                     <Input
                                         type="password"
-                                        label="Nuova password"
-                                        placeholder="Inserisci la nuova password"
+                                        label={t('passwordModal.newPassword.label')}
+                                        placeholder={t('passwordModal.newPassword.placeholder')}
                                         value={passwordData.newPassword}
                                         onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
                                     />
                                     <Input
                                         type="password"
-                                        label="Conferma password"
-                                        placeholder="Conferma la nuova password"
+                                        label={t('passwordModal.confirmPassword.label')}
+                                        placeholder={t('passwordModal.confirmPassword.placeholder')}
                                         value={passwordData.confirmPassword}
                                         onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
                                     />
@@ -571,10 +572,10 @@ export default function ProfiloPage() {
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="default" variant="light" onPress={() => onClose}>
-                                    Annulla
+                                    {t('buttons.cancel')}
                                 </Button>
                                 <Button color="warning" onPress={() => cambioPassword}>
-                                    Aggiorna Password
+                                    {t('buttons.update')}
                                 </Button>
                             </ModalFooter>
                         </>
@@ -588,26 +589,26 @@ export default function ProfiloPage() {
                     {(onClose: () => void) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1 text-danger">
-                                Conferma eliminazione account
+                                {t('modalTitles.confirmDelete')}
                             </ModalHeader>
                             <ModalBody>
                                 <div className="space-y-4">
                                     <div className="p-3 bg-danger-50 text-danger border border-danger-200 rounded-md flex items-start gap-2">
                                         <Warning size={24} />
                                         <div>
-                                            <p className="font-medium">Questa azione è irreversibile</p>
-                                            <p className="text-sm">Tutti i tuoi dati personali e i tuoi biglietti verranno eliminati permanentemente.</p>
+                                            <p className="font-medium">{t('deleteModal.warning')}</p>
+                                            <p className="text-sm">{t('deleteModal.description')}</p>
                                         </div>
                                     </div>
-                                    <p>Sei sicuro di voler eliminare il tuo account?</p>
+                                    <p>{t('deleteModal.confirmation')}</p>
                                 </div>
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="default" variant="light" onPress={onClose}>
-                                    Annulla
+                                    {t('buttons.cancel')}
                                 </Button>
                                 <Button color="danger" onPress={handleDeleteAccount}>
-                                    Elimina Account
+                                    {t('buttons.delete')}
                                 </Button>
                             </ModalFooter>
                         </>

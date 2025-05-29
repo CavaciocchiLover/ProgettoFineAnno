@@ -11,7 +11,7 @@ import React from "react";
 export interface ProvidersProps {
     children: React.ReactNode,
     themeProps?: ThemeProviderProps,
-    locale?: "it" | "en"
+    locale?: "it" | "en" | "es"
 }
 
 declare module "@react-types/shared" {
