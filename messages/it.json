@@ -1,0 +1,64 @@
+{
+  "navbar": {
+    "home": "Cerca biglietto",
+    "faq": "FAQ",
+    "account": "Account",
+    "profile": "Profilo",
+    "Cart": "Carrello",
+    "login": "Accedi",
+    "logout": "Esci"
+  },
+  "footer": {
+    "home": "Cerca biglietto",
+    "profile": "Area riservata",
+    "privacyPolicy": "Privacy Policy",
+    "allRightsReserved": "© 2025 Trainsoup. Tutti i diritti riservati."
+  },
+  "homePage": {
+    "departureStation": "Da dove vuoi partire?",
+    "arrivalStation": "Dove vuoi arrivare?",
+    "departureDate": "Quando vuoi partire?",
+    "passengers": "Numero di persone",
+    "searchButton": "Cerca",
+    "services": {
+      "title": "I nostri servizi",
+      "ecoFriendly": {
+        "title": "Viaggi ecosostenibili",
+        "description": "Viaggiare con noi significa scegliere un trasporto sostenibile che riduce le emissioni di CO2 rispetto ad altri mezzi, contribuendo alla tutela dell'ambiente."
+      },
+      "loyaltyProgram": {
+        "title": "Programma ad alta fedeltà",
+        "description": "Ogni volta che compri un biglietto, hai l'opportunità di accumulare punti per riscattare offerte vantaggiose e numerosi premi in futuro."
+      },
+      "customerSupport": {
+        "title": "Assistenza immediata",
+        "description": "Per qualsiasi problema, il nostro team dedicato al supporto clienti è disponibile per risolverlo sia tramite chat e che per telefono."
+      }
+    }
+  },
+  "searchPage": {
+    "loading": "Caricando risultati...",
+    "noResults": "Nessun risultato trovato",
+    "filter": "Filtra risultati",
+    "sort": "Ordina per",
+    "price": "Prezzo",
+    "duration": "Durata",
+    "departureTime": "Orario di partenza",
+    "arrivalTime": "Orario di arrivo"
+  },
+  "trainDetails": {
+    "train": "Treno",
+    "departure": "Partenza",
+    "arrival": "Arrivo",
+    "duration": "Durata",
+    "price": "Prezzo",
+    "availableSeats": "Posti disponibili",
+    "bookNow": "Prenota ora"
+  },
+  "errors": {
+    "requiredField": "Campo obbligatorio",
+    "stationNotFound": "Stazione non trovata",
+    "connectionError": "Errore di connessione",
+    "tryAgain": "Riprova più tardi"
+  }
+}

@@ -24,7 +24,6 @@ import {useDateFormatter} from "@react-aria/i18n";
 import {zxcvbn} from "@zxcvbn-ts/core";
 import {Link} from "@heroui/link";
 
-// Types
 type UserProfile = {
     nome: string;
     cognome: string;
@@ -50,7 +49,6 @@ export default function ProfiloPage() {
     const router = useRouter();
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [tickets, setTickets] = useState<TicketData[]>([]);
-    const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);
     const [tempProfile, setTempProfile] = useState<UserProfile | null>(null);
     const [selectedTicket, setSelectedTicket] = useState<TicketData | null>(null);
@@ -99,7 +97,6 @@ export default function ProfiloPage() {
                             };
                             setProfile(profilo);
                             setTempProfile(profilo);
-                            setLoading(false);
                         })
                         .catch((e) => {
                             console.error(e);

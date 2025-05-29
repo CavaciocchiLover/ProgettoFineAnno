@@ -17,6 +17,9 @@ import {Link} from "@heroui/link";
 import Cookies from "js-cookie";
 import {Badge} from "@heroui/badge";
 import {ShoppingCart, User, SignOut, CaretDown} from "@phosphor-icons/react";
+import {Divider} from "@heroui/divider";
+import {useTranslations} from "next-intl";
+import {usePathname} from "next/navigation";
 
 const plex = IBM_Plex_Sans({
     weight: '400',
@@ -25,32 +28,25 @@ const plex = IBM_Plex_Sans({
 
 let items = [
     {
-        key: "UK",
+        key: "en",
         label: "English",
-        startContent: <GB/>,
+        endContent: <GB/>,
     },
     {
-        key: "ES",
+        key: "es",
         label: "Español",
-        startContent: <ES/>,
+        endContent: <ES/>,
     },
 ]
 
 let selectedItem = {
-    key: "IT",
+    key: "it",
     label: "Italiano",
     endContent: <IT/>,
 }
 
-const changeItem = (key: any) => {
-    const oldItem = selectedItem;
-    const index = items.findIndex(item => item.key === key);
-    selectedItem.key = key;
-    selectedItem.endContent = items[index].startContent;
-    selectedItem.label = items[index].label;
-    items[index].key = oldItem.key;
-    items[index].startContent = oldItem.endContent;
-    items[index].label = oldItem.label;
+const changeItem = (key: string, path: string) => {
+    window.location.href = `/${key}/${path}`;
 }
 
 interface NavbarProps {
@@ -59,15 +55,34 @@ interface NavbarProps {
 
 export const Navbar = ({path}: NavbarProps) => {
     const [token, setToken] = useState<string | undefined>("");
-    const [carrello, setCarrello] = useState<string | undefined>("");
     const [pagina, setPagina] = useState("");
+    const locale = useTranslations('navbar');
+    const localeCookie = Cookies.get("NEXT_LOCALE");
 
     useEffect(() => {
         setToken(Cookies.get("token"));
-        setCarrello(Cookies.get("carrello"));
 
         if (path !== undefined) {
           setPagina(path);
+        }
+
+        if(localeCookie !== undefined || localeCookie !== "it") {
+            let trovato = false;
+            let i = 0;
+            while (!trovato && i < items.length) {
+                if (items[i]["key"] === localeCookie) {
+                    selectedItem = items[i];
+                    items = items.filter((item) => item.key !== localeCookie);
+                    items.push({
+                        key: "it",
+                        label: "Italiano",
+                        endContent: <IT/>,
+                    })
+                    trovato = true;
+                } else {
+                    i++;
+                }
+            }
         }
     }, []);
 
@@ -88,10 +103,10 @@ export const Navbar = ({path}: NavbarProps) => {
             </NavbarContent>
             <NavbarContent className="sm:flex gap-4" justify="center">
                 <NavbarItem>
-                    <Link href="/" color="foreground">Cerca biglietto</Link>
+                    <Link href="/" color="foreground">{locale("home")}</Link>
                 </NavbarItem>
                 <NavbarItem>
-                    <Link href="/faq" color="foreground">FAQ</Link>
+                    <Link href="/faq" color="foreground">{locale("faq")}</Link>
                 </NavbarItem>
             </NavbarContent>
             <NavbarContent
@@ -109,25 +124,23 @@ export const Navbar = ({path}: NavbarProps) => {
                                         className={pagina === "login" ? "hidden" : ""}
                                         endContent={<CaretDown size={18} />}
                                     >
-                                        Account
+                                        {locale("account")}
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu aria-label="Account Actions">
                                     <DropdownItem key="profilo" startContent={<User size={18} />}>
                                         <Link color="foreground" href="/profilo">
-                                            Profilo
+                                            {locale("profile")}
                                         </Link>
                                     </DropdownItem>
-                                    <DropdownItem key="carrello" startContent={<ShoppingCart size={18} />}>
-                                        <Badge color="danger" content="1" isInvisible={carrello === undefined || pagina === "carrello" || pagina === "login"}>
-                                            <Link href="/carrello" color="foreground" className={pagina === "carrello" ? "hidden" : ""}>
-                                                Carello
-                                            </Link>
-                                        </Badge>
+                                    <DropdownItem showDivider key="carrello" startContent={<ShoppingCart size={18} />}>
+                                        <Link href="/carrello" color="foreground">
+                                            {locale("Cart")}
+                                        </Link>
                                     </DropdownItem>
                                     <DropdownItem key="logout" startContent={<SignOut size={18} />} className="text-danger" color="danger">
                                         <Link color="foreground" href="/login">
-                                            Logout
+                                            {locale("logout")}
                                         </Link>
                                     </DropdownItem>
                                 </DropdownMenu>
@@ -140,7 +153,7 @@ export const Navbar = ({path}: NavbarProps) => {
                                 className={pagina === "login" ? "hidden" : ""}
                                 variant="shadow"
                             >
-                                Login
+                                {locale("login")}
                             </Button>
                         )}
                     </div>
@@ -160,13 +173,15 @@ export const Navbar = ({path}: NavbarProps) => {
                             </Button>
                         </DropdownTrigger>
                     </NavbarItem>
-                    <DropdownMenu items={items} onAction={changeItem}>
+                    <DropdownMenu items={items} onAction={(key) => {
+                        changeItem(key.toString(), pagina)
+                    }}>
                         {(item) => (
                             <DropdownItem
                                 key={item.key}
                                 startContent={item.label}
                             >
-                                {cloneElement(item.startContent, {style: {width: "2.2rem"}})}
+                                {cloneElement(item.endContent, {style: {width: "2.2rem"}})}
                             </DropdownItem>
 
                         )}

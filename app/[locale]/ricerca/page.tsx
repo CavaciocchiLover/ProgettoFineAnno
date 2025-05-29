@@ -270,7 +270,21 @@ export default function RicercaPage() {
         setFermateDaMostrare(fermateFiltrate);
     }
 
-    function acquista(treno: {}) {
+    function acquista(treno: {
+        arrivo: string,
+        costo: number,
+        durata: string,
+        idTreni: [],
+        oraArrivo: Date,
+        oraPartenza: Date,
+        partenza: string,
+        scalo: {
+            numero: number,
+            tempo: string,
+            stazioneCambio: [],
+        },
+        sigla: []
+    }) {
         const cookie = Cookies.get("token");
         if (cookie === undefined) {
             setModalTipo(1);
@@ -287,7 +301,7 @@ export default function RicercaPage() {
                 costo: treno.costo * nPersone,
                 nPersone: nPersone,
                 idTreni: idCompleto,
-                data_partenza: giorno.toString()
+                data_partenza: treno.oraPartenza.toString()
 
             };
             Cookies.set("carrello", JSON.stringify(json));

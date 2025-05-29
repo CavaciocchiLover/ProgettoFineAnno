@@ -1,0 +1,115 @@
+{
+  "navbar": {
+    "home": "Find ticket",
+    "faq": "FAQ",
+    "account": "Account",
+    "profile": "Profile",
+    "Cart": "Cart",
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "footer": {
+    "home": "Find ticket",
+    "profile": "Reserved area",
+    "privacyPolicy": "Privacy Policy",
+    "allRightsReserved": "© 2025 Trainsoup. All rights reserved."
+  },
+  "homePage": {
+    "departureStation": "From",
+    "arrivalStation": "To",
+    "departureDate": "When do you want to depart?",
+    "passengers": "People taking the train",
+    "searchButton": "Search",
+    "services": {
+      "title": "Our services",
+      "ecoFriendly": {
+        "title": "Eco-friendly travel",
+        "description": "Traveling with us means choosing sustainable transport that reduces CO2 emissions compared to other means, contributing to environmental protection."
+      },
+      "loyaltyProgram": {
+        "title": "High-fidelity program",
+        "description": "Every time you buy a ticket, you have the opportunity to accumulate points to redeem advantageous offers and numerous prizes in the future."
+      },
+      "customerSupport": {
+        "title": "Immediate assistance",
+        "description": "For any problem, our dedicated customer support team is available to solve it both via chat and by phone."
+      }
+    }
+  },
+  "searchPage": {
+    "loading": "Loading results...",
+    "noResults": "No results found",
+    "filter": "Filter results",
+    "sort": "Sort by",
+    "price": "Price",
+    "duration": "Duration",
+    "departureTime": "Departure time",
+    "arrivalTime": "Arrival time"
+  },
+  "trainDetails": {
+    "train": "Train",
+    "departure": "Departure",
+    "arrival": "Arrival",
+    "duration": "Duration",
+    "price": "Price",
+    "availableSeats": "Available seats",
+    "bookNow": "Book now"
+  },
+  "profilePage": {
+    "personalInfo": "Personal Information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "birthDate": "Date of Birth",
+    "notSet": "Not set",
+    "password": "Password",
+    "passwordDescription": "Change your password to keep your account secure",
+    "changePassword": "Change Password",
+    "dangerZone": "Danger Zone",
+    "deleteAccountWarning": "Account deletion is permanent and cannot be undone.",
+    "deleteAccount": "Delete Account",
+    "myTickets": "My Tickets",
+    "noTickets": "You haven't purchased any tickets yet",
+    "findTicket": "Find a Ticket",
+    "ticketStatus": {
+      "active": "Active",
+      "expired": "Expired"
+    },
+    "ticketDetails": "Ticket Details",
+    "passenger": "Passenger",
+    "close": "Close"
+  },
+  "passwordChange": {
+    "title": "Change Password",
+    "currentPassword": "Current password",
+    "currentPasswordPlaceholder": "Enter your current password",
+    "newPassword": "New password",
+    "newPasswordPlaceholder": "Enter new password",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Confirm new password",
+    "success": "Password successfully updated!",
+    "cancel": "Cancel",
+    "update": "Update Password",
+    "errors": {
+      "tooShort": "The new password must be at least 8 characters",
+      "notMatching": "Passwords do not match",
+      "notSecure": "The password is not secure enough",
+      "wrongCurrent": "The current password is incorrect",
+      "generic": "An error occurred"
+    }
+  },
+  "deleteAccountModal": {
+    "title": "Confirm account deletion",
+    "irreversible": "This action is irreversible",
+    "warning": "All your personal data and tickets will be permanently deleted.",
+    "confirmation": "Are you sure you want to delete your account?",
+    "cancel": "Cancel",
+    "delete": "Delete Account"
+  },
+  "errors": {
+    "requiredField": "Required field",
+    "stationNotFound": "Station not found",
+    "connectionError": "Connection error",
+    "tryAgain": "Try again later"
+  }
+}

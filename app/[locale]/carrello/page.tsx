@@ -68,9 +68,9 @@ export default function CarrelloPage() {
             router.push("/");
         } else {
             const json = JSON.parse(carrelloCookie);
-            const data = parseZonedDateTime(json["data_partenza"]);
+            const data = new Date(json["data_partenza"]);
 
-            if (data.compare(today(getLocalTimeZone())) > 0) {
+            if (data < new Date()) {
                 Cookies.remove("carrello");
                 router.push("/");
             }

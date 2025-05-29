@@ -6,6 +6,9 @@ import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
+import {hasLocale, NextIntlClientProvider} from "next-intl";
+import {notFound} from "next/navigation";
+import {routing} from "@/i18n/routing";
 
 export const metadata: Metadata = {
   title: {
@@ -25,13 +28,19 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function LocaleLayout({
   children,
+  params
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode,
+  params: Promise<{ locale: string }>
 }) {
+    const {locale} = await params;
+    if (!hasLocale(routing.locales, locale)) {
+        notFound();
+    }
   return (
-    <html suppressHydrationWarning lang="en">
+    <html suppressHydrationWarning lang={locale}>
       <head />
       <body
           className={clsx(
@@ -39,8 +48,10 @@ export default function RootLayout({
               fontSans.className,
           )}
       >
-      <Providers themeProps={{attribute: "class", defaultTheme: "light"}}>
-        {children}
+      <Providers themeProps={{attribute: "class", defaultTheme: "light"}} locale={locale}>
+          <NextIntlClientProvider>
+              {children}
+          </NextIntlClientProvider>
       </Providers>
       </body>
 

@@ -14,6 +14,7 @@ import {useRouter} from "next/navigation";
 import {Autocomplete, AutocompleteItem} from "@heroui/autocomplete";
 import {FormEvent, useState} from "react";
 import Cookies from "js-cookie";
+import {useTranslations} from "next-intl";
 
 export type Stazione = {
     nome: string;
@@ -21,6 +22,7 @@ export type Stazione = {
 }
 
 export default function Home() {
+    const locale = useTranslations('homePage');
     const [partenza, setPartenza] = useState("");
     const [arrivo, setArrivo] = useState("");
     const [data, setData] = useState<ZonedDateTime | null>(now(getLocalTimeZone()));
@@ -28,7 +30,6 @@ export default function Home() {
     const [caricando, setCaricando] = useState(false);
     const [stazioni, setStazioni] = useState<Stazione[]>([]);
     const [stazioniArrivo, setStazioniArrivo] = useState<Stazione[]>([]);
-
     const router = useRouter();
 
     async function CercoStazione(stazione: string) {
@@ -83,6 +84,8 @@ export default function Home() {
         }
     }
 
+
+
     return (
         <div suppressHydrationWarning className="bg-gradient-to-tr from-blue-100 to-indigo-100">
             <div className="relative">
@@ -95,14 +98,14 @@ export default function Home() {
                         priority
                         quality={100}/>
                 </div>
-                <Navbar/>
+                <Navbar path="/"/>
                 <div
                     className="relative z-10 flex h-full w-full items-start overflow-x-auto overflow-y-auto transition-colors duration-200 justify-center dark text-foreground">
                     <div
                         className="flex min-h-[48rem] w-full items-center justify-end overflow-hidden rounded-small p-2 sm:p-4 lg:p-8"
                     >
                         <div
-                            className="flex w-full max-w-lg flex-col gap-4 rounded-large px-8 pb-10 pt-6 shadow-small"
+                            className="flex w-full max-w-3xl flex-col gap-4 rounded-large px-8 pb-10 pt-6 shadow-small"
                             style={{
                                 background: "rgba(222,201,201,0.25)",
                                 borderRadius: "16px",
@@ -120,7 +123,7 @@ export default function Home() {
                                             inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-0 border-t-0 border-l-0 border-r-0 focus-within:rounded-lg"],
                                         }
                                     }}
-                                    placeholder="Da dove vuoi partire?"
+                                    placeholder={locale("departureStation")}
                                     type="search"
                                     variant="bordered"
                                     items={stazioni}
@@ -146,7 +149,7 @@ export default function Home() {
                                             inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-0 border-t-0 border-l-0 border-r-0 focus-within:rounded-lg"],
                                         }
                                     }}
-                                    placeholder="Dove vuoi arrivare?"
+                                    placeholder={locale("arrivalStation")}
                                     type="search"
                                     variant="bordered"
                                     items={stazioniArrivo}
@@ -182,7 +185,7 @@ export default function Home() {
                                         }
                                     }}
                                     value={data}
-                                    label="Quando vuoi partire?"
+                                    label={locale("departureDate")}
                                     minValue={today(getLocalTimeZone())}
                                     firstDayOfWeek="mon"/>
                                 <NumberInput
@@ -191,7 +194,7 @@ export default function Home() {
                                         input: ["placeholder:text-white placeholder:text-base", "text-black/90 dark:text-white/90", "text-base",],
                                         inputWrapper: ["shadow-xl bg-zinc-950/30", "group-data-[focus=true]:bg-default-200/50", "dark:group-data-[focus=true]:bg-zinc-900/60", "!cursor-text", "border-b-0 border-t-0 border-l-0 border-r-0 focus-within:rounded-lg",],
                                     }}
-                                    placeholder="Numero di persone"
+                                    label={locale("passengers")}
                                     variant="bordered"
                                     hideStepper
                                     minValue={1}
@@ -204,7 +207,7 @@ export default function Home() {
                                     startContent={<MagnifyingGlass/>}
                                     type="submit"
                                 >
-                                    Cerca
+                                    {locale("searchButton")}
                                 </Button>
                             </form>
                         </div>
@@ -215,7 +218,7 @@ export default function Home() {
                 <div className="max-w-7xl mx-auto">
                     <h2 className="text-3xl font-bold text-center mb-10 relative">
                     <span className="relative inline-block">
-                        I nostri servizi
+                        {locale("services.title")}
                         <span
                             className="absolute bottom-0 left-0 w-full h-1 rounded-full transform -translate-y-2"></span>
                     </span>
@@ -224,7 +227,7 @@ export default function Home() {
                         <Card
                             className="max-w-[340px] border border-[#57E389] shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                             <CardHeader className="pb-0 pt-4 px-6 border-b border-amber-100">
-                                <p className="font-bold text-xl text-amber-900">Viaggi ecosostenibili</p>
+                                <p className="font-bold text-xl text-amber-900">{locale("services.ecoFriendly.title")}</p>
                             </CardHeader>
                             <CardBody className="px-6 pt-6">
                                 <div className="flex justify-center items-center mb-4">
@@ -241,21 +244,18 @@ export default function Home() {
                                         <g id="SVGRepo_iconCarrier">
                                             <path
                                                 d="M3 13.6493C3 16.6044 5.41766 19 8.4 19L16.5 19C18.9853 19 21 16.9839 21 14.4969C21 12.6503 19.8893 10.9449 18.3 10.25C18.1317 7.32251 15.684 5 12.6893 5C10.3514 5 8.34694 6.48637 7.5 8.5C4.8 8.9375 3 11.2001 3 13.6493Z"
-                                                stroke="#000000" stroke-width="2" stroke-linecap="round"
-                                                stroke-linejoin="round"></path>
+                                                stroke="#000000" strokeWidth="2" strokeLinecap="round"
+                                                strokeLinejoin="round"></path>
                                         </g>
                                     </svg>
                                 </div>
-                                <p className="mt-2 font-medium text-gray-700 leading-relaxed">Viaggiare con noi
-                                    significa scegliere un trasporto sostenibile
-                                    che riduce le emissioni di CO2 rispetto ad altri mezzi, contribuendo alla tutela
-                                    dell'ambiente.</p>
+                                <p className="mt-2 font-medium text-gray-700 leading-relaxed">{locale("services.ecoFriendly.description")}</p>
                             </CardBody>
                         </Card>
                         <Card
                             className="max-w-[340px] border border-[#FF6060] shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                             <CardHeader className="pb-0 pt-4 px-6 border-b border-amber-100">
-                                <p className="font-bold text-xl text-amber-900">Programma ad alta fedeltà</p>
+                                <p className="font-bold text-xl text-amber-900">{locale("services.loyaltyProgram.title")}</p>
                             </CardHeader>
                             <CardBody className="px-6 pt-6">
                                 <div className="flex justify-center items-center mb-4">
@@ -281,15 +281,13 @@ export default function Home() {
                                         </g>
                                     </svg>
                                 </div>
-                                <p className="mt-2 font-medium text-gray-700 leading-relaxed">Ogni volta che compri un
-                                    biglietto, hai l'opportunità di
-                                    accumulare punti per riscattare offerte vantaggiose e numerosi premi in futuro.</p>
+                                <p className="mt-2 font-medium text-gray-700 leading-relaxed">{locale("services.loyaltyProgram.description")}</p>
                             </CardBody>
                         </Card>
                         <Card
                             className="max-w-[340px] border border-[#FFA348] shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                             <CardHeader className="pb-0 pt-4 px-6 border-b border-amber-100">
-                                <p className="font-bold text-xl text-amber-900">Assistenza immediata</p>
+                                <p className="font-bold text-xl text-amber-900">{locale("services.customerSupport.title")}</p>
                             </CardHeader>
                             <CardBody className="px-6 pt-6">
                                 <div className="flex justify-center items-center mb-4">
@@ -314,9 +312,7 @@ export default function Home() {
                                         </g>
                                     </svg>
                                 </div>
-                                <p className="mt-2 font-medium text-gray-700 leading-relaxed">Per qualsiasi problema, il
-                                    nostro team dedicato al supporto
-                                    clienti è disponibile per risolverlo sia tramite chat e che per telefono.</p>
+                                <p className="mt-2 font-medium text-gray-700 leading-relaxed">{locale("services.loyaltyProgram.description")}</p>
                             </CardBody>
                         </Card>
                     </div>

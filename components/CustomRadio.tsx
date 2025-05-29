@@ -2,6 +2,7 @@ import React from "react";
 import {Radio} from "@heroui/radio";
 import {cn} from "@heroui/theme";
 
+//@ts-ignore
 export const CustomRadio = (props) => {
     const {children, ...otherProps} = props;
 
