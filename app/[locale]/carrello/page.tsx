@@ -67,6 +67,9 @@ export default function CarrelloPage() {
     const [errore, setErrore] = useState(false);
     const [carrelloVuoto, setCarrelloVuoto] = useState(false);
     const [valoreQRCode, setValoreQRCode] = useState("");
+    const [punti, setPunti] = useState(0);
+    const [puntiUsati, setPuntiUsati] = useState(0);
+
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
     useEffect(() => {
@@ -85,6 +88,22 @@ export default function CarrelloPage() {
 
             setDatiTreno(json);
             setNPersone(json.nPersone);
+
+            fetch("http://localhost:8080/punti", {
+                method: "GET",
+                headers: {"Authorization": tokenCookie}
+            })
+                .then((res) => {
+                    if (res.ok) {
+                        res.text()
+                            .then(text => console.log(text))
+                    } else {
+                        console.log(res.status);
+                    }
+                })
+                .catch((e) => {
+                    console.log(e);
+                })
         }
     }, [router]);
 
@@ -572,12 +591,11 @@ export default function CarrelloPage() {
                                                 <span className="text-small text-default-500">{t('discount')}</span>
                                                 <span className={sconto > 0 ? "text-small font-semibold text-success" : "text-small text-default-700 font-semibold"}>{sconto > 0 ? `-${sconto}€` : "0€"}</span>
                                             </div>
-                                            <Divider/>
                                             <div className="flex justify-between">
-                                                <span className="text-small text-default-500">{t('total')}</span>
-                                                <span className="text-small font-semibold text-default-700">{`${datiTreno["costo"] - sconto}€`}</span>
+                                                <span className="text-small text-default-500">{t('discount')}</span>
+                                                <span className={sconto > 0 ? "text-small font-semibold text-success" : "text-small text-default-700 font-semibold"}>{sconto > 0 ? `-${sconto}€` : "0€"}</span>
                                             </div>
-                                        
+                                            <Divider/>
                                         </div>
                                                                             </div>
                                                                         </div>

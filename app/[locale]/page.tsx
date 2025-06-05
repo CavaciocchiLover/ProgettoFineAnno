@@ -12,7 +12,7 @@ import {Footer} from "@/components/footer";
 import {useRouter} from "next/navigation";
 
 import {Autocomplete, AutocompleteItem} from "@heroui/autocomplete";
-import {FormEvent, useEffect, useState} from "react";
+import {FormEvent, useState} from "react";
 import Cookies from "js-cookie";
 import {useTranslations} from "next-intl";
 
@@ -20,6 +20,7 @@ export type Stazione = {
     nome: string;
     codice: string;
 }
+
 
 export default function Home() {
     const locale = useTranslations('homePage');
@@ -32,27 +33,9 @@ export default function Home() {
     const [stazioniArrivo, setStazioniArrivo] = useState<Stazione[]>([]);
     const router = useRouter();
 
-    useEffect(() => {
-        fetch("http://localhost:8080/stazioni")
-            .then((response) => {
-                if (response.ok) {
-                    response.json()
-                        .then((json) => {
-                            console.log(json);
-                        })
-                } else {
-                    console.error(response.status);
-                }
-            })
-            .catch((e) => {
-                console.error(e);
-            })
-    }, []);
-
     async function CercoStazione(stazione: string) {
         setCaricando(true);
-
-        const response = await fetch(`https://corsproxy.io/?url=https://www.lefrecce.it/Channels.Website.BFF.WEB/website/locations/search?name=${stazione}&limit=5`);
+        const response = await fetch(`http://localhost:8080/stazioni?nome=${stazione}`);
 
         if (response.ok) {
             const stazioni = await response.json();

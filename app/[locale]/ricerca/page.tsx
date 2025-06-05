@@ -169,7 +169,7 @@ export default function RicercaPage() {
         
         for (const i in cambi) {
             try {
-                const prima_richiesta = await fetch("https://corsproxy.io/?url=https://www.viaggiatreno.it/infomobilitamobile/resteasy/viaggiatreno/cercaNumeroTrenoTrenoAutocomplete/" + cambi[i])
+                const prima_richiesta = await fetch("https://cors-anywhere.herokuapp.com/https://www.viaggiatreno.it/infomobilitamobile/resteasy/viaggiatreno/cercaNumeroTrenoTrenoAutocomplete/" + cambi[i])
                 
                 if (prima_richiesta.status === 200) {
                     const testo = await prima_richiesta.text();
@@ -178,11 +178,11 @@ export default function RicercaPage() {
                     console.log(vec);
                     if (vec.length === 2) {
                         dati = vec[0].split("|")[1].split("-");
-                    } else {
+                    } else if (vec[0] !== "") {
                         dati = testo.split("|")[1].split("-");
                     }
                     
-                    const seconda_richiesta = await fetch(`https://corsproxy.io/?url=https://www.viaggiatreno.it/infomobilitamobile/resteasy/viaggiatreno/andamentoTreno/${dati[1]}/${cambi[i]}/${dati[2]}`)
+                    const seconda_richiesta = await fetch(`https://cors-anywhere.herokuapp.com/https://www.viaggiatreno.it/infomobilitamobile/resteasy/viaggiatreno/andamentoTreno/${dati[1]}/${cambi[i]}/${dati[2]}`)
 
                     if (seconda_richiesta.status === 200) {
                         const json = await seconda_richiesta.json();
@@ -240,35 +240,6 @@ export default function RicercaPage() {
     function mostroFermate(index_fermata: number, fine: boolean) {
         let fermateFiltrate: string[] = [];
         setFermateDaMostrare([]);
-
-        let startIndex = 0;
-        let endIndex = fermate.length - 1;
-        let currentSegmentStart = 0;
-        
-        // @ts-ignore
-        const connectionPoints = trenoSelezionato["scalo"]["stazioneCambio"];
-
-        for (let i = 0; i < connectionPoints.length; i++) {
-            const pointIndex = fermate.findIndex(station => station === connectionPoints[i]);
-            
-            if (pointIndex !== -1) {
-                if (i === index_fermata) {
-                    startIndex = pointIndex;
-                    currentSegmentStart = i;
-                }
-                
-                if (i === index_fermata + 1) {
-                    endIndex = pointIndex;
-                }
-            }
-        }
-
-        if (index_fermata === connectionPoints.length - 1) {
-            endIndex = fermate.length - 1;
-        }
-        
-        // Extract the stations for this segment
-        fermateFiltrate = fermate.slice(startIndex, endIndex + 1);
         
         // Set the modal to show these stations
         setModalTipo(2);
@@ -382,31 +353,35 @@ export default function RicercaPage() {
                                         <span className="light text-default-800 font-bold text-lg  bg-[#ffffef] border-8 border-[#ffffef] rounded-xl">I viaggi successivi sono previsti per il giorno dopo</span>
                                     </div>
                                     <Card>
-                                        <CardBody className="flex-col gap-1 bg-[#ffffef]">
-                                            <div>
-                                                {treno.idTreni.map((id, index) => (
-                                                    <div key={index} className="bg-gray-200 rounded-md px-2 py-1 text-xs font-medium">
-                                                        {treno.sigla[index]} {id}
+                                        <CardBody className="flex flex-row gap-1 bg-[#ffffef]">
+                                            <div className="flex flex-col gap-2">
+                                                <div>
+                                                    {treno.idTreni.map((id, index) => (
+                                                        <div key={index} className="flex flex-row gap-1 light mx-5 rounded-md text-sm text-default-800 font-medium">
+                                                            <p className="font-medium">
+                                                                {treno.sigla[index] === "UB" ? "Trasporto urbano" : treno.sigla[index] + " " + id}
+                                                            </p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                <div className="flex flex-row gap-5">
+                                                    <div className="flex flex-col gap-2 mx-5 flex-shrink-0">
+                                                        <p className="light font-bold text-default-800 text-lg">{treno['partenza']}</p>
+                                                        <p className="text-red-500 font-bold text-xl">{formattoTempo(treno["oraPartenza"].getHours()) + ":" + formattoTempo(treno["oraPartenza"].getMinutes())}</p>
                                                     </div>
-                                                ))}
+                                                    <div className="flex flex-col gap-2 mx-[8%] flex-shrink-0">
+                                                        <p className="light font-bold text-default-800 text-lg">{treno['arrivo']}</p>
+                                                        <p className="text-red-500 text-xl font-bold">{formattoTempo(treno["oraArrivo"].getHours()) + ":" + formattoTempo(treno["oraArrivo"].getMinutes())}</p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="flex-row gap-5">
-                                                <div className="flex flex-col gap-2 mx-5 flex-shrink-0">
-                                                    <p className="light font-bold text-default-800 text-lg">{treno['partenza']}</p>
-                                                    <p className="text-red-500 font-bold text-xl">{formattoTempo(treno["oraPartenza"].getHours()) + ":" + formattoTempo(treno["oraPartenza"].getMinutes())}</p>
-                                                </div>
-                                                <div className="flex flex-col gap-2 mx-[8%] flex-shrink-0">
-                                                    <p className="light font-bold text-default-800 text-lg">{treno['arrivo']}</p>
-                                                    <p className="text-red-500 text-xl font-bold">{formattoTempo(treno["oraArrivo"].getHours()) + ":" + formattoTempo(treno["oraArrivo"].getMinutes())}</p>
-                                                </div>
-                                                <div className="grid gap-2 w-screen justify-items-end mr-5">
-                                                    <p className="light text-default-800 text-lg">{"Durata viaggio: " + treno["durata"]}</p>
-                                                    <p className="light text-default-800 text-lg">{treno['costo'] === 0 ? "Non prenotabile" : "Costo: " + (treno['costo'] * nPersone) + "€"}</p>
-                                                </div>
+                                            <div className="grid w-screen justify-items-end items-center mr-5">
+                                                <p className="light text-default-800 text-lg">{"Durata viaggio: " + treno["durata"]}</p>
+                                                <p className="light text-default-800 text-lg">{treno['costo'] === 0 ? "Non prenotabile" : "Costo: " + (treno['costo'] * nPersone) + "€"}</p>
                                             </div>
                                         </CardBody>
                                         <Divider/>
-                                        <CardFooter className={treno['costo'] === 0 ? "hidden" : "bg-[#ffffef] flex justify-end bottom-0 border-t-1 p-2 gap-2"}>
+                                        <CardFooter className={"bg-[#ffffef] flex justify-end bottom-0 border-t-1 p-2 gap-2"}>
                                             <Button
                                                 className={treno["scalo"]["numero"] === 0 ? "hidden" : "light text-default-800 text-md"}
                                                 variant={"light"}
@@ -416,10 +391,10 @@ export default function RicercaPage() {
                                                 {treno["scalo"]["numero"] + " cambi/o, " + treno["scalo"]["tempo"]}
                                             </Button>
                                             <Button
-                                                className={"text-default-800 text-md"}
+                                                className={treno['costo'] === 0 ? "hidden" : "text-default-800 text-md"}
                                                 variant={"solid"}
                                                 color="danger"
-                                                onPress={() => acquista(treni[i])}
+                                                onPress={() => acquista(treno)}
                                             >
                                                 Acquista
                                             </Button>
@@ -436,10 +411,9 @@ export default function RicercaPage() {
                                                 <div>
                                                     {treno.idTreni.map((id, index) => (
                                                         <div key={index} className="flex flex-row gap-1 light mx-5 rounded-md text-sm text-default-800 font-medium">
-                                                            <p className="font-bold">
-                                                                {treno.sigla[index]}
+                                                            <p className="font-medium">
+                                                                {treno.sigla[index] === "UB" ? "Trasporto urbano" : treno.sigla[index] + " " + id}
                                                             </p>
-                                                            {id}
                                                         </div>
                                                     ))}
                                                 </div>
@@ -507,15 +481,8 @@ export default function RicercaPage() {
                                                  } else if (i != trenoSelezionato["scalo"]["stazioneCambio"].length - 1) {
                                                      return (
                                                          <div className="flex flex-col justify-center items-center" key={stazione + "_" + i}>
-                                                             <div className="flex flex-row gap-1 pl-32">
+                                                             <div className="flex items-center justify-center">
                                                                  <div className="h-10 w-0.5 bg-black"/>
-                                                                 <Button
-                                                                     className={"light text-default-800 text-md"}
-                                                                     variant={"light"}
-                                                                     onPress={() => mostroFermate(i, false)}
-                                                                 >
-                                                                     Vedi fermate
-                                                                 </Button>
                                                              </div>
 
                                                              <div className="text-lg font-medium py-2">{stazione}</div>
@@ -527,15 +494,8 @@ export default function RicercaPage() {
                                                  } else {
                                                      return (
                                                          <div className="flex flex-col justify-center items-center" key={stazione + "_" + i}>
-                                                             <div className="flex flex-row gap-1 pl-32">
+                                                             <div className="flex items-center justify-center">
                                                                  <div className="h-10 w-0.5 bg-black"/>
-                                                                 <Button
-                                                                     className={"light text-default-800 text-md"}
-                                                                     variant={"light"}
-                                                                     onPress={() => mostroFermate(i, true)}
-                                                                 >
-                                                                     Vedi fermate
-                                                                 </Button>
                                                              </div>
                                                              <div className="text-lg font-medium py-2">{stazione}</div>
                                                          </div>
