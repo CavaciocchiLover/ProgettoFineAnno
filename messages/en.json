@@ -224,6 +224,106 @@
       }
     }
   },
+  "privacyPage": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last Updated: June 15, 2023",
+    "sections": {
+      "introduction": {
+        "title": "Introduction",
+        "content": [
+          "Welcome to TrainSoup's Privacy Policy. This policy explains how we collect, use, disclose, and safeguard your information when you use our service.",
+          "We respect your privacy and are committed to protecting personally identifiable information that may be collected through our website or app. We have adopted this privacy policy to explain what information may be collected, how we use this information, and under what circumstances we may disclose the information to third parties."
+        ]
+      },
+      "informationCollection": {
+        "title": "Information We Collect",
+        "subtitle": "Personal Data",
+        "content": [
+          "We may collect personal information that you voluntarily provide when using our service, including:"
+        ],
+        "listItems": [
+          "Name, email address, and contact information",
+          "Account login credentials",
+          "Billing and payment information",
+          "Information shared through customer support channels"
+        ]
+      },
+      "informationUsage": {
+        "title": "How We Use Your Information",
+        "content": [
+          "We use the collected data for various purposes, including:"
+        ],
+        "listItems": [
+          "Providing and maintaining our service",
+          "Processing your bookings and payments",
+          "Managing your account and verifying your identity",
+          "Providing customer support",
+          "Detecting and preventing fraudulent activities"
+        ]
+      },
+      "dataSharing": {
+        "title": "Data Sharing and Disclosure",
+        "content": [
+          "We may share your personal information in the following situations:"
+        ],
+        "listItems": [
+          {
+            "title": "With Service Providers:",
+            "description": "We may share your information with third-party vendors who provide services on our behalf."
+          },
+          {
+            "title": "For Business Transfers:",
+            "description": "We may share information in connection with a merger, sale of company assets, financing, or acquisition."
+          },
+          {
+            "title": "With Your Consent:",
+            "description": "We may disclose your personal information for any other purpose with your consent."
+          },
+          {
+            "title": "Legal Requirements:",
+            "description": "We may disclose your information when required by law or to protect our rights."
+          }
+        ]
+      },
+      "dataSecurity": {
+        "title": "Data Security",
+        "content": [
+          "The security of your data is important to us. We strive to use commercially acceptable means to protect your personal information, but no method of transmission over the Internet or method of electronic storage is 100% secure.",
+          "We implement appropriate technical and organizational measures to maintain the safety of your personal data."
+        ]
+      },
+      "yourRights": {
+        "title": "Your Rights",
+        "content": [
+          "Depending on your location, you may have certain rights regarding your personal information, including:"
+        ],
+        "listItems": [
+          "The right to access information we have about you",
+          "The right to request correction of inaccurate information",
+          "The right to request deletion of your data",
+          "The right to restrict or object to processing",
+          "The right to data portability",
+          "The right to withdraw consent"
+        ],
+        "additional": "To exercise these rights, please contact us using the information provided at the end of this policy."
+      },
+      "cookiesAndTracking": {
+        "title": "Cookies and Tracking",
+        "content": [
+          "We use cookies and similar tracking technologies to track activity on our service and hold certain information.",
+          "Cookies are files with a small amount of data that may include an anonymous unique identifier. They are sent to your browser from a website and stored on your device.",
+          "You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our service."
+        ]
+      },
+      "changes": {
+        "title": "Changes to This Privacy Policy",
+        "content": [
+          "We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the \"Last Updated\" date.",
+          "You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page."
+        ]
+      }
+    }
+  },
   "ricercaPage": {
     "months": [
       "January", 

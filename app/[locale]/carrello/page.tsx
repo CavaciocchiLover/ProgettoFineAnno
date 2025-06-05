@@ -33,7 +33,14 @@ export type trenoJSON = {
 export default function CarrelloPage() {
     const t = useTranslations('cartPage');
     const router = useRouter();
-    const [datiTreno, setDatiTreno] = useState<trenoJSON>({});
+    const [datiTreno, setDatiTreno] = useState<trenoJSON>({
+        arrivo: "",
+        costo: 0,
+        data_partenza: "",
+        idTreni: [],
+        nPersone: 0,
+        partenza: ""
+    });
     const [nPersone, setNPersone] = useState(0);
     const [indexPasseggero, setIndexPasseggero] = useState(0);
     const [nomi, setNomi] = useState<string[]>([]);
@@ -56,7 +63,7 @@ export default function CarrelloPage() {
     const [mese, setMese] = useState("");
     const [anno, setAnno] = useState("");
     const [metodo, setMetodo] = useState("");
-    const [tipo, setTipo] = useState("Visa");
+    const [tipo, setTipo] = useState("");
     const [errore, setErrore] = useState(false);
     const [carrelloVuoto, setCarrelloVuoto] = useState(false);
     const [valoreQRCode, setValoreQRCode] = useState("");
@@ -367,8 +374,11 @@ export default function CarrelloPage() {
                                                     variant="bordered"
                                                     type="text"
                                                     className="bg-content1"
+                                                    maxLength={5}
                                                     value={cap}
                                                     onValueChange={setCap}
+                                                    onKeyDown={handleKeyDown}
+                                                    onPaste={handlePaste}
                                                     isRequired={true}
                                                 />
                                             </div>
@@ -428,6 +438,7 @@ export default function CarrelloPage() {
                                                         type="number"
                                                         variant="bordered"
                                                         startContent={
+                                                            //@ts-ignore
                                                             <PaymentIcon className={tipo === "" ? "hidden" : ""} type={tipo} format="flatRounded" width={25} />
                                                         }
                                                         endContent={
@@ -448,8 +459,16 @@ export default function CarrelloPage() {
                                                         value={carta}
                                                         onKeyDown={handleKeyDown}
                                                         onPaste={handlePaste}
-                                                        onValueChange={setCarta}
-                                            
+                                                        onValueChange={(carta) => {
+                                                            setCarta(carta);
+                                                            if (carta.length >= 2) {
+                                                                if (carta[0] === "4") {
+                                                                    setTipo("Visa");
+                                                                } else if (carta[0] === "5" || carta[0] === "2") {
+                                                                    setTipo("Mastercard");
+                                                                }
+                                                            }
+                                                        }}
                                                     />
                                                     <Input
                                                         label={t('cardholderName')}

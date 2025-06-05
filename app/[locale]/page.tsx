@@ -12,7 +12,7 @@ import {Footer} from "@/components/footer";
 import {useRouter} from "next/navigation";
 
 import {Autocomplete, AutocompleteItem} from "@heroui/autocomplete";
-import {FormEvent, useState} from "react";
+import {FormEvent, useEffect, useState} from "react";
 import Cookies from "js-cookie";
 import {useTranslations} from "next-intl";
 
@@ -31,6 +31,23 @@ export default function Home() {
     const [stazioni, setStazioni] = useState<Stazione[]>([]);
     const [stazioniArrivo, setStazioniArrivo] = useState<Stazione[]>([]);
     const router = useRouter();
+
+    useEffect(() => {
+        fetch("http://localhost:8080/stazioni")
+            .then((response) => {
+                if (response.ok) {
+                    response.json()
+                        .then((json) => {
+                            console.log(json);
+                        })
+                } else {
+                    console.error(response.status);
+                }
+            })
+            .catch((e) => {
+                console.error(e);
+            })
+    }, []);
 
     async function CercoStazione(stazione: string) {
         setCaricando(true);

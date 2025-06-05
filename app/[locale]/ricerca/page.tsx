@@ -2,7 +2,7 @@
 
 import {useRouter} from "next/navigation";
 import {useEffect, useMemo, useState} from "react";
-import {Card, CardBody, CardFooter} from "@heroui/card";
+import {Card, CardBody, CardFooter, CardHeader} from "@heroui/card";
 import {getDayOfWeek, getLocalTimeZone, now, parseZonedDateTime, ZonedDateTime} from "@internationalized/date";
 import Cookies from "js-cookie";
 import {Info, Train, Warning} from "@phosphor-icons/react";
@@ -55,7 +55,7 @@ export default function RicercaPage() {
             setGiorno(parseZonedDateTime(json["data"]));
             setNPersone(json["nPersone"]);
 
-            let tempo = giorno.toString();
+            let tempo = parseZonedDateTime(json["data"]).toString();
             tempo = tempo.substring(0, tempo.indexOf("+"));
 
             const myHeaders = new Headers();
@@ -105,11 +105,14 @@ export default function RicercaPage() {
                             tempo = new Date(viaggio["nodes"][i + 1]["departureTime"]).getTime() - new Date(viaggio["nodes"][i]["arrivalTime"]).getTime();
                             idTreni.push(viaggio["nodes"][i]["train"]["name"])
                             sigla.push(viaggio["nodes"][i]["train"]["acronym"])
+                            //@ts-ignore
                             scalo.stazioneCambio.push(viaggio["nodes"][i]["origin"].toUpperCase())
+                            //@ts-ignore
                             scalo.stazioneCambio.push(viaggio["nodes"][i]["destination"].toUpperCase())
                         }
                         idTreni.push(viaggio["nodes"][scalo.numero]["train"]["name"])
                         sigla.push(viaggio["nodes"][scalo.numero]["train"]["acronym"])
+                        //@ts-ignore
                         scalo.stazioneCambio.push(viaggio["destination"].toUpperCase())
                         //ms -> min
                         tempo = (tempo / 1000) / 60;
@@ -190,12 +193,14 @@ export default function RicercaPage() {
                         
                         while (index < json["fermate"].length) {
                             const currentStation = json["fermate"][index]["stazione"];
-                            
+
+                            //@ts-ignore
                             if (currentStation === json_treno["scalo"]["stazioneCambio"][parseInt(i)]) {
                                 stazione_partenza = index;
                             }
-                            
+                            //@ts-ignore
                             if (parseInt(i) + 1 < json_treno["scalo"]["stazioneCambio"].length &&
+                                //@ts-ignore
                                 currentStation === json_treno["scalo"]["stazioneCambio"][parseInt(i) + 1]) {
                                 fine = true;
                             }
@@ -377,22 +382,31 @@ export default function RicercaPage() {
                                         <span className="light text-default-800 font-bold text-lg  bg-[#ffffef] border-8 border-[#ffffef] rounded-xl">I viaggi successivi sono previsti per il giorno dopo</span>
                                     </div>
                                     <Card>
-                                        <CardBody className="flex-row gap-5 bg-[#ffffef]">
-                                            <div className="flex flex-col gap-2 mx-5 flex-shrink-0">
-                                                <p className="light font-bold text-default-800 text-lg">{treno['partenza']}</p>
-                                                <p className="text-red-500 font-bold text-xl">{formattoTempo(treno["oraPartenza"].getHours()) + ":" + formattoTempo(treno["oraPartenza"].getMinutes())}</p>
+                                        <CardBody className="flex-col gap-1 bg-[#ffffef]">
+                                            <div>
+                                                {treno.idTreni.map((id, index) => (
+                                                    <div key={index} className="bg-gray-200 rounded-md px-2 py-1 text-xs font-medium">
+                                                        {treno.sigla[index]} {id}
+                                                    </div>
+                                                ))}
                                             </div>
-                                            <div className="flex flex-col gap-2 mx-[8%] flex-shrink-0">
-                                                <p className="light font-bold text-default-800 text-lg">{treno['arrivo']}</p>
-                                                <p className="text-red-500 text-xl font-bold">{formattoTempo(treno["oraArrivo"].getHours()) + ":" + formattoTempo(treno["oraArrivo"].getMinutes())}</p>
-                                            </div>
-                                            <div className="grid gap-2 w-screen justify-items-end mr-5">
-                                                <p className="light text-default-800 text-lg">{"Durata viaggio: " + treno["durata"]}</p>
-                                                <p className="light text-default-800 text-lg">{treno['costo'] === 0 ? "Non prenotabile" : "Costo: " + (treno['costo'] * nPersone) + "€"}</p>
+                                            <div className="flex-row gap-5">
+                                                <div className="flex flex-col gap-2 mx-5 flex-shrink-0">
+                                                    <p className="light font-bold text-default-800 text-lg">{treno['partenza']}</p>
+                                                    <p className="text-red-500 font-bold text-xl">{formattoTempo(treno["oraPartenza"].getHours()) + ":" + formattoTempo(treno["oraPartenza"].getMinutes())}</p>
+                                                </div>
+                                                <div className="flex flex-col gap-2 mx-[8%] flex-shrink-0">
+                                                    <p className="light font-bold text-default-800 text-lg">{treno['arrivo']}</p>
+                                                    <p className="text-red-500 text-xl font-bold">{formattoTempo(treno["oraArrivo"].getHours()) + ":" + formattoTempo(treno["oraArrivo"].getMinutes())}</p>
+                                                </div>
+                                                <div className="grid gap-2 w-screen justify-items-end mr-5">
+                                                    <p className="light text-default-800 text-lg">{"Durata viaggio: " + treno["durata"]}</p>
+                                                    <p className="light text-default-800 text-lg">{treno['costo'] === 0 ? "Non prenotabile" : "Costo: " + (treno['costo'] * nPersone) + "€"}</p>
+                                                </div>
                                             </div>
                                         </CardBody>
                                         <Divider/>
-                                        <CardFooter className={"bg-[#ffffef] flex justify-end bottom-0 border-t-1 p-2 gap-2"}>
+                                        <CardFooter className={treno['costo'] === 0 ? "hidden" : "bg-[#ffffef] flex justify-end bottom-0 border-t-1 p-2 gap-2"}>
                                             <Button
                                                 className={treno["scalo"]["numero"] === 0 ? "hidden" : "light text-default-800 text-md"}
                                                 variant={"light"}
@@ -402,7 +416,7 @@ export default function RicercaPage() {
                                                 {treno["scalo"]["numero"] + " cambi/o, " + treno["scalo"]["tempo"]}
                                             </Button>
                                             <Button
-                                                className={treno['costo'] === 0 ? "hidden" : "text-default-800 text-md"}
+                                                className={"text-default-800 text-md"}
                                                 variant={"solid"}
                                                 color="danger"
                                                 onPress={() => acquista(treni[i])}
@@ -417,16 +431,30 @@ export default function RicercaPage() {
                             return (
                                 <div key={i}>
                                     <Card>
-                                        <CardBody className="flex-row gap-5 bg-[#ffffef]">
-                                            <div className="flex flex-col gap-2 mx-5 flex-shrink-0">
-                                                <p className="light font-bold text-default-800 text-lg">{treno['partenza']}</p>
-                                                <p className="text-red-500 font-bold text-xl">{formattoTempo(treno["oraPartenza"].getHours()) + ":" + formattoTempo(treno["oraPartenza"].getMinutes())}</p>
+                                        <CardBody className="flex flex-row gap-1 bg-[#ffffef]">
+                                            <div className="flex flex-col gap-2">
+                                                <div>
+                                                    {treno.idTreni.map((id, index) => (
+                                                        <div key={index} className="flex flex-row gap-1 light mx-5 rounded-md text-sm text-default-800 font-medium">
+                                                            <p className="font-bold">
+                                                                {treno.sigla[index]}
+                                                            </p>
+                                                            {id}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                <div className="flex flex-row gap-5">
+                                                    <div className="flex flex-col gap-2 mx-5 flex-shrink-0">
+                                                        <p className="light font-bold text-default-800 text-lg">{treno['partenza']}</p>
+                                                        <p className="text-red-500 font-bold text-xl">{formattoTempo(treno["oraPartenza"].getHours()) + ":" + formattoTempo(treno["oraPartenza"].getMinutes())}</p>
+                                                    </div>
+                                                    <div className="flex flex-col gap-2 mx-[8%] flex-shrink-0">
+                                                        <p className="light font-bold text-default-800 text-lg">{treno['arrivo']}</p>
+                                                        <p className="text-red-500 text-xl font-bold">{formattoTempo(treno["oraArrivo"].getHours()) + ":" + formattoTempo(treno["oraArrivo"].getMinutes())}</p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="flex flex-col gap-2 mx-[8%] flex-shrink-0">
-                                                <p className="light font-bold text-default-800 text-lg">{treno['arrivo']}</p>
-                                                <p className="text-red-500 text-xl font-bold">{formattoTempo(treno["oraArrivo"].getHours()) + ":" + formattoTempo(treno["oraArrivo"].getMinutes())}</p>
-                                            </div>
-                                            <div className="grid gap-2 w-screen justify-items-end mr-5">
+                                            <div className="grid w-screen justify-items-end items-center mr-5">
                                                 <p className="light text-default-800 text-lg">{"Durata viaggio: " + treno["durata"]}</p>
                                                 <p className="light text-default-800 text-lg">{treno['costo'] === 0 ? "Non prenotabile" : "Costo: " + (treno['costo'] * nPersone) + "€"}</p>
                                             </div>
