@@ -355,6 +355,7 @@
     "changes": "change(s),",
     "seeStops": "See stops",
     "buy": "Buy",
+    "urbanTransport": "Urban transport",
     "modal": {
       "title": "Train stops",
       "loginRequired": "You must be logged in to purchase a ticket"

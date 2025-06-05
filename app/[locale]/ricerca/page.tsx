@@ -9,8 +9,10 @@ import {Info, Train, Warning} from "@phosphor-icons/react";
 import {Button} from "@heroui/button";
 import {Modal, ModalContent, ModalBody, ModalHeader, useDisclosure} from "@heroui/modal";
 import {Divider} from "@heroui/divider";
+import {useTranslations} from 'next-intl';
 
 export default function RicercaPage() {
+    const t = useTranslations('ricercaPage');
     const router = useRouter();
     const [nPersone, setNPersone] = useState(0);
     const [treni, setTreni] = useState([]);
@@ -42,9 +44,8 @@ export default function RicercaPage() {
         return array;
     }, [giorno]);
 
-    const Mesi = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
-
-    const Giorni = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato",]
+    const Mesi = t.raw('months');
+    const Giorni = t.raw('days');
 
     useEffect(() => {
         const cookie = Cookies.get("ricerca");
@@ -350,7 +351,7 @@ export default function RicercaPage() {
                             return (
                                 <div key={i}>
                                     <div className="flex justify-center mb-4 mt-3">
-                                        <span className="light text-default-800 font-bold text-lg  bg-[#ffffef] border-8 border-[#ffffef] rounded-xl">I viaggi successivi sono previsti per il giorno dopo</span>
+                                        <span className="light text-default-800 font-bold text-lg  bg-[#ffffef] border-8 border-[#ffffef] rounded-xl">{t('nextDaySolution')}</span>
                                     </div>
                                     <Card>
                                         <CardBody className="flex flex-row gap-1 bg-[#ffffef]">
@@ -359,7 +360,7 @@ export default function RicercaPage() {
                                                     {treno.idTreni.map((id, index) => (
                                                         <div key={index} className="flex flex-row gap-1 light mx-5 rounded-md text-sm text-default-800 font-medium">
                                                             <p className="font-medium">
-                                                                {treno.sigla[index] === "UB" ? "Trasporto urbano" : treno.sigla[index] + " " + id}
+                                                                {treno.sigla[index] === "UB" ? t('urbanTransport') : treno.sigla[index] + " " + id}
                                                             </p>
                                                         </div>
                                                     ))}
@@ -376,171 +377,138 @@ export default function RicercaPage() {
                                                 </div>
                                             </div>
                                             <div className="grid w-screen justify-items-end items-center mr-5">
-                                                <p className="light text-default-800 text-lg">{"Durata viaggio: " + treno["durata"]}</p>
-                                                <p className="light text-default-800 text-lg">{treno['costo'] === 0 ? "Non prenotabile" : "Costo: " + (treno['costo'] * nPersone) + "€"}</p>
+                                                <p className="light text-default-800 text-lg">{t('journeyDuration') + " " + treno["durata"]}</p>
+                                                {treno["scalo"]["numero"] > 0 && (
+                                                    <p className="light text-default-800 text-lg">
+                                                        {treno["scalo"]["numero"]} {t('changes')} {treno["scalo"]["tempo"]}
+                                                    </p>
+                                                )}
+                                                <p className="light text-default-800 text-lg">
+                                                    {t('cost')} {treno["costo"] === 0 ? t('notBookable') : "€" + treno["costo"] * nPersone}
+                                                </p>
+                                                <div className="flex flex-row gap-2 mt-2">
+                                                    <Button
+                                                        size="sm"
+                                                        variant="ghost"
+                                                        className="light text-default-800"
+                                                        onPress={() => dettagliTreno(treno)}
+                                                    >
+                                                        {t('seeStops')}
+                                                    </Button>
+                                                    {treno["costo"] > 0 && (
+                                                        <Button
+                                                            size="sm"
+                                                            color="primary"
+                                                            onPress={() => acquista(treno)}
+                                                        >
+                                                            {t('buy')}
+                                                        </Button>
+                                                    )}
+                                                </div>
                                             </div>
                                         </CardBody>
-                                        <Divider/>
-                                        <CardFooter className={"bg-[#ffffef] flex justify-end bottom-0 border-t-1 p-2 gap-2"}>
-                                            <Button
-                                                className={treno["scalo"]["numero"] === 0 ? "hidden" : "light text-default-800 text-md"}
-                                                variant={"light"}
-                                                endContent={<Info size={25} color="#000000"/>}
-                                                onPress={() => dettagliTreno(treno)}
-                                            >
-                                                {treno["scalo"]["numero"] + " cambi/o, " + treno["scalo"]["tempo"]}
-                                            </Button>
-                                            <Button
-                                                className={treno['costo'] === 0 ? "hidden" : "text-default-800 text-md"}
-                                                variant={"solid"}
-                                                color="danger"
-                                                onPress={() => acquista(treno)}
-                                            >
-                                                Acquista
-                                            </Button>
-                                        </CardFooter>
                                     </Card>
                                 </div>
-                            )
+                            );
                         } else {
                             return (
-                                <div key={i}>
-                                    <Card>
-                                        <CardBody className="flex flex-row gap-1 bg-[#ffffef]">
-                                            <div className="flex flex-col gap-2">
-                                                <div>
-                                                    {treno.idTreni.map((id, index) => (
-                                                        <div key={index} className="flex flex-row gap-1 light mx-5 rounded-md text-sm text-default-800 font-medium">
-                                                            <p className="font-medium">
-                                                                {treno.sigla[index] === "UB" ? "Trasporto urbano" : treno.sigla[index] + " " + id}
-                                                            </p>
-                                                        </div>
-                                                    ))}
+                                <Card key={i}>
+                                    <CardBody className="flex flex-row gap-1">
+                                        <div className="flex flex-col gap-2">
+                                            <div>
+                                                {treno.idTreni.map((id, index) => (
+                                                    <div key={index} className="flex flex-row gap-1 light mx-5 rounded-md text-sm text-default-800 font-medium">
+                                                        <p className="font-medium">
+                                                            {treno.sigla[index] === "UB" ? t('urbanTransport') : treno.sigla[index] + " " + id}
+                                                        </p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <div className="flex flex-row gap-5">
+                                                <div className="flex flex-col gap-2 mx-5 flex-shrink-0">
+                                                    <p className="light font-bold text-default-800 text-lg">{treno['partenza']}</p>
+                                                    <p className="text-red-500 font-bold text-xl">{formattoTempo(treno["oraPartenza"].getHours()) + ":" + formattoTempo(treno["oraPartenza"].getMinutes())}</p>
                                                 </div>
-                                                <div className="flex flex-row gap-5">
-                                                    <div className="flex flex-col gap-2 mx-5 flex-shrink-0">
-                                                        <p className="light font-bold text-default-800 text-lg">{treno['partenza']}</p>
-                                                        <p className="text-red-500 font-bold text-xl">{formattoTempo(treno["oraPartenza"].getHours()) + ":" + formattoTempo(treno["oraPartenza"].getMinutes())}</p>
-                                                    </div>
-                                                    <div className="flex flex-col gap-2 mx-[8%] flex-shrink-0">
-                                                        <p className="light font-bold text-default-800 text-lg">{treno['arrivo']}</p>
-                                                        <p className="text-red-500 text-xl font-bold">{formattoTempo(treno["oraArrivo"].getHours()) + ":" + formattoTempo(treno["oraArrivo"].getMinutes())}</p>
-                                                    </div>
+                                                <div className="flex flex-col gap-2 mx-[8%] flex-shrink-0">
+                                                    <p className="light font-bold text-default-800 text-lg">{treno['arrivo']}</p>
+                                                    <p className="text-red-500 text-xl font-bold">{formattoTempo(treno["oraArrivo"].getHours()) + ":" + formattoTempo(treno["oraArrivo"].getMinutes())}</p>
                                                 </div>
                                             </div>
-                                            <div className="grid w-screen justify-items-end items-center mr-5">
-                                                <p className="light text-default-800 text-lg">{"Durata viaggio: " + treno["durata"]}</p>
-                                                <p className="light text-default-800 text-lg">{treno['costo'] === 0 ? "Non prenotabile" : "Costo: " + (treno['costo'] * nPersone) + "€"}</p>
+                                        </div>
+                                        <div className="grid w-screen justify-items-end items-center mr-5">
+                                            <p className="light text-default-800 text-lg">{t('journeyDuration') + " " + treno["durata"]}</p>
+                                            {treno["scalo"]["numero"] > 0 && (
+                                                <p className="light text-default-800 text-lg">
+                                                    {treno["scalo"]["numero"]} {t('changes')} {treno["scalo"]["tempo"]}
+                                                </p>
+                                            )}
+                                            <p className="light text-default-800 text-lg">
+                                                {t('cost')} {treno["costo"] === 0 ? t('notBookable') : "€" + treno["costo"] * nPersone}
+                                            </p>
+                                            <div className="flex flex-row gap-2 mt-2">
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    className="light text-default-800"
+                                                    onPress={() => dettagliTreno(treno)}
+                                                >
+                                                    {t('seeStops')}
+                                                </Button>
+                                                {treno["costo"] > 0 && (
+                                                    <Button
+                                                        size="sm"
+                                                        color="primary"
+                                                        onPress={() => acquista(treno)}
+                                                    >
+                                                        {t('buy')}
+                                                    </Button>
+                                                )}
                                             </div>
-                                        </CardBody>
-                                        <Divider/>
-                                        <CardFooter className={"bg-[#ffffef] flex justify-end bottom-0 border-t-1 p-2 gap-2"}>
-                                            <Button
-                                                className={treno["scalo"]["numero"] === 0 ? "hidden" : "light text-default-800 text-md"}
-                                                variant={"light"}
-                                                endContent={<Info size={25} color="#000000"/>}
-                                                onPress={() => dettagliTreno(treno)}
-                                            >
-                                                {treno["scalo"]["numero"] + " cambi/o, " + treno["scalo"]["tempo"]}
-                                            </Button>
-                                            <Button
-                                                className={treno['costo'] === 0 ? "hidden" : "text-default-800 text-md"}
-                                                variant={"solid"}
-                                                color="danger"
-                                                onPress={() => acquista(treno)}
-                                            >
-                                                Acquista
-                                            </Button>
-                                        </CardFooter>
-                                    </Card>
-                                </div>
-                            )
+                                        </div>
+                                    </CardBody>
+                                </Card>
+                            );
                         }
-
-                    }
-                )}
+                    })}
             </div>
-            <Modal backdrop="opaque" isDismissable  isOpen={isOpen} onClose={onOpenChange}>
+
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
-                    {() => (
+                    {(onClose) => (
                         <>
-                            <ModalHeader className="flex flex-col gap-1">Fermate del treno</ModalHeader>
+                            <ModalHeader className="flex flex-col gap-1">
+                                {modalTipo === 0 && t('modal.title')}
+                                {modalTipo === 1 && t('modal.loginRequired')}
+                            </ModalHeader>
                             <ModalBody>
-                                {
-                                 modalTipo === 0 ? (
-                                     <div className="flex flex-col justify-center items-center p-6  rounded-lg max-w-xs mx-auto">
-                                         {
-                                             //@ts-ignore
-                                             trenoSelezionato["scalo"]["stazioneCambio"].map((stazione, i) => {
-                                                 if (i == 0) {
-                                                     return (<div className="flex flex-row gap-1" key={stazione + "_" + i}>
-                                                         <Train size={25} color="#000000" className="self-center"/>
-                                                         <div className="text-lg font-medium py-2">{stazione}</div>
-                                                     </div>)
-                                                     //@ts-ignore
-                                                 } else if (i != trenoSelezionato["scalo"]["stazioneCambio"].length - 1) {
-                                                     return (
-                                                         <div className="flex flex-col justify-center items-center" key={stazione + "_" + i}>
-                                                             <div className="flex items-center justify-center">
-                                                                 <div className="h-10 w-0.5 bg-black"/>
-                                                             </div>
-
-                                                             <div className="text-lg font-medium py-2">{stazione}</div>
-                                                             <div className="flex flex-row gap-1">
-                                                                 <div className="text-lg font-medium py-2">{stazione}</div>
-                                                             </div>
-                                                         </div>
-                                                     )
-                                                 } else {
-                                                     return (
-                                                         <div className="flex flex-col justify-center items-center" key={stazione + "_" + i}>
-                                                             <div className="flex items-center justify-center">
-                                                                 <div className="h-10 w-0.5 bg-black"/>
-                                                             </div>
-                                                             <div className="text-lg font-medium py-2">{stazione}</div>
-                                                         </div>
-                                                     )
-                                                 }
-                                             })
-                                         }
-                                     </div>
-                                 ) : (
-                                     modalTipo === 1 ? (
-                                         <div className="flex flex-col justify-center items-center p-3 text-center rounded-lg max-w-xs mx-auto">
-                                             <Warning size={50} color="#f9a804"/>
-                                             <p>Devi essere loggatə per poter acquistare un biglietto</p>
-                                         </div>
-                                     ) : (
-                                         <div className="flex flex-col justify-center items-center p-6  rounded-lg max-w-xs mx-auto">
-                                             {
-                                                 fermateDaMostrare.map((stazione, i) => {
-                                                     if (i === 0) {
-                                                         return (
-                                                             <div className="flex flex-row gap-1" key={stazione + "_" + i}>
-                                                                <Train size={25} color="#000000" className="self-center"/>
-                                                                <div className="text-lg font-medium py-2">{stazione}</div>
-                                                             </div>
-                                                         )
-                                                     } else {
-                                                         return (
-                                                             <div className="flex flex-col justify-center items-center" key={stazione + "_" + i}>
-                                                                 <div className="h-10 w-0.5 bg-black"/>
-                                                                 <div className="text-lg font-medium py-2">{stazione}</div>
-                                                             </div>
-                                                         )
-                                                     }
-
-                                                 })
-                                             }
-                                         </div>
-                                     )
-                                 )
-                                }
-
+                                {modalTipo === 0 && (
+                                    <div className="flex flex-col gap-2">
+                                        {fermate.map((fermata, index) => (
+                                            <div key={index} className="p-2 border-b border-default-200">
+                                                <p className="text-sm">{fermata}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                {modalTipo === 1 && (
+                                    <div className="flex flex-col gap-4">
+                                        <p>{t('modal.loginRequired')}</p>
+                                        <Button 
+                                            color="primary" 
+                                            onPress={() => {
+                                                onClose();
+                                                router.push('/login');
+                                            }}
+                                        >
+                                            Login
+                                        </Button>
+                                    </div>
+                                )}
                             </ModalBody>
                         </>
                     )}
                 </ModalContent>
             </Modal>
-        </div>)
+        </div>
+    );
 }

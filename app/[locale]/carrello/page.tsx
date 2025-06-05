@@ -595,6 +595,10 @@ export default function CarrelloPage() {
                                                 <span className="text-small text-default-500">{t('discount')}</span>
                                                 <span className={sconto > 0 ? "text-small font-semibold text-success" : "text-small text-default-700 font-semibold"}>{sconto > 0 ? `-${sconto}€` : "0€"}</span>
                                             </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-small text-default-500">Points</span>
+                                                <span className={sconto > 0 ? "text-small font-semibold text-success" : "text-small text-default-700 font-semibold"}>{sconto > 0 ? `-${sconto}€` : "0€"}</span>
+                                            </div>
                                             <Divider/>
                                         </div>
                                                                             </div>

@@ -1,3 +1,4 @@
+
 {
   "navbar": {
     "home": "Buscar billete",
@@ -224,6 +225,106 @@
       }
     }
   },
+  "privacyPage": {
+    "title": "Política de Privacidad",
+    "lastUpdated": "Última Actualización: 15 de junio de 2023",
+    "sections": {
+      "introduction": {
+        "title": "Introducción",
+        "content": [
+          "Bienvenido a la Política de Privacidad de TrainSoup. Esta política explica cómo recopilamos, utilizamos, divulgamos y protegemos tu información cuando utilizas nuestro servicio.",
+          "Respetamos tu privacidad y nos comprometemos a proteger la información personalmente identificable que puede ser recopilada a través de nuestro sitio web o aplicación. Hemos adoptado esta política de privacidad para explicar qué información puede ser recopilada, cómo utilizamos esta información y en qué circunstancias podríamos divulgar la información a terceros."
+        ]
+      },
+      "informationCollection": {
+        "title": "Información que Recopilamos",
+        "subtitle": "Datos Personales",
+        "content": [
+          "Podríamos recopilar información personal que proporciones voluntariamente cuando utilizas nuestro servicio, incluyendo:"
+        ],
+        "listItems": [
+          "Nombre, dirección de email e información de contacto",
+          "Credenciales de acceso a la cuenta",
+          "Información de facturación y pago",
+          "Información compartida a través de canales de atención al cliente"
+        ]
+      },
+      "informationUsage": {
+        "title": "Cómo Utilizamos tu Información",
+        "content": [
+          "Utilizamos los datos recopilados para varios propósitos, incluyendo:"
+        ],
+        "listItems": [
+          "Proporcionar y mantener nuestro servicio",
+          "Procesar tus reservas y pagos",
+          "Gestionar tu cuenta y verificar tu identidad",
+          "Proporcionar atención al cliente",
+          "Detectar y prevenir actividades fraudulentas"
+        ]
+      },
+      "dataSharing": {
+        "title": "Compartir y Divulgación de Datos",
+        "content": [
+          "Podríamos compartir tu información personal en las siguientes situaciones:"
+        ],
+        "listItems": [
+          {
+            "title": "Con Proveedores de Servicios:",
+            "description": "Podríamos compartir tu información con proveedores terceros que proporcionan servicios en nuestro nombre."
+          },
+          {
+            "title": "Para Transferencias Comerciales:",
+            "description": "Podríamos compartir información en relación con una fusión, venta de activos de la empresa, financiación o adquisición."
+          },
+          {
+            "title": "Con tu Consentimiento:",
+            "description": "Podríamos divulgar tu información personal para cualquier otro propósito con tu consentimiento."
+          },
+          {
+            "title": "Requisitos Legales:",
+            "description": "Podríamos divulgar tu información cuando sea requerido por ley o para proteger nuestros derechos."
+          }
+        ]
+      },
+      "dataSecurity": {
+        "title": "Seguridad de Datos",
+        "content": [
+          "La seguridad de tus datos es importante para nosotros. Nos esforzamos por utilizar medios comercialmente aceptables para proteger tu información personal, pero ningún método de transmisión por Internet o método de almacenamiento electrónico es 100% seguro.",
+          "Implementamos medidas técnicas y organizativas apropiadas para mantener la seguridad de tus datos personales."
+        ]
+      },
+      "yourRights": {
+        "title": "Tus Derechos",
+        "content": [
+          "Dependiendo de tu ubicación, podrías tener ciertos derechos con respecto a tu información personal, incluyendo:"
+        ],
+        "listItems": [
+          "El derecho a acceder a la información que tenemos sobre ti",
+          "El derecho a solicitar la corrección de información inexacta",
+          "El derecho a solicitar la eliminación de tus datos",
+          "El derecho a restringir u oponerte al procesamiento",
+          "El derecho a la portabilidad de datos",
+          "El derecho a retirar el consentimiento"
+        ],
+        "additional": "Para ejercer estos derechos, contáctanos utilizando la información proporcionada al final de esta política."
+      },
+      "cookiesAndTracking": {
+        "title": "Cookies y Seguimiento",
+        "content": [
+          "Utilizamos cookies y tecnologías de seguimiento similares para rastrear la actividad en nuestro servicio y conservar cierta información.",
+          "Las cookies son archivos con una pequeña cantidad de datos que pueden incluir un identificador único anónimo. Se envían a tu navegador desde un sitio web y se almacenan en tu dispositivo.",
+          "Puedes instruir a tu navegador para que rechace todas las cookies o para que indique cuándo se está enviando una cookie. Sin embargo, si no aceptas cookies, es posible que no puedas utilizar algunas partes de nuestro servicio."
+        ]
+      },
+      "changes": {
+        "title": "Cambios a Esta Política de Privacidad",
+        "content": [
+          "Podríamos actualizar nuestra Política de Privacidad de vez en cuando. Te notificaremos cualquier cambio publicando la nueva Política de Privacidad en esta página y actualizando la fecha de \"Última Actualización\".",
+          "Se te aconseja revisar esta Política de Privacidad periódicamente para cualquier cambio. Los cambios a esta Política de Privacidad son efectivos cuando se publican en esta página."
+        ]
+      }
+    }
+  },
   "ricercaPage": {
     "months": [
       "Enero",
@@ -255,6 +356,7 @@
     "changes": "cambio/s,",
     "seeStops": "Ver paradas",
     "buy": "Comprar",
+    "urbanTransport": "Transporte urbano",
     "modal": {
       "title": "Paradas del tren",
       "loginRequired": "Debes iniciar sesión para poder comprar un billete"
