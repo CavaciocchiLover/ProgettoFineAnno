@@ -356,6 +356,7 @@
     "seeStops": "Vedi fermate",
     "buy": "Acquista",
     "urbanTransport": "Trasporto urbano",
+    "noResults": "Nessun risultato trovato",
     "modal": {
       "title": "Fermate del treno",
       "loginRequired": "Devi essere loggato per acquistare un biglietto"

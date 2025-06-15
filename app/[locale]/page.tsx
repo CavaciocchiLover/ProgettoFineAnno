@@ -35,7 +35,7 @@ export default function Home() {
 
     async function CercoStazione(stazione: string) {
         setCaricando(true);
-        const response = await fetch(`http://localhost:8080/stazioni?nome=${stazione}`);
+        const response = await fetch(`http://141.144.245.5:8080/stazioni?nome=${stazione}`);
 
         if (response.ok) {
             const stazioni = await response.json();

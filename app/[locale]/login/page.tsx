@@ -71,7 +71,7 @@ export default function LoginPage() {
     }
 
     if (errori !== 1) {
-        fetch("http://localhost:8080/registrazione", {
+        fetch("http://141.144.245.5:8080/registrazione", {
             method: "POST",
             body: JSON.stringify({
                 email: email,
@@ -101,7 +101,7 @@ export default function LoginPage() {
   }
 
     async function accessoGoogle(jwt: CredentialResponse) {
-        fetch("http://localhost:8080/accessoGoogle", {
+        fetch("http://141.144.245.5:8080/accessoGoogle", {
             method: "POST",
             body: JSON.stringify({"token": jwt.credential})
         }).then((resp) => {
@@ -126,7 +126,7 @@ export default function LoginPage() {
     async function Login(e: FormEvent<HTMLFormElement>) {
       e.preventDefault();
       setErrore(false);
-        fetch("http://localhost:8080/login", {
+        fetch("http://141.144.245.5:8080/login", {
             method: "POST",
             body: JSON.stringify({
                 email: email,

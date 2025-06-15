@@ -89,7 +89,7 @@ export default function CarrelloPage() {
             setDatiTreno(json);
             setNPersone(json.nPersone);
 
-            fetch("http://localhost:8080/punti", {
+            fetch("http://141.144.245.5:8080/punti", {
                 method: "GET",
                 headers: {"Authorization": tokenCookie}
             })
@@ -167,7 +167,7 @@ export default function CarrelloPage() {
         })
         const token = Cookies.get("token");
 
-        fetch("http://localhost:8080/compra",{
+        fetch("http://141.144.245.5:8080/compra",{
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -206,7 +206,7 @@ export default function CarrelloPage() {
 
     function CercoSconto() {
         if (codiceSconto.search(codiceSconto) !== -1) {
-            fetch("http://localhost:8080/sconto", {
+            fetch("http://141.144.245.5:8080/sconto", {
                 method: "POST",
                 body: JSON.stringify({ codice: codiceSconto })
             }).then(res => {
@@ -271,9 +271,6 @@ export default function CarrelloPage() {
             {
                 carrelloVuoto ? (
                     <div className="flex justify-center items-center h-screen w-screen">
-                        <div>
-
-                        </div>
                         <Image src={TiziaCarrello} alt="carrello vuoto"/>
                         <p>{t('emptyCart')}</p>
                     </div>
@@ -589,14 +586,6 @@ export default function CarrelloPage() {
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-small text-default-500">{t('discount')}</span>
-                                                <span className={sconto > 0 ? "text-small font-semibold text-success" : "text-small text-default-700 font-semibold"}>{sconto > 0 ? `-${sconto}€` : "0€"}</span>
-                                            </div>
-                                            <div className="flex justify-between">
-                                                <span className="text-small text-default-500">{t('discount')}</span>
-                                                <span className={sconto > 0 ? "text-small font-semibold text-success" : "text-small text-default-700 font-semibold"}>{sconto > 0 ? `-${sconto}€` : "0€"}</span>
-                                            </div>
-                                            <div className="flex justify-between">
-                                                <span className="text-small text-default-500">Points</span>
                                                 <span className={sconto > 0 ? "text-small font-semibold text-success" : "text-small text-default-700 font-semibold"}>{sconto > 0 ? `-${sconto}€` : "0€"}</span>
                                             </div>
                                             <Divider/>

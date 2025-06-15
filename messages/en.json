@@ -356,6 +356,7 @@
     "seeStops": "See stops",
     "buy": "Buy",
     "urbanTransport": "Urban transport",
+    "noResults": "No results found",
     "modal": {
       "title": "Train stops",
       "loginRequired": "You must be logged in to purchase a ticket"

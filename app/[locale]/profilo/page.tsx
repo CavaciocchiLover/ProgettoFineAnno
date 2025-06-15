@@ -82,7 +82,7 @@ export default function ProfiloPage() {
             return;
         }
 
-        fetch("http://localhost:8080/info", {
+        fetch("http://141.144.245.5:8080/info", {
             method: "GET",
             headers: {"Authorization": token}
         })
